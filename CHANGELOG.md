@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.41 — Auswahlstreifen bei Kühlstellen erhalten
+
+- Ausgewählte gelbe oder rote Kühlstellen zeigen zusätzlich zur schmalen Kontur wieder den dicken orangefarbenen linken Streifen.
+
 ## 0.1.40 — Zustandsmarkierung der Kühlstellen vereinheitlichen
 
 - Gelbe und rote Kühlstellen erhalten keinen dicken linken Streifen mehr; eine ausgewählte Kühlstelle behält eine schmale umlaufende Kontur.

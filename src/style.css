@@ -91,4 +91,4 @@ body{min-width:0}
 
 .result-section:hover{filter:brightness(1.1);cursor:pointer}.result-section-title:hover b{color:var(--text)}
 
-.endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #f4a34066}
+.endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
