@@ -27,7 +27,7 @@ Ein Projekt enthält Knoten und gerichtete Leitungsabschnitte. Der Netzeditor sp
 
 Kreise, doppelte Verbindungen, getrennte Netzteile, ungültige Höhen-/Lastwerte und nicht rechtwinklige Wege werden vor der hydraulischen Berechnung abgewiesen. Es gibt keine geschlossene Ringnetzberechnung.
 
-Die hydraulische Länge eines Abschnitts ist die Summe der orthogonalen Planstrecken multipliziert mit dem Maßstab, zuzüglich `max(0, extraLengthM)`. Eine zusätzliche Länge ist daher ein Zuschlag zur gezeichneten Strecke.
+Die hydraulische Länge eines Abschnitts ist die Summe der orthogonalen Planstrecken multipliziert mit dem Maßstab, zuzüglich `max(0, extraLengthM)` des Abschnitts. Bei einer angeschlossenen Kühlstelle kommt deren zusätzliche Rohrleitung `extraLengthM` am letzten Abschnitt hinzu. Die in der Kühlstellenliste angezeigte Gesamtlänge summiert diese Längen auf dem Pfad vom Anlagenstart zur Kühlstelle. Ohne Maßstab oder vollständigen Pfad wird keine Gesamtlänge angezeigt.
 
 ## 3. Stoffzustände und Kältemittel
 
@@ -116,7 +116,7 @@ Geprüft werden:
 
 - maximaler Saug- und Flüssigkeitsverlust in Kelvin;
 - maximale Sauggeschwindigkeit;
-- Mindestgeschwindigkeit nur für steigende Saugleitungen (`suctionDeltaZ > 0`);
+- Mindestgeschwindigkeit nur für steigende Saugleitungen (`suctionDeltaZ > 0` oder aktiviertes Kontrollfeld „Steigleitung“ an der angeschlossenen Kühlstelle). Das Kontrollfeld kennzeichnet den letzten Leitungsabschnitt zur Kühlstelle für diese Prüfung; es legt keine Höhendifferenz fest und erzeugt keinen zusätzlichen geodätischen Druckanteil. Eine tatsächliche Höhendifferenz ist weiterhin am Leitungsabschnitt einzutragen;
 - verbleibende Flüssigkeitsunterkühlung bzw. Erreichen der Phasengrenze.
 
 Die automatische Wahl startet mit den kleinsten druckzulässigen Größen und vergrößert nur Rohrleitungen auf den erkannten Verletzungspfaden. Das zielt auf kleine Leitungen, ist aber kein Beweis für das global kleinste Gesamtnetz: alternative Größenkombinationen werden nicht vollständig durchsucht. Manuelle Größen bleiben unverändert. Die Standard-Maximalgeschwindigkeit beträgt 30 m/s; die Mindestgeschwindigkeit ist standardmäßig 0 m/s und wirkt damit nur, wenn sie ausdrücklich erhöht wird.

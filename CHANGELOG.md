@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+## 0.2.1 — Berechnungsansicht und Kühlstellenliste überarbeitet
+
+- Der Berechnungsstart steht oben; selten benötigte Parameter sind eingeklappt. Der Status im Kopfbereich zeigt laufende Berechnungen und ihre Dauer.
+- Rohrstrecken und Kühlstellen sind im Ergebnis einzeln einklappbar. Spalten, Schrift und Eingabefelder wurden lesbarer und einheitlicher gestaltet.
+- Die Kühlstellenliste zeigt kompakte, auswählbare Karten mit Leistung, zusätzlicher Rohrleitung, Steigleitungskennzeichen und Gesamtlänge. Die Zusatzlänge und das Kennzeichen fließen in die hydraulische Berechnung beziehungsweise die Mindestgeschwindigkeitsprüfung ein.
+- Lange Projekt- und PDF-Namen bleiben ohne Überdeckung der Bedienelemente zugänglich. Überflüssige Pfeilsymbole und der zusätzliche Kühlstellenknopf wurden entfernt.
+
 ## 0.2.0 — Kühlstellenpfad bis zum Verbund markieren
 
 - Die orange Markierung des Leitungswegs berücksichtigt die Verbindungsrichtung nicht mehr und zeigt für jede ausgewählte Kühlstelle den vollständigen Pfad bis zum Verbund.

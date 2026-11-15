@@ -73,6 +73,18 @@ test('topology and scale validation reject loops and uncalibrated plans', () => 
   assert.throws(() => context.RohrRunnerEngine.analyze(loop, 1), /Kreis|doppelte Verbindung/);
 });
 
+test('terminal pipe allowance is added to the final section and riser is retained', () => {
+  const plan=network();
+  plan.nodes.find(node=>node.id==='cold-a').extraLengthM=3.5;
+  plan.nodes.find(node=>node.id==='cold-a').suctionRiser=true;
+  plan.edges.find(edge=>edge.id==='branch-a').extraLengthM=1.5;
+  const graph=context.RohrRunnerEngine.analyze(plan,1);
+  const branch=graph.edges.find(edge=>edge.id==='branch-a');
+  assert.equal(branch._lengthM,9);
+  assert.equal(branch._terminalRiser,true);
+  assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._terminalRiser,false);
+});
+
 test('CoolProp checks all three requested refrigerants on a branched network', async () => {
   await context.RohrStoffdaten.load();
   const cases = [
