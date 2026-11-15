@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.33 — Abstand vor ΔT SL
+
+- SL- und FL-Auswahl samt Überschriften leicht nach links verschoben, damit mehr Abstand zu ΔT SL bleibt.
+
 ## 0.1.32 — Geschwindigkeiten und Statushinweise
 
 - SL- und FL-Geschwindigkeit stets in getrennten Zeilen dargestellt.

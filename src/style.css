@@ -80,3 +80,4 @@ body{min-width:0}
 .result-table-header span:first-child{text-align:center}.result-table-header,.result-section-row{grid-template-columns:minmax(40px,.8fr) 64px 64px minmax(34px,.65fr) minmax(34px,.65fr) minmax(70px,1.3fr);gap:2px;padding-left:8px;padding-right:8px}.result-size-select{width:64px;max-width:100%}
 .result-table-header span:first-child,.length-cell{text-align:left}.result-table-header,.endpoint-table-header{padding-left:9px}.result-section-row,.endpoint-result{padding-left:8px}.endpoint-results h3{margin-left:9px}
 .velocity-cell{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:center;justify-content:center;white-space:nowrap;line-height:1.35}
+.result-section-row .size-cell,.result-table-header span:nth-child(2),.result-table-header span:nth-child(3){transform:translateX(-5px)}
