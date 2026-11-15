@@ -86,6 +86,8 @@ test('CoolProp checks all three requested refrigerants on a branched network', a
     assert.equal(result.rows.length, 6, input.fluid);
     assert.ok(result.rows.every(row => row.diameterMm > 0 && row.flowKgS > 0), input.fluid);
     assert.ok(result.endpoints.every(end => Number.isFinite(end.suctionK) && end.remainingSubcoolingK > 0), input.fluid);
+    assert.ok(result.endpoints.every(end => Math.abs(end.evaporationC - (input.evaporationC + end.suctionK)) < 1e-6), `${input.fluid}: tatsächliche Verdampfungstemperatur je Kühlstelle`);
+    assert.ok(result.endpoints.every(end => end.coolingKW === network().nodes.find(node => node.id === end.id).coolingKW), `${input.fluid}: Leistungsvorgabe je Kühlstelle`);
     assert.ok(result.rows.filter(row => row.type === 'suction').every(row => row.psBar >= input.designPressureBar), input.fluid);
     if (input.fluid === 'R744') assert.ok(result.rows.every(row => /^\d+(?:-\d+\/\d+|\/\d+)?"$/.test(row.sizeLabel)), 'R744-Rohrbezeichnungen in Zoll');
   }

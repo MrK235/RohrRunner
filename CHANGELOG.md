@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.15 — Kühlstellenwerte in Ergebnissen
+
+- Tatsächliche Verdampfungstemperatur und vorgegebene Kühlstellenleistung bis zur Ergebnisliste durchgereicht.
+- Endpunkt-Verdampfungstemperatur in der Liste mit zwei Nachkommastellen angezeigt.
+- Tests ergänzen Prüfungen für Endpunkt-Temperatur und Leistungsvorgabe.
+
 ## 0.1.14 — Druckargument bei Verdampfungstemperatur
 
 - Kältemittelkennung beim Ermitteln der Endpunkt-Verdampfungstemperatur an den Stoffdatenaufruf übergeben.
