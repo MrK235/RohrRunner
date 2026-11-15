@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.16 — Statusfarben und automatische Dimension
+
+- Normale Rohrabschnitte neutral dargestellt; orange und rot sind Auffälligkeiten und Grenzverletzungen vorbehalten.
+- Automatische Rohrgröße im ersten Auswahlfeld-Eintrag mit der gewählten Dimension gekennzeichnet.
+
 ## 0.1.15 — Kühlstellenwerte in Ergebnissen
 
 - Tatsächliche Verdampfungstemperatur und vorgegebene Kühlstellenleistung bis zur Ergebnisliste durchgereicht.
