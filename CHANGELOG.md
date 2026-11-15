@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.23 — Kühlstellenstatus abstufen
+
+- Nicht eingehaltene Auslegungsgrenzen an Kühlstellen orange markiert.
+- Rot bleibt kritischen Phasengrenzen vorbehalten.
+
 ## 0.1.22 — Ergebnisdarstellung vereinheitlicht
 
 - Kühlstellen im Kartenstil der Rohrstrecken angeordnet.
