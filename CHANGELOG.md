@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.21 — Schlichte Geschwindigkeit und Kühlstellenstatus
+
+- Geschwindigkeiten im Ergebnis ohne farbige SL-/FL-Abzeichen dargestellt.
+- Kühlstellenzeilen und betroffene Endpunktwerte bei Grenzverletzungen farblich hervorgehoben.
+- Spaltenüberschriften der Kühlstellenliste verkürzt und ausführlich erläutert.
+
 ## 0.1.20 — Auto-Dimension als ausgewählter Eintrag
 
 - Die automatisch berechnete Dimension wird im Auswahlfeld selbst als `22x1mm (auto)` angezeigt.
