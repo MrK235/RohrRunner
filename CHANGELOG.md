@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.5 — Kopfzeilenstatus
+
+- Überschrift über den Seitenleisten-Reitern entfernt.
+- Berechnungsstatus in die obere Kopfzeile verschoben.
+
 ## 0.1.4 — Seitenleisten-Reiter
 
 - Seitenleiste in die Reiter Kühlstellen, Berechnung und Ergebnis gegliedert.

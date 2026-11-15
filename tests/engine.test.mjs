@@ -51,6 +51,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   for(const control of ['openPdf','exportPlanPdf','calibrate','calculate','exportCsv','projectFile','edgeEditor'])assert.ok(html.includes(`id="${control}"`),`UI: ${control}`);
   for(const panel of ['panelTerminals','panelCalculation','panelResults'])assert.ok(html.includes(`id="${panel}"`),`sidebar tab panel: ${panel}`);
   assert.ok(html.includes('role="tablist"')&&html.includes('Kühlstellen</button>')&&html.includes('Berechnung</button>')&&html.includes('Ergebnis</button>'),'sidebar exposes the three workflow tabs');
+  assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
   assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
