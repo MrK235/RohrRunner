@@ -84,3 +84,5 @@ body{min-width:0}
 .result-table-header span:nth-child(5),.result-section-row .metric-cell:nth-child(5){transform:translateX(10px)}
 
 .pipe-line.selected{stroke:#f4a340;stroke-width:4;filter:drop-shadow(0 0 5px #f4a34088)}
+
+.result-section.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}

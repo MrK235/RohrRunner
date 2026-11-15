@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.37 — Plan und Messergebnis verknüpfen
+
+- Die Auswahl einer Rohrstrecke markiert den zugehörigen Messergebnisabschnitt.
+- Die Auswahl im Messergebnis markiert die zugehörige Rohrstrecke im Plan.
+
 ## 0.1.36 — Auswahlpfade orange markieren
 
 - Beim Auswählen einer Kühlstelle wird ihr Rohrweg bis zum Anlagenstart orange dargestellt.
