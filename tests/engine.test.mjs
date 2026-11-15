@@ -54,6 +54,8 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
   assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
   assert.ok(app.includes('Automatisch · gewählt:')&&app.includes("directLimit?'limit':'check'"),'automatic pipe size stays visible and section warnings use amber or red states');
+  assert.ok(app.includes('status.textContent=`${type===\'suction\'?\'SL\':\'FL\'} prüfen`')&&!app.includes('section-state'),'inspection note sits below its SL/FL size without a separate row');
+  assert.ok(style.includes('.size-cell{height:31px')&&style.includes('grid-template-rows:22px 8px'),'inspection note fits within the existing result row height');
   assert.ok(style.includes('.result-section.check')&&style.includes('.result-section.limit')&&!style.includes('.result-section.valid'),'normal pipe sections have no green status highlight');
   assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));

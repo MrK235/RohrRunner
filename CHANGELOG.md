@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.17 — Prüfhinweis im Rohrgrößenfeld
+
+- SL-/FL-Prüfhinweis direkt unter der jeweiligen Rohrgröße platziert.
+- Feld- und Zeilenhöhe bleiben dafür fest; separate Statuszeilen entfallen.
+
 ## 0.1.16 — Statusfarben und automatische Dimension
 
 - Normale Rohrabschnitte neutral dargestellt; orange und rot sind Auffälligkeiten und Grenzverletzungen vorbehalten.
