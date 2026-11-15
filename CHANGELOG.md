@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.44 — Berechnungsreiter nach Auslegungsreset öffnen
+
+- Nach „Auslegung zurücksetzen“ wird der Reiter „Berechnung“ angezeigt.
+
 ## 0.1.43 — Auslegung an Grenzwerten ausrichten
 
 - Automatische Rohr-Upgrades sind nicht mehr auf acht Schritte begrenzt; die Schrittweite verringert sich nahe an den Vorgaben.
