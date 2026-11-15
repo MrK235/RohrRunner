@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.29 — Rohrdimensionen erhalten Platz
+
+- Längenwerte unter der zentrierten Spaltenüberschrift ausgerichtet.
+- SL-/FL-Auswahlfelder verbreitert und Spaltenbreiten dafür angepasst.
+
 ## 0.1.28 — Punkte entfernt und Spalten ausgerichtet
 
 - Statuspunkte am Anfang von Rohr- und Kühlstellenkarten entfernt.
