@@ -95,6 +95,44 @@ test('CoolProp checks all three requested refrigerants on a branched network', a
   }
 });
 
+test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und reizen sie aus', async t => {
+  await context.RohrStoffdaten.load();
+  const input = { ...settings, fluid: 'R513A', simultaneity: 0.5, maxVelocityMS: 30, minVelocityMS: 0,
+    suctionLimitK: 2, liquidLimitK: 2 };
+  const manyEndpoints = count => {
+    const nodes = [{ id: 'plant', type: 'start', name: 'Verbund', x: 0, y: 0 }], edges = [];
+    let previous = 'plant';
+    for (let i = 0; i < count; i++) {
+      const junction = `junction-${i}`, x = (i + 1) * 8, endpoint = `cold-${i}`, branchY = i % 2 ? -5 : 5;
+      nodes.push({ id: junction, type: 'junction', name: `T${i + 1}`, x, y: 0 });
+      edges.push({ id: `main-${i}`, from: previous, to: junction, points: [{ x: i * 8, y: 0 }, { x, y: 0 }] });
+      nodes.push({ id: endpoint, type: 'endpoint', name: `Kühlstelle ${i + 1}`, coolingKW: 3 + i % 3, x, y: branchY });
+      edges.push({ id: `branch-${i}`, from: junction, to: endpoint, points: [{ x, y: 0 }, { x, y: branchY }] });
+      previous = junction;
+    }
+    return { nodes, edges };
+  };
+  for (const count of [2, 5, 10]) {
+    const started = performance.now();
+    const result = context.RohrRunnerEngine.calculate(manyEndpoints(count), 1, input, context.RohrStoffdaten, catalog);
+    const durationMs = performance.now() - started;
+    assert.equal(result.valid, true, `${count} Kühlstellen: ${result.issues.map(issue => issue.message).join(' ')}`);
+    assert.equal(result.endpoints.length, count);
+    assert.ok(result.endpoints.every(end => end.suctionK <= input.suctionLimitK + 1e-6), `${count}: Saugverlust`);
+    assert.ok(result.endpoints.every(end => end.liquidK <= input.liquidLimitK + 1e-6 && end.remainingSubcoolingK > 0), `${count}: Flüssigkeitsverlust und Restunterkühlung`);
+    assert.ok(result.rows.filter(row => row.type === 'suction').every(row => row.velocityMS <= input.maxVelocityMS + 1e-6), `${count}: Maximalgeschwindigkeit`);
+    for (const type of ['suction', 'liquid']) {
+      const mainRows = Array.from({ length: count }, (_, i) => result.rows.find(row => row.edgeId === `main-${i}` && row.type === type));
+      const branchRows = Array.from({ length: count }, (_, i) => result.rows.find(row => row.edgeId === `branch-${i}` && row.type === type));
+      assert.ok(mainRows.every((row, i) => i === 0 || row.diameterMm <= mainRows[i - 1].diameterMm), `${count}: ${type} fällt entlang des Hauptstrangs nicht ab`);
+      assert.ok(branchRows.every((row, i) => row.diameterMm <= mainRows[i].diameterMm), `${count}: ${type} ist in einem Einzelzweig größer als der Hauptstrang`);
+    }
+    const utilization = Math.max(...result.endpoints.flatMap(end => [end.suctionK / input.suctionLimitK, end.liquidK / input.liquidLimitK]));
+    assert.ok(utilization >= 0.9, `${count}: Grenzwerte werden nicht ausreichend ausgenutzt (${utilization.toFixed(2)})`);
+    t.diagnostic(`${count} Kühlstellen: gültig, max. Grenzwertausnutzung ${(utilization * 100).toFixed(1)} %, ${durationMs.toFixed(0)} ms`);
+  }
+});
+
 test('R744 transcritical and a missing terminal load are refused explicitly', async () => {
   await context.RohrStoffdaten.load();
   assert.throws(() => context.RohrRunnerEngine.calculate(network(), 1, { ...settings, fluid: 'R744', condensationC: 35,

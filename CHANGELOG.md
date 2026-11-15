@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.43 — Auslegung an Grenzwerten ausrichten
+
+- Automatische Rohr-Upgrades sind nicht mehr auf acht Schritte begrenzt; die Schrittweite verringert sich nahe an den Vorgaben.
+- Synthetische Solvertests mit 2, 5 und 10 Kühlstellen prüfen Grenzwerte, Ausnutzung und Laufzeit.
+- Standard-Maximalgeschwindigkeit auf 30 m/s gesetzt und Mindestgeschwindigkeit standardmäßig deaktiviert.
+
 ## 0.1.42 — Ergebnistab nach Auslegungsreset beibehalten
 
 - Nach „Auslegung zurücksetzen“ bleibt der Ergebnisreiter aktiv.

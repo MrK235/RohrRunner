@@ -136,7 +136,9 @@
     // pipe with the greatest weighted reduction on the currently failing path.
     const manual=new Set(edges.flatMap(e=>['suction','liquid'].filter(t=>e.thermal?.[t]?.mode==='manual').map(t=>`${e.id}:${t}`)));
     let finalScenarios=[];
-    for(let pass=0;pass<Math.max(1,Math.min(8,edges.length*2));pass++){
+    // Bound the upgrade search by all possible catalog transitions in the network.
+    const maxUpgradePasses=Math.max(1,edges.length*2*(sizes.length-1));
+    for(let pass=0;pass<maxUpgradePasses;pass++){
       finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
       const rowByKey=new Map();for(const e of edges)for(const t of ['suction','liquid'])rowByKey.set(`${e.id}:${t}`,[]);
       for(const s of finalScenarios)for(const [key,r] of s.lineResults)rowByKey.get(key)?.push({scenario:s,result:r});
@@ -149,7 +151,10 @@
       const keys=[...rowByKey.keys()].filter(key=>key.endsWith(worstIssue.type)&&worstIssue.path.has(key.slice(0,key.lastIndexOf(':')))&&!manual.has(key));
       let best=null;
       for(const key of keys){const current=selected.get(key),ix=sizes.indexOf(current);if(ix<0||ix>=sizes.length-1)continue;const candidates=rowByKey.get(key).filter(x=>x.scenario.targetId===worstIssue.target);const drop=candidates.reduce((sum,x)=>sum+x.result.drop,0);const edgeId=key.slice(0,key.lastIndexOf(':'));const edge=edges.find(e=>e.id===edgeId);const length=edge._lengthM||1;const score=drop/Math.max(length,0.1)/(diOf(sizes[ix+1])**2/diOf(current)**2-1);if(!best||score>best.score)best={key,score,ix};}
-      if(!best)break;const factor=Math.max(1.12,Math.pow(1+worstIssue.excess,.4)),currentD=diOf(sizes[best.ix]),targetD=currentD*factor;let targetIndex=best.ix+1;while(targetIndex<sizes.length-1&&diOf(sizes[targetIndex])<targetD)targetIndex++;selected.set(best.key,sizes[targetIndex]);
+      if(!best)break;
+      const factor=Math.max(1.05,Math.pow(1+worstIssue.excess,.2)),targetDiameter=diOf(sizes[best.ix])*factor;
+      let targetIndex=best.ix+1;while(targetIndex<sizes.length-1&&diOf(sizes[targetIndex])<targetDiameter)targetIndex++;
+      selected.set(best.key,sizes[targetIndex]);
     }
     finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
     const issues=[];

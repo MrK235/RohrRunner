@@ -2,7 +2,7 @@
   'use strict';
   const $ = id => document.getElementById(id), svgNS='http://www.w3.org/2000/svg', STORAGE='rohrrunner.project.v1', DB_NAME='rohrrunner.projects.v1', ACTIVE='rohrrunner.activeProject.v1', appScriptUrl=document.currentScript.src, Editor=window.RohrRunnerEditor;
   if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const defaults={fluid:'R513A',simultaneity:1,evaporationC:-10,condensationC:45,superheatK:5,subcoolingK:3,suctionLimitK:2,liquidLimitK:2,minVelocityMS:6,maxVelocityMS:10,designPressureBar:35,roughnessMicroM:1.5,fittingsFactor:1.5,viscosityMarginPercent:15};
+  const defaults={fluid:'R513A',simultaneity:1,evaporationC:-10,condensationC:45,superheatK:5,subcoolingK:3,suctionLimitK:2,liquidLimitK:2,minVelocityMS:0,maxVelocityMS:30,designPressureBar:35,roughnessMicroM:1.5,fittingsFactor:1.5,viscosityMarginPercent:15};
   const fresh=()=>({id:'rr-'+crypto.randomUUID(),name:'Neues Rohrnetz',nodes:[],edges:[],calibration:0,settings:{...defaults}});
   let project=fresh(),tool='select',selection=null,pipeStart=null,pipePoints=[],pipeAxis=null,pipeHover=null,zoom=1,pan={x:0,y:0},zoomTarget=1,panTarget={x:0,y:0},zoomFrame=0,zoomTime=0,pdf=null,pdfBytes=null,pdfName='',renderViewport=null,worker=null,workerUnavailable=false,workerSourceLoading=null,workerStarting=null,workerUrl=null,pending=new Map(),runId=0,history=[],future=[],calibrationPoints=[],calibrationPending=false,calibrationHover=null,dragPan=null,networkDrag=null,panMoved=false,ignoreCanvasClick=false,spaceDown=false,pdfRenderTask=null,baseScale=1,dirty=true;
   const stage=$('stage'), net=$('network'), canvas=$('pdfCanvas'), ctx=canvas.getContext('2d');

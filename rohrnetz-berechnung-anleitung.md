@@ -108,9 +108,9 @@ Am Anlagenstart werden Saugdruck aus Verdampfung und Taupunkt sowie Flüssigkeit
 
 ## 8. Automatische Dimensionierung
 
-Die automatische Wahl beginnt mit der kleinsten druckzulässigen Größe. Für Saugleitungen wird zunächst eine Größe gesucht, die die maximale Geschwindigkeit im anfänglichen Flussansatz einhält. Danach werden Endpunkt-Lastfälle mit den aktuellen Größen gerechnet.
+Die automatische Wahl beginnt mit der kleinsten druckzulässigen Größe. Für Saugleitungen wird zunächst eine Größe gesucht, die die maximale Geschwindigkeit im anfänglichen Flussansatz einhält. Danach werden Endpunkt-Lastfälle mit den aktuellen Größen gerechnet. Bei Grenzverletzungen wird die betroffene automatische Größe abhängig von der Überschreitung angehoben; nahe der Grenze werden kleinere Schritte gewählt. Das gesamte Netz wird nach jedem Upgrade erneut gerechnet. Die obere Iterationsgrenze deckt alle möglichen Katalogstufen aller automatischen Leitungen ab, statt eine feste kleine Zahl von Upgrades vorzugeben.
 
-Wenn Grenzverletzungen auftreten, wertet eine begrenzte Upgrade-Heuristik die betroffenen Pfade aus. Sie vergrößert eine automatische Rohrgröße anhand des Druckverlustanteils und des erwarteten Querschnittsgewinns. Manuelle Größen werden dabei nicht automatisch geändert. Der Upgrade-Durchlauf ist auf höchstens acht Durchgänge bzw. zwei je Netzabschnitt begrenzt; anschließend wird das Netz erneut ausgewertet und mögliche Grenzverletzungen werden angezeigt.
+Wenn Grenzverletzungen auftreten, wertet eine Upgrade-Heuristik die betroffenen Pfade aus. Sie vergrößert eine automatische Rohrgröße anhand des Druckverlustanteils und des erwarteten Querschnittsgewinns. Der Schritt hängt von der Überschreitung ab und wird nahe dem Grenzwert kleiner. Manuelle Größen werden nicht geändert. Der Durchlauf ist durch alle möglichen Katalogübergänge des Netzes begrenzt; anschließend wird das Netz erneut ausgewertet und mögliche Grenzverletzungen werden angezeigt.
 
 Geprüft werden:
 
@@ -119,7 +119,9 @@ Geprüft werden:
 - Mindestgeschwindigkeit nur für steigende Saugleitungen (`suctionDeltaZ > 0`);
 - verbleibende Flüssigkeitsunterkühlung bzw. Erreichen der Phasengrenze.
 
-Die Heuristik ist kein globaler Kosten- oder Optimierungsbeweis. `GRENZEN EINGEHALTEN` bedeutet, dass die implementierten Prüfungen für die eingegebenen Daten keinen Grenzverstoß gefunden haben; es ist keine Anlagenfreigabe.
+Die automatische Wahl startet mit den kleinsten druckzulässigen Größen und vergrößert nur Rohrleitungen auf den erkannten Verletzungspfaden. Das zielt auf kleine Leitungen, ist aber kein Beweis für das global kleinste Gesamtnetz: alternative Größenkombinationen werden nicht vollständig durchsucht. Manuelle Größen bleiben unverändert. Die Standard-Maximalgeschwindigkeit beträgt 30 m/s; die Mindestgeschwindigkeit ist standardmäßig 0 m/s und wirkt damit nur, wenn sie ausdrücklich erhöht wird.
+
+Die Dimensionierungstests enthalten synthetische Baumstrukturen mit 2, 5 und 10 Kühlstellen. Sie prüfen die Einhaltung der Kriterien und protokollieren Laufzeiten; sie ersetzen keine Validierung an Hersteller- oder Felddaten. `GRENZEN EINGEHALTEN` bedeutet, dass die implementierten Prüfungen für die eingegebenen Daten keinen Grenzverstoß gefunden haben; es ist keine Anlagenfreigabe.
 
 ## 9. Relevante Vereinfachungen
 
