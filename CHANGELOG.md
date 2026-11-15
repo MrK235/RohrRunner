@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.45 — Beschriftungen außerhalb des PDF aufhellen
+
+- Netzwerkbeschriftungen außerhalb der PDF-Fläche werden weiß mit dunkler Kontur dargestellt; Beschriftungen auf dem PDF bleiben unverändert.
+
 ## 0.1.44 — Berechnungsreiter nach Auslegungsreset öffnen
 
 - Nach „Auslegung zurücksetzen“ wird der Reiter „Berechnung“ angezeigt.
