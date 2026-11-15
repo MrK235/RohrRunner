@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.27 — Geschwindigkeitsüberschrift vereinheitlicht
+
+- Spaltenüberschrift zeigt `m/s`; die zusätzliche Einheit unter den Geschwindigkeitswerten entfällt.
+
 ## 0.1.26 — Ergebnisfelder dichter ausrichten
 
 - Leerraum unter den Rohrkartenüberschriften reduziert.
