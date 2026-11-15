@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.38 — Kühlstellenauswahl einheitlich markieren
+
+- Ausgewählte Kühlstellenzeilen und Knoten werden wie ausgewählte Rohrabschnitte mit einer orangefarbenen linken Kante hervorgehoben.
+
 ## 0.1.37 — Plan und Messergebnis verknüpfen
 
 - Die Auswahl einer Rohrstrecke markiert den zugehörigen Messergebnisabschnitt.
