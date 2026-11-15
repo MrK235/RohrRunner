@@ -56,6 +56,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));
   assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
+  assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
   assert.ok(app.includes("location.protocol!=='file:'"),'file:// skips Worker and uses the local fallback');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));

@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.8 — PDF-Leiste über Werkzeugleiste
+
+- PDF-Steuerleiste über die linke Werkzeugleiste und die Planansicht erweitert.
+- Auswahl-, Start- und Lastenwerkzeuge beginnen nun unter der PDF-Steuerleiste.
+
 ## 0.1.7 — Maßstab-Livevorschau
 
 - Kalibrierungslinie folgt dem Mauszeiger nach dem ersten gesetzten Punkt.
