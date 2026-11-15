@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.14 — Druckargument bei Verdampfungstemperatur
+
+- Kältemittelkennung beim Ermitteln der Endpunkt-Verdampfungstemperatur an den Stoffdatenaufruf übergeben.
+
 ## 0.1.13 — Gruppierte Ergebnisliste
 
 - SL- und FL-Ergebnisse je Rohrabschnitt tabellarisch zusammengefasst; Rohrgrößen sind direkt änderbar.
