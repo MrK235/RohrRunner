@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.3 — Arbeitsregeln für Codex
+
+- AGENTS.md dokumentiert Patch-Versionierung, synchronisierte Versionsstellen, Änderungsprotokoll und Commit-Regeln sowie fachliche Projektkonventionen.
+
 ## 0.1.2 — Auswahlwerkzeug
 
 - Auswahl und Verschieben ist das Standardwerkzeug beim Start; das Symbol zeigt eine Hand.
