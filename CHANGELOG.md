@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.19 — Automatisch berechnete Rohrgröße markieren
+
+- Im Größenmenü bleibt „Automatisch“ der erste Eintrag; die berechnete Größe ist unter den Dimensionen mit `(auto)` markiert.
+- Die ursprüngliche Auto-Dimension bleibt nach einer manuellen Größenwahl am Abschnitt gespeichert und erkennbar.
+
 ## 0.1.18 — Kompakte Rohrdimensionen
 
 - Rohrgrößen-Auswahlliste zeigt Außendurchmesser × Wandstärke kompakt, etwa `10x1mm`.
