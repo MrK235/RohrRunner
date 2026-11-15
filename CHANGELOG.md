@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.22 — Ergebnisdarstellung vereinheitlicht
+
+- Kühlstellen im Kartenstil der Rohrstrecken angeordnet.
+- Rohrgrößenauswahl verbreitert, damit Dimensionen vollständig lesbar sind.
+
 ## 0.1.21 — Schlichte Geschwindigkeit und Kühlstellenstatus
 
 - Geschwindigkeiten im Ergebnis ohne farbige SL-/FL-Abzeichen dargestellt.
