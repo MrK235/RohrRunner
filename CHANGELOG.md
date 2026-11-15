@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.2 — Steigleitungsprüfung und Bedienoberfläche
+
+- Die Steigleitungsprüfung verwendet standardmäßig 7 m/s; Werte darunter werden geprüft und Werte unter 5 m/s als kritisch markiert. Hinweise und farbliche Markierung betreffen nur die markierte Kühlstelle und ihre zugehörige Rohrstrecke.
+- Berechnungsergebnisse werden lokal im Projekt gespeichert und bei unverändertem Netz wiederhergestellt. Neue leere Projekte werden erst nach dem ersten gezeichneten Knoten gespeichert.
+- Kühlstellenfelder reagieren auf das Mausrad erst nach einem Klick. Ergebnisanzeige, Projektstatus und Werkzeugsymbole wurden überarbeitet.
+
 ## 0.2.1 — Berechnungsansicht und Kühlstellenliste überarbeitet
 
 - Der Berechnungsstart steht oben; selten benötigte Parameter sind eingeklappt. Der Status im Kopfbereich zeigt laufende Berechnungen und ihre Dauer.

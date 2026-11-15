@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.2.1** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.2.2** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -58,7 +58,7 @@ Einstellbar sind Kältemittel, Gleichzeitigkeit, Verdampfungs- und Verflüssigun
 | Verdampfung / Verflüssigung | −10 °C / 45 °C |
 | Überhitzung / Unterkühlung | 5 K / 3 K |
 | Max. Saug- / Flüssigkeitsverlust | 2 K / 2 K |
-| Mindest- / Maximalgeschwindigkeit | 0 m/s / 30 m/s |
+| Mindest- / Maximalgeschwindigkeit | 7 m/s / 30 m/s |
 | Auslegungsdruck | 35 bar Überdruck |
 | Rohrrauheit | 1,5 µm |
 | Reibungs- / Viskositätszuschlag | 1,5 / 15 % |
@@ -122,4 +122,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.2.1**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.2.2**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
