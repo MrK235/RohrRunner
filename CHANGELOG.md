@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.34 — Rohrgrößen sofort neu berechnen
+
+- Eine geänderte Rohrgröße im Leitungseditor oder in der Ergebnistabelle löst direkt eine Neuberechnung aus.
+
 ## 0.1.33 — Abstand vor ΔT SL
 
 - SL- und FL-Auswahl samt Überschriften leicht nach links verschoben, damit mehr Abstand zu ΔT SL bleibt.
