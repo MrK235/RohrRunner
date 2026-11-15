@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.20 — Auto-Dimension als ausgewählter Eintrag
+
+- Die automatisch berechnete Dimension wird im Auswahlfeld selbst als `22x1mm (auto)` angezeigt.
+- Der separate Eintrag „Automatisch“ entfällt nach der Berechnung; vor dem ersten Ergebnis bleibt er als Auswahl verfügbar.
+
 ## 0.1.19 — Automatisch berechnete Rohrgröße markieren
 
 - Im Größenmenü bleibt „Automatisch“ der erste Eintrag; die berechnete Größe ist unter den Dimensionen mit `(auto)` markiert.
