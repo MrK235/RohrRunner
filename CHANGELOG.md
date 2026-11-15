@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.46 — Beschriftungen ohne PDF weiß darstellen
+
+- Ohne geladene PDF werden Netzwerkbeschriftungen ebenfalls weiß mit dunkler Kontur gezeigt.
+
 ## 0.1.45 — Beschriftungen außerhalb des PDF aufhellen
 
 - Netzwerkbeschriftungen außerhalb der PDF-Fläche werden weiß mit dunkler Kontur dargestellt; Beschriftungen auf dem PDF bleiben unverändert.
