@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.35 — ΔT FL ausgerichtet
+
+- Überschrift und Werte der Spalte ΔT FL um zwei Zeichenbreiten nach rechts gerückt.
+
 ## 0.1.34 — Rohrgrößen sofort neu berechnen
 
 - Eine geänderte Rohrgröße im Leitungseditor oder in der Ergebnistabelle löst direkt eine Neuberechnung aus.
