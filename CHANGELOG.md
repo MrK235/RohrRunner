@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.25 — Länge und Abschnittsüberschrift
+
+- „Von → nach“ in die Überschrift jeder Rohrstreckenkarte verschoben.
+- Erste Ergebnisspalte zeigt die Länge; Rohrgrößenfelder sind um etwa vier Zeichenbreiten schmaler.
+
 ## 0.1.24 — Rohrgrößenfelder lesbar dimensioniert
 
 - Rohrgrößenfelder verkleinert und Schrift vergrößert.
