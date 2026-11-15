@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.28 — Punkte entfernt und Spalten ausgerichtet
+
+- Statuspunkte am Anfang von Rohr- und Kühlstellenkarten entfernt.
+- Überschriften und Werte einheitlich eingerückt; Ergebnisspalten gleichmäßig verteilt.
+- Rohrgrößenfelder vertikal zentriert und auf Zeilenhöhe abgestimmt.
+
 ## 0.1.27 — Geschwindigkeitsüberschrift vereinheitlicht
 
 - Spaltenüberschrift zeigt `m/s`; die zusätzliche Einheit unter den Geschwindigkeitswerten entfällt.
