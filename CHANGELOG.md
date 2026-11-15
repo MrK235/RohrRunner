@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.36 — Auswahlpfade orange markieren
+
+- Beim Auswählen einer Kühlstelle wird ihr Rohrweg bis zum Anlagenstart orange dargestellt.
+- Eine ausgewählte Rohrstrecke wird ebenfalls orange hervorgehoben.
+
 ## 0.1.35 — ΔT FL ausgerichtet
 
 - Überschrift und Werte der Spalte ΔT FL um zwei Zeichenbreiten nach rechts gerückt.

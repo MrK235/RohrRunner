@@ -82,3 +82,5 @@ body{min-width:0}
 .velocity-cell{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:center;justify-content:center;white-space:nowrap;line-height:1.35}
 .result-section-row .size-cell,.result-table-header span:nth-child(2),.result-table-header span:nth-child(3){transform:translateX(-5px)}
 .result-table-header span:nth-child(5),.result-section-row .metric-cell:nth-child(5){transform:translateX(10px)}
+
+.pipe-line.selected{stroke:#f4a340;stroke-width:4;filter:drop-shadow(0 0 5px #f4a34088)}
