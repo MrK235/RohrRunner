@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.2 — Auswahlwerkzeug
+
+- Auswahl und Verschieben ist das Standardwerkzeug beim Start; das Symbol zeigt eine Hand.
+- Nach dem Klick auf Netz berechnen wird das Auswahlwerkzeug aktiviert.
+
 Bemerkenswerte Änderungen des Projekts nach Version. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Patch-Erhöhung. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Dokumentationsänderungen folgen derselben Regel.
 
 ## 0.1.1 — Versionsregel und Dokumentation
