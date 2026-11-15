@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.6 — Einheitlicher Hintergrund
+
+- Hintergrund der Seitenleisten-Reiter an die benachbarte PDF-Steuerleiste angeglichen.
+
 ## 0.1.5 — Kopfzeilenstatus
 
 - Überschrift über den Seitenleisten-Reitern entfernt.
