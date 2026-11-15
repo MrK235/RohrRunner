@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.24 — Rohrgrößenfelder lesbar dimensioniert
+
+- Rohrgrößenfelder verkleinert und Schrift vergrößert.
+- Tabellenbreite neu verteilt, damit Rohrnamen, Temperaturverluste und Geschwindigkeiten nebeneinander Platz haben.
+
 ## 0.1.23 — Kühlstellenstatus abstufen
 
 - Nicht eingehaltene Auslegungsgrenzen an Kühlstellen orange markiert.
