@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.11 — Worker direkt aus `file://` starten
+
+- Worker-Code einschließlich Rechenkern und CoolProp wird als Blob-Worker gebündelt und direkt aus dem Browser gestartet.
+- `RohrRunner.bat` öffnet wieder die HTML-Datei; lokaler Server und Node.js sind für den Worker nicht nötig.
+- Bundle-Generator und Build-Befehl für spätere Änderungen am Worker ergänzt.
+
 ## 0.1.10 — Worker-Start ohne Node.js
 
 - `RohrRunner.bat` startet nun einen lokalen PowerShell-Server auf `127.0.0.1`, damit Browser den Berechnungs-Worker ausführen können.

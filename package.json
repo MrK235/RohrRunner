@@ -1,9 +1,10 @@
 {
   "name": "rohrrunner",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "type": "module",
   "scripts": {
+    "build:worker": "node scripts/build-worker-bundle.mjs",
     "serve": "node scripts/serve.mjs",
     "test": "node --test tests/*.test.mjs"
   }

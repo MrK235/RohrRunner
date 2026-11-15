@@ -58,10 +58,11 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
   assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
-  assert.ok(app.includes("location.protocol!=='file:'"),'file:// skips Worker and uses the local fallback');
+  assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
-  assert.ok(launcher.includes('scripts\\serve.ps1')&&launcher.includes('127.0.0.1:4173'),'launcher starts the bundled localhost server without Node.js');
-  assert.ok(read('scripts/serve.ps1').includes('IPAddress]::Loopback, 4173'),'PowerShell server binds to loopback only');
+  assert.ok(launcher.includes('index.html'),'Windows shortcut opens the app directly');
+  assert.ok(read('scripts/build-worker-bundle.mjs').includes('src/worker-bundle.js'),'worker bundle can be regenerated from local sources');
+  assert.ok(read('src/worker-bundle.js').includes('window.RohrRunnerWorkerBundle = '),'generated standalone worker bundle exists');
 });
 
 test('topology and scale validation reject loops and uncalibrated plans', () => {
