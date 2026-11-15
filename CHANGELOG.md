@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.2.0 — Kühlstellenpfad bis zum Verbund markieren
+
+- Die orange Markierung des Leitungswegs berücksichtigt die Verbindungsrichtung nicht mehr und zeigt für jede ausgewählte Kühlstelle den vollständigen Pfad bis zum Verbund.
+
 ## 0.1.46 — Beschriftungen ohne PDF weiß darstellen
 
 - Ohne geladene PDF werden Netzwerkbeschriftungen ebenfalls weiß mit dunkler Kontur gezeigt.
