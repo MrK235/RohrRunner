@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.42 — Ergebnistab nach Auslegungsreset beibehalten
+
+- Nach „Auslegung zurücksetzen“ bleibt der Ergebnisreiter aktiv.
+
 ## 0.1.41 — Auswahlstreifen bei Kühlstellen erhalten
 
 - Ausgewählte gelbe oder rote Kühlstellen zeigen zusätzlich zur schmalen Kontur wieder den dicken orangefarbenen linken Streifen.
