@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.31 — Erste Ergebnisspalten ausgerichtet
+
+- Länge, Kühlstellenname und ihre Überschriften auf eine gemeinsame linke Flucht gesetzt.
+
 ## 0.1.30 — Ergebnisspalten ohne Überlauf
 
 - SL-/FL-Dropdowns um etwa vier Zeichenbreiten verkürzt.
