@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.26 — Ergebnisfelder dichter ausrichten
+
+- Leerraum unter den Rohrkartenüberschriften reduziert.
+- SL- und FL-Felder direkt nebeneinander angeordnet; restliche Spalten gleichmäßig verteilt.
+
 ## 0.1.25 — Länge und Abschnittsüberschrift
 
 - „Von → nach“ in die Überschrift jeder Rohrstreckenkarte verschoben.
