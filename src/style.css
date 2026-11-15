@@ -88,3 +88,5 @@ body{min-width:0}
 .result-section.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
 
 .endpoint-result.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}.network-node.selected .node-halo{stroke:#f4a340;filter:drop-shadow(0 0 8px #f4a34099)}
+
+.result-section:hover{filter:brightness(1.1);cursor:pointer}.result-section-title:hover b{color:var(--text)}

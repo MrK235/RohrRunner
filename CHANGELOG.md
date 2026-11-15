@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.39 — Rohrabschnitte vollständig anklickbar
+
+- Der gesamte Rohrabschnitt lässt sich zur Auswahl anklicken; Rohrgrößen-Dropdowns behalten ihre eigene Bedienung.
+- Die Hover-Rückmeldung umfasst den ganzen Abschnitt, und die Überschrift bleibt neutral gefärbt.
+
 ## 0.1.38 — Kühlstellenauswahl einheitlich markieren
 
 - Ausgewählte Kühlstellenzeilen und Knoten werden wie ausgewählte Rohrabschnitte mit einer orangefarbenen linken Kante hervorgehoben.
