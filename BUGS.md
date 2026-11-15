@@ -22,7 +22,7 @@ Der Repository-Stand enthält derzeit keine bestätigten Fehlerberichte, die hie
 
 Für einen reproduzierbaren Fehler bitte ein GitHub-Issue mit folgenden Angaben erstellen:
 
-1. Version aus der Oberfläche (`0.1.0`) und Browser/Betriebssystem.
+1. Version aus der Oberfläche (`0.1.1`) und Browser/Betriebssystem.
 2. Schritte, die zum Fehler führen, sowie erwartetes und tatsächliches Ergebnis.
 3. Fehlermeldung aus der Browserkonsole, falls vorhanden.
 4. Möglichst ein kleines, synthetisches Rohrnetz. Keine Kundenpläne, Gebäudegrundrisse oder echten Projektdateien öffentlich anhängen.

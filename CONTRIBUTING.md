@@ -20,4 +20,6 @@
 
 ## Pull Requests
 
-Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Änderungen an `package.json` oder der Versionsnummer nur dann vornehmen, wenn der Beitrag ausdrücklich eine Softwareversion ändern soll.
+Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält einen Patchsprung: Bei `x.y.z` wird ausschließlich `z` erhöht, zum Beispiel `0.1.1` auf `0.1.2`. Pro zusammengehöriger Änderung gibt es einen Patchsprung. Minor- und Major-Versionen dürfen nur auf ausdrückliche Aufforderung erhöht werden.
+
+Versionsnummer in `package.json`, Versionsanzeige in `index.html` und Eintrag in `CHANGELOG.md` gemeinsam aktualisieren. Änderungen nach der Prüfung committen und auf `main` pushen. Dokumentationsänderungen folgen derselben Patchregel; sie erhalten keinen größeren Versionssprung.

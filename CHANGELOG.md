@@ -1,15 +1,14 @@
 # Änderungsprotokoll
 
-Bemerkenswerte Änderungen des Projekts nach Version. Die Softwareversion wird in `package.json` und in der Oberfläche geführt; Dokumentationsänderungen erhöhen sie nicht automatisch.
+Bemerkenswerte Änderungen des Projekts nach Version. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Patch-Erhöhung. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Dokumentationsänderungen folgen derselben Regel.
 
-## Unveröffentlicht
+## 0.1.1 — Versionsregel und Dokumentation
 
-- Projektdokumentation auf den implementierten Stand 0.1.0 abgestimmt.
-- Berechnungsanleitung von einem Architekturentwurf auf das tatsächlich implementierte Modell umgestellt.
-- Fehler- und Mitwirkungsdokumentation ergänzt.
-- Keine Änderung an Anwendungscode, Rechenkern oder Versionsnummer.
+- Versionspolitik dokumentiert: Änderungen werden mit Patchsprung, Commit und Push ausgeliefert; Minor-/Major-Sprünge nur auf Aufforderung.
+- README, Berechnungsmodell, Architektur-, Fehler-, Sicherheits- und Mitwirkungsdokumentation auf den implementierten Stand abgestimmt.
+- Versionsmetadaten und Anzeige auf 0.1.1 aktualisiert; keine Änderung am Berechnungsverhalten.
 
-## 0.1.0 — aktueller Softwarestand
+## 0.1.0 — Ausgangsstand
 
 - Lokale Browseroberfläche zur grafischen Erfassung verzweigter Rohrnetze auf PDF-Grundrissen.
 - Maßstabskalibrierung, orthogonales Zeichnen, automatische Abzweige, Verschieben sowie Undo/Redo.
