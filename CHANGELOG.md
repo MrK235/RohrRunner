@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.4 — Seitenleisten-Reiter
+
+- Seitenleiste in die Reiter Kühlstellen, Berechnung und Ergebnis gegliedert.
+- Leitungsdaten einschließlich Zusatzlänge und Steigeleitung im Kühlstellen-Reiter gebündelt.
+- Nach erfolgreicher Berechnung wird die Ergebnisliste automatisch angezeigt.
+
 ## 0.1.3 — Arbeitsregeln für Codex
 
 - AGENTS.md dokumentiert Patch-Versionierung, synchronisierte Versionsstellen, Änderungsprotokoll und Commit-Regeln sowie fachliche Projektkonventionen.

@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.1.3** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.1.4** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -13,6 +13,7 @@
 - Saug- und Flüssigkeitsleitungen automatisch dimensionieren oder je Abschnitt eine Kataloggröße festlegen.
 - Druckverluste, Geschwindigkeiten, Rohrgrößen, Endpunktreserven und Grenzwertmeldungen anzeigen.
 - Berechnungsergebnisse als CSV, den Plan als PDF und ein vollständiges Projekt als `.rohrrunner` exportieren.
+- Die Seitenleiste über die Reiter **Kühlstellen**, **Berechnung** und **Ergebnis** bedienen; nach einem erfolgreichen Lauf öffnet sich die Ergebnisliste automatisch.
 - Projekte lokal im Browser zwischenspeichern.
 
 ## Schnellstart
@@ -43,7 +44,7 @@ PDF-Import und PDF-Export benötigen eine Internetverbindung, weil PDF.js und pd
 - **Lasten:** Kühlstellen fortlaufend setzen und jeweils Name sowie Kälteleistung in kW eintragen. Dezimal-Komma und Dezimal-Punkt werden akzeptiert.
 - **Leitung:** Vom Start bzw. einem bestehenden Netzknoten aus orthogonale Abschnitte zeichnen. Bei einem Schnitt mit einer vorhandenen Leitung wird ein Abzweig erzeugt.
 - **Auswahl:** Knoten oder Leitungsabschnitt auswählen und ziehen. Die Ansicht kann durch Ziehen auf dem Hintergrund, mittlere Maustaste oder Leertaste verschoben werden; Mausrad und Zoom-Schaltflächen ändern den Zoom.
-- **Leitungsdaten:** Einen Abschnitt auswählen, um manuelle Rohrgrößen, Höhendifferenzen je Leitungstyp, Zusatzlänge und Summe der Einzelwiderstände `Σζ` festzulegen.
+- **Leitungsdaten:** Im Reiter **Kühlstellen** einen Abschnitt auswählen, um manuelle Rohrgrößen, Höhendifferenzen je Leitungstyp (einschließlich Steigeleitung), Zusatzlänge und Summe der Einzelwiderstände `Σζ` festzulegen.
 - **Undo / Redo / Löschen:** Änderungen am Netz bearbeiten. **Neu** startet nach Bestätigung ein leeres Projekt.
 
 ### Betriebspunkt und Auslegung
@@ -120,4 +121,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.1.3**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert, committed und nach der Prüfung gepusht. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.1.4**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert, committed und nach der Prüfung gepusht. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
