@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.9 — Projektverwaltung und PDF-Autospeicherung
+
+- Projekte über einen neuen Dialog öffnen, umbenennen und löschen.
+- Projekte und PDF-Grundrisse gemeinsam in IndexedDB speichern und beim Start wiederherstellen.
+- PDF-Dateinamen als vorgeschlagene Projektnamen übernehmen und vorhandene Autosaves migrieren.
+
 ## 0.1.8 — PDF-Leiste über Werkzeugleiste
 
 - PDF-Steuerleiste über die linke Werkzeugleiste und die Planansicht erweitert.

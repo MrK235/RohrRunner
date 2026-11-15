@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.1.8** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.1.9** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -14,7 +14,7 @@
 - Druckverluste, Geschwindigkeiten, Rohrgrößen, Endpunktreserven und Grenzwertmeldungen anzeigen.
 - Berechnungsergebnisse als CSV, den Plan als PDF und ein vollständiges Projekt als `.rohrrunner` exportieren.
 - Die Seitenleiste über die Reiter **Kühlstellen**, **Berechnung** und **Ergebnis** bedienen; nach einem erfolgreichen Lauf öffnet sich die Ergebnisliste automatisch.
-- Projekte lokal im Browser zwischenspeichern.
+- Mehrere Projekte lokal im Browser verwalten und automatisch samt PDF-Grundriss speichern.
 
 ## Schnellstart
 
@@ -80,7 +80,7 @@ Die Rohrgrößen, Wandstärken, Katalogdruckangaben und Datenquellen liegen in `
 
 ## Projekte, Speicherung und Datenschutz
 
-- Automatisches Zwischenspeichern legt Netz, Einstellungen, Maßstab und das letzte Berechnungsergebnis in `localStorage` des verwendeten Browsers ab. Der geladene Grundriss wird dabei **nicht** mitgespeichert.
+- Automatisches Zwischenspeichern legt jedes Projekt einschließlich Netz, Einstellungen, Maßstab, letztem Berechnungsergebnis und geladenem PDF in der IndexedDB des verwendeten Browsers ab. Über **Projekte** lassen sich Einträge öffnen, umbenennen und löschen. Neue PDFs übernehmen ihren Dateinamen als Projektname.
 - Eine `.rohrrunner`-Projektdatei enthält Projekt, Netz und Einstellungen sowie, falls ein Grundriss geladen war, auch die PDF als Base64-Daten. Damit lässt sich eine Sitzung vollständig sichern und auf einem anderen Rechner öffnen.
 - Plan, Lasten und Projekte werden im aktuellen Programmablauf lokal verarbeitet; es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Für PDF-Bedienung lädt der Browser jedoch PDF.js und pdf-lib von den oben genannten CDNs.
 - Grundrisse und `.rohrrunner`-Dateien sind in `.gitignore` ausgeschlossen. Sie können Gebäude- und Projektdaten enthalten und gehören nur nach bewusster Prüfung in ein öffentliches Repository.
@@ -121,4 +121,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.1.8**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert, committed und nach der Prüfung gepusht. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.1.9**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.

@@ -14,7 +14,7 @@ flowchart LR
   Props --> CoolProp[vendor/coolprop WebAssembly]
   Engine --> Fast[src/fast-data.js]
   Engine --> Catalog[data/pipe-catalog.js]
-  App --> BrowserStorage[localStorage: Netz + Einstellungen]
+  App --> BrowserStorage[IndexedDB: Projekte + PDFs]
   App --> ProjectFile[.rohrrunner: Netz + Einstellungen + optionale PDF]
   App -. PDF-Bedienung .-> CDN[PDF.js / pdf-lib CDN]
 ```
@@ -43,7 +43,7 @@ Die Berechnung läuft über `Worker` bei HTTP(S). Beim direkten Öffnen mit `fil
 
 Das Projektobjekt enthält Versionsfeld, Projekt-ID und -Name, Knoten, Leitungen, Maßstab, Einstellungen und optional das letzte Ergebnis. Knoten haben einen Typ (`start`, `junction`, `endpoint`); Leitungen verbinden zwei Knoten und enthalten einen rechtwinkligen Punktpfad. Zusatzlänge, `Σζ`, manuelle Rohrgrößen und Höhendifferenzen liegen an der Leitung.
 
-Automatisches Speichern schreibt eine Version-1-Projektstruktur in `localStorage` unter `rohrrunner.project.v1`. Der geladene Grundriss bleibt als Laufzeit-PDF im Speicher. Beim Export als `.rohrrunner` wird das PDF, wenn vorhanden, als `pdfBase64` in die JSON-Datei aufgenommen; der Import erkennt Version 1 und lädt die eingebettete PDF erneut. `.rohrtanplan` wird als älterer Dateisuffix ebenfalls angenommen, sofern der Inhalt dem unterstützten Version-1-Schema entspricht.
+Automatisches Speichern hält mehrere Version-1-Projekte in der IndexedDB `rohrrunner.projects.v1`; PDF-Bytes liegen direkt im jeweiligen Projekt-Datensatz. `localStorage` enthält nur die ID des zuletzt geöffneten Projekts. Vorhandene Daten aus `rohrrunner.project.v1` werden beim ersten Start in die IndexedDB übernommen. Beim Export als `.rohrrunner` wird das PDF als `pdfBase64` in die JSON-Datei aufgenommen; der Import erkennt Version 1 und lädt die eingebettete PDF erneut. `.rohrtanplan` wird als ältere Dateiendung ebenfalls angenommen, sofern der Inhalt dem unterstützten Version-1-Schema entspricht.
 
 Projekt- und Planinhalte werden im aktuellen Anwendungsablauf nicht an einen Projektserver übertragen. Die PDF-Bibliotheken selbst kommen von externen CDNs. Es gibt keine Konten, Cloud-Synchronisierung oder Backend-API in diesem Repository.
 

@@ -178,7 +178,7 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.deepEqual(missing, [], `Fehlende UI-Elemente: ${missing.join(', ')}`);
 
   const dialogs = [...html.matchAll(/<dialog\b[\s\S]*?<\/dialog>/g)].map(match => match[0]);
-  assert.equal(dialogs.length, 3);
+  assert.equal(dialogs.length, 4);
   for (const dialog of dialogs) {
     for (const button of dialog.matchAll(/<button\b([^>]*)>/g)) {
       assert.match(button[1], /\btype="(?:button|submit)"/, `Dialogbutton ohne expliziten Typ: ${button[0]}`);
