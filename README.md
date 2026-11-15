@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.1.12** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.1.13** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -67,7 +67,7 @@ Beim Wechsel auf R744 setzt die Oberfläche den Auslegungsdruck auf mindestens 1
 
 ### Ergebnis
 
-Die Ergebnistabelle enthält je Leitungsabschnitt Saug- und Flüssigkeitsdaten: gewählte Größe, Länge, Massenstrom, Geschwindigkeit, Druckverlust und Temperaturverlust. Für jede Kühlstelle werden außerdem Saugverlust, Flüssigkeitsverlust, verbleibende Unterkühlung und Enddrücke berechnet. Ein Status weist auf verletzte Grenzen bzw. nicht erfüllte Voraussetzungen hin. Ergebnisse können als semikolongetrennte CSV mit UTF-8-BOM exportiert werden.
+Die Ergebnisliste gruppiert Saug- und Flüssigkeitsleitung je Abschnitt und zeigt Rohrgrößen, Temperaturverluste und Geschwindigkeiten nebeneinander. Rohrgrößen lassen sich direkt in der Tabelle ändern; danach ist eine neue Berechnung erforderlich. Kühlstellen zeigen Verdampfungstemperatur, Saug- und Flüssigkeitstemperaturverlust, verbleibende Unterkühlung und Leistung. Abschnitte sind je nach Berechnungsstatus farblich markiert. Ergebnisse können als semikolongetrennte CSV mit UTF-8-BOM exportiert werden.
 
 ## Kältemittel und Rohrkatalog
 

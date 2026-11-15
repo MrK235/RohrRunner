@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.1.13 — Gruppierte Ergebnisliste
+
+- SL- und FL-Ergebnisse je Rohrabschnitt tabellarisch zusammengefasst; Rohrgrößen sind direkt änderbar.
+- Kühlstellenliste um Verdampfungstemperatur und Leistung erweitert und um Temperaturverluste sowie Unterkühlung gruppiert.
+- Rohrabschnitte nach Berechnungsstatus farblich markiert.
+
 ## 0.1.12 — Rohrmaße im PDF am längsten Segment
 
 - Längen und Dimensionen werden am längsten Segment der Rohrleitung platziert.
