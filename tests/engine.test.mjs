@@ -53,6 +53,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(html.includes('role="tablist"')&&html.includes('Kühlstellen</button>')&&html.includes('Berechnung</button>')&&html.includes('Ergebnis</button>'),'sidebar exposes the three workflow tabs');
   assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
   assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
+  assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));
   assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));

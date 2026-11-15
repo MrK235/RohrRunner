@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.7 — Maßstab-Livevorschau
+
+- Kalibrierungslinie folgt dem Mauszeiger nach dem ersten gesetzten Punkt.
+
 ## 0.1.6 — Einheitlicher Hintergrund
 
 - Hintergrund der Seitenleisten-Reiter an die benachbarte PDF-Steuerleiste angeglichen.
