@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.12 — Rohrmaße im PDF am längsten Segment
+
+- Längen und Dimensionen werden am längsten Segment der Rohrleitung platziert.
+- Zu kurze Segmente erhalten keine Beschriftung, wenn der Leitung kein ausreichend langes Segment zur Verfügung steht.
+
 ## 0.1.11 — Worker direkt aus `file://` starten
 
 - Worker-Code einschließlich Rechenkern und CoolProp wird als Blob-Worker gebündelt und direkt aus dem Browser gestartet.

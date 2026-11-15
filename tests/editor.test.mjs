@@ -137,6 +137,10 @@ test('Rohrangaben an senkrechter Leitung haben Vorrang vor Kühlstellennamen', (
   assert.ok(result.annotations[0].x < 100 && result.annotations[1].x > 100);
   assert.ok(result.annotations.every(item => Math.abs(item.y - 80) < 1));
   assert.ok(result.nodeLabels.get('e2').dx > 0);
+  edge.points = [{ x: 100, y: 20 }, { x: 100, y: 50 }, { x: 300, y: 50 }];
+  const longestSegmentResult = sandbox.layout();
+  assert.equal(longestSegmentResult.annotations.length, 2);
+  assert.ok(longestSegmentResult.annotations.every(item => Math.abs(item.x - 200) < 1));
   sandbox.project.lastResult.fluid = 'R744';
   sandbox.project.lastResult.rows[0].sizeId = '19.05x1.19';
   sandbox.project.lastResult.rows[1].sizeId = '34.92x2.17';
