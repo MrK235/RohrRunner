@@ -1,0 +1,68 @@
+{
+  "version": 2,
+  "referenceState": "Alle Druckwerte absolut, außer R513A-psig-Werte; deren Umrechnung verwendet 101325 Pa Umgebungsdruck. Herstellerangaben sind gerundet.",
+  "sources": {
+    "R513A": "https://www.chemours.com/en/-/media/files/opteon/opteon-xp10-pressure-temperature-chart.pdf",
+    "R448A": "https://www.honeywell-refrigerants.com/europe/?document=solstice-n40-tds-141216-vf&download=1",
+    "R744": "https://webbook.nist.gov/cgi/fluid.cgi?ID=C124389&Action=Page",
+    "R513A_density": "https://www.chemours.com/es/-/media/files/opteon/opteon-xp10-prodinfo.pdf?la=es&rev=f0cd148b1bbf40c3804a8792454d5532",
+    "R513A_Climalife": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentr-513a-fp-en.pdf",
+    "R448A_Climalife": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentr-448a-fp-en.pdf",
+    "Climalife_Blue_Handbook": "https://climalife.com/wp-content/uploads/2022/09/uploadsassetsPractical20informationBLUE20HANDBOOKCarnet20Bleu202018_EN_BD.pdf",
+    "R513A_liquid_viscosity_experiment": "https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819"
+  },
+  "saturation": {
+    "R513A": {
+      "pressureUnit": "psig", "temperatureUnit": "degF", "columns": ["pressure", "bubble", "dew"],
+      "rows": [[-2.5,-27.8,-27.5],[0,-20.6,-20.4],[5,-8.5,-8.4],[10,1.4,1.5],[20,17.2,17.2],[30,29.8,29.8],[40,40.3,40.4],[50,49.5,49.6],[60,57.7,57.7],[70,65.1,65.1],[90,78.1,78.1],[110,89.3,89.3],[130,99.3,99.3],[150,108.2,108.3],[190,124.0,124.0],[250,143.7,143.8],[350,170.1,170.1]]
+    },
+    "R448A": {
+      "pressureUnit": "kPa_absolute", "temperatureUnit": "degC", "columns": ["pressure", "bubble", "dew"],
+      "rows": [[100,-46.2,-40.0],[150,-37.5,-31.4],[200,-30.8,-24.8],[250,-25.3,-19.4],[300,-20.6,-14.7],[400,-12.8,-7.0],[500,-6.4,-0.6],[600,-0.8,4.8],[800,8.5,13.9],[1000,16.1,21.4],[1200,22.7,27.9],[1500,31.2,36.2],[2000,43.0,47.5],[2500,52.7,56.8]]
+    },
+    "R744": {
+      "pressureUnit": "bar_absolute", "temperatureUnit": "degC", "columns": ["pressure", "temperature", "rhoLiquidKgM3", "hLiquidKJKg", "muLiquidPaS", "rhoVaporKgM3", "hVaporKJKg", "muVaporPaS"],
+      "rows": [[6.8254,-49.993,1154.5,92.957,0.00022703,17.93,432.68,0.000011221],[14.275,-30.005,1075.8,133.33,0.00016399,37.091,436.82,0.000012307],[26.473,-10.018,983.02,176.48,0.00011883,71.144,435.14,0.000013657],[34.896,0.048743,927.14,200.12,0.00010032,97.799,430.86,0.000014566],[57.339,20.036,773.0,255.99,0.000066709,194.48,407.79,0.000017852]]
+    }
+  },
+  "singlePhase": {
+    "R744": {
+      "temperatureC": 40,
+      "columns": ["pressureBarAbsolute", "densityKgM3", "enthalpyKJKg", "viscosityPaS"],
+      "rows": [[40,83.758,480.10,0.000016509],[60,149.26,451.72,0.000017776],[80,277.90,402.90,0.000021927],[100,628.61,313.04,0.000047652],[120,717.76,296.06,0.000058861]]
+    }
+  },
+  "manufacturerPropertyChecks": [
+    {"fluid":"R448A","phase":"bubble","temperatureC":25,"property":"densityKgM3","reference":1092.3,"unit":"kg/m3","source":"R448A","pressureBasis":"saturated liquid"},
+    {"fluid":"R448A","phase":"bubble","temperatureC":25,"property":"viscosityPaS","reference":0.0001381,"unit":"Pa*s","source":"R448A","pressureBasis":"saturated liquid assumed; data sheet does not state pressure"},
+    {"fluid":"R448A","phase":"dew","temperatureC":25,"property":"viscosityPaS","reference":0.0000125,"unit":"Pa*s","source":"R448A","pressureBasis":"saturated vapor assumed; data sheet does not state pressure"},
+    {"fluid":"R513A","phase":"bubble","temperatureC":21.1,"property":"densityKgM3","reference":1185.7,"unit":"kg/m3","source":"R513A_density","pressureBasis":"saturated liquid assumed; product sheet does not state pressure"},
+    {"fluid":"R513A","phase":"bubble","temperatureC":25,"property":"densityKgM3","reference":1134,"unit":"kg/m3","source":"R513A_Climalife","pressureBasis":"saturated liquid"},
+    {"fluid":"R513A","phase":"bubble","temperatureC":25,"property":"viscosityPaS","reference":0.000167,"unit":"Pa*s","source":"R513A_Climalife","pressureBasis":"saturated liquid"},
+    {"fluid":"R513A","phase":"pt","temperatureC":25,"pressurePa":101300,"property":"viscosityPaS","reference":0.000011,"unit":"Pa*s","source":"R513A_Climalife","pressureBasis":"vapour at 1.013 bar"},
+    {"fluid":"R448A","phase":"bubble","temperatureC":25,"property":"densityKgM3","reference":1097,"unit":"kg/m3","source":"R448A_Climalife","pressureBasis":"saturated liquid"},
+    {"fluid":"R448A","phase":"bubble","temperatureC":25,"property":"viscosityPaS","reference":0.000139,"unit":"Pa*s","source":"R448A_Climalife","pressureBasis":"saturated liquid"},
+    {"fluid":"R448A","phase":"pt","temperatureC":25,"pressurePa":101300,"property":"viscosityPaS","reference":0.000012,"unit":"Pa*s","source":"R448A_Climalife","pressureBasis":"vapour at 1.013 bar"}
+  ],
+  "r513aMeasuredLiquidViscosity": {
+    "source": "R513A_liquid_viscosity_experiment",
+    "citation": "Chen et al., CIESC Journal 72 (2021), 5502-5509, Tabelle 3; Kapillarviskosimeter, gesättigte Flüssigkeit",
+    "columns": ["temperatureK", "pressureMPa", "viscosityMicroPaS"],
+    "rows": [[253.15,0.156,287.59],[258.20,0.190,268.76],[263.09,0.225,252.23],[268.16,0.272,237.94],[273.19,0.325,224.13],[278.16,0.380,211.22],[283.13,0.455,198.83],[288.21,0.531,186.76],[293.18,0.621,175.40],[298.15,0.709,165.09],[303.13,0.798,154.84],[308.18,0.892,145.72],[313.17,1.018,136.84],[318.14,1.136,128.38],[323.12,1.295,119.87],[328.19,1.460,111.72],[333.16,1.640,103.81]]
+  },
+  "r513aSuperheatedVapor": {
+    "source": "Climalife_Blue_Handbook",
+    "basis": "Blue Handbook 2018, Seiten 136-137; +10 K Überhitzung bezogen auf Tabellen-Sättigungstemperatur; Volumen in dm3/kg, Enthalpie in kJ/kg",
+    "columns": ["saturationTemperatureC", "pressureBarAbsolute", "specificVolumeDm3Kg", "enthalpyKJKg"],
+    "rows": [[-20,1.525,125.584,371.722],[0,3.248,61.089,385.063],[25,7.135,28.243,400.799]]
+  },
+  "climalifeSaturation": {
+    "source": "Climalife_Blue_Handbook",
+    "basis": "Blue Handbook 2018, Seiten 110 und 135; absolute Druckwerte, Flüssigkeit am Blasenpunkt und Dampf am Taupunkt. Enthalpie-Nullpunkt wird je Stoff anhand der Tabellenzeile bei 0 °C Flüssigkeit abgeglichen.",
+    "columns": ["bubbleTemperatureC", "pressureBarAbsolute", "bubbleDensityKgM3", "dewDensityKgM3", "bubbleEnthalpyKJKg", "dewEnthalpyKJKg"],
+    "rows": {
+      "R448A": [[-30,2.087,1300,9.321,158.729,388.141],[0,6.219,1198,26.869,200,403.378],[25,12.876,1097,56.871,237.009,412.910],[50,23.728,969,115.159,278.127,416.696]],
+      "R513A": [[-30,0.994,1314,5.578,161.915,356.931],[0,3.251,1222,17.242,200,375.895],[25,7.135,1134,37.629,234.031,390.384],[50,13.775,1028,76.153,270.899,402.188]]
+    }
+  }
+}
