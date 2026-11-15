@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.10 — Worker-Start ohne Node.js
+
+- `RohrRunner.bat` startet nun einen lokalen PowerShell-Server auf `127.0.0.1`, damit Browser den Berechnungs-Worker ausführen können.
+- Direkter `file://`-Start bleibt verfügbar und verwendet den Hauptthread-Fallback.
+
 ## 0.1.9 — Projektverwaltung und PDF-Autospeicherung
 
 - Projekte über einen neuen Dialog öffnen, umbenennen und löschen.

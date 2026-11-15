@@ -60,7 +60,8 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
   assert.ok(app.includes("location.protocol!=='file:'"),'file:// skips Worker and uses the local fallback');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
-  assert.ok(launcher.includes('index.html'));
+  assert.ok(launcher.includes('scripts\\serve.ps1')&&launcher.includes('127.0.0.1:4173'),'launcher starts the bundled localhost server without Node.js');
+  assert.ok(read('scripts/serve.ps1').includes('IPAddress]::Loopback, 4173'),'PowerShell server binds to loopback only');
 });
 
 test('topology and scale validation reject loops and uncalibrated plans', () => {

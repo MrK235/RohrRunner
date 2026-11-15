@@ -19,7 +19,7 @@ flowchart LR
   App -. PDF-Bedienung .-> CDN[PDF.js / pdf-lib CDN]
 ```
 
-Die Berechnung läuft über `Worker` bei HTTP(S). Beim direkten Öffnen mit `file://` wird sie im Hauptthread ausgeführt. PDF.js und pdf-lib sind separate Client-Bibliotheken; sie werden für PDF-Import, Darstellung und Plan-PDF-Ausgabe gebraucht.
+Die Berechnung läuft über `Worker`, wenn die App über HTTP(S) geladen wird. `RohrRunner.bat` startet unter Windows dafür den mitgelieferten PowerShell-Server, der ausschließlich an `127.0.0.1` gebunden ist und keine zusätzliche Laufzeitinstallation benötigt. Beim direkten Öffnen mit `file://` blockieren Browser den Worker; dann rechnet die App im Hauptthread. PDF.js und pdf-lib sind separate Client-Bibliotheken; sie werden für PDF-Import, Darstellung und Plan-PDF-Ausgabe gebraucht.
 
 ## Komponenten
 
@@ -32,6 +32,7 @@ Die Berechnung läuft über `Worker` bei HTTP(S). Beim direkten Öffnen mit `fil
 | `src/stoffdaten.js` | CoolProp-Lader, Stoffwertzugriff, Phasenprüfung, Einheiten/Sättigungswerte und Viskositätskorrekturen |
 | `src/fast-data.js` | Begrenzte, pro Einstellung vorberechnete Interpolationspfade; außerhalb des gültigen Bereichs Rückfall auf Stoffdatenfunktionen |
 | `src/worker.js` | Worker-Nachrichtenformat und Aufruf des Solvers |
+| `scripts/serve.ps1`, `RohrRunner.bat` | Installationsfreier lokaler Windows-Server und Browserstart |
 | `src/style.css` | Layout, Zeichenfläche, Inspector und responsive Anpassungen |
 | `data/pipe-catalog.json` | Rohrserien, Geometrie, Druckangaben, Bedingungen und Quellen |
 | `data/pipe-catalog.js` | Browser-Global `RohrKatalog` für direkt geöffnetes HTML und Worker |

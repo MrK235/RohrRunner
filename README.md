@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.1.9** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.1.10** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -20,8 +20,8 @@
 
 Es gibt keinen Build-Schritt und keine npm-Laufzeitabhängigkeiten.
 
-1. `index.html` im aktuellen Browser öffnen oder `RohrRunner.bat` starten.
-2. Optional für den zuverlässigen Worker-Betrieb einen lokalen Server verwenden:
+1. Unter Windows `RohrRunner.bat` doppelklicken. Es startet einen lokalen Server mit dem integrierten PowerShell und öffnet RohrRunner im Browser. Node.js oder npm müssen nicht installiert sein.
+2. Alternativ `index.html` direkt öffnen. Browser blockieren Worker unter `file://`; die Berechnung läuft dann im Hauptthread. Für den Worker-Betrieb kann weiterhin der optionale Node.js-Server gestartet werden:
 
    ```powershell
    npm run serve
@@ -32,7 +32,7 @@ Es gibt keinen Build-Schritt und keine npm-Laufzeitabhängigkeiten.
 3. PDF-Grundriss öffnen, den Maßstab kalibrieren, Anlagenstart und Kühlstellen einzeichnen, Leitungen verbinden und Lasten sowie Betriebsdaten erfassen. Für R744 muss die Verflüssigungstemperatur unter etwa 30,98 °C liegen.
 4. **Netz berechnen** wählen. Danach können Ergebnis-CSV, Plan-PDF oder die Projektdatei heruntergeladen werden.
 
-PDF-Import und PDF-Export benötigen eine Internetverbindung, weil PDF.js und pdf-lib beim Seitenaufruf von Cloudflare bzw. jsDelivr geladen werden. Die Rechen- und Stoffdaten liegen im Repository. Wird `index.html` direkt mit `file://` gestartet, läuft die Berechnung ohne Web Worker im Browser-Hauptthread.
+PDF-Import und PDF-Export benötigen eine Internetverbindung, weil PDF.js und pdf-lib beim Seitenaufruf von Cloudflare bzw. jsDelivr geladen werden. Die Rechen- und Stoffdaten liegen im Repository. Der Windows-Start verwendet einen ausschließlich an `127.0.0.1` gebundenen Server, damit der Browser den Berechnungs-Worker starten kann. Beim direkten Öffnen von `index.html` unter `file://` läuft die Berechnung ersatzweise im Browser-Hauptthread.
 
 ## Bedienung
 
@@ -106,7 +106,8 @@ Weitere Entwicklerhinweise: [CONTRIBUTING.md](CONTRIBUTING.md). Komponenten und 
 | `src/editor-core.js` | Geometrie- und Netzeditorfunktionen |
 | `src/engine.js` | Netzprüfung, Hydraulik, Dimensionierung und Ergebnisberechnung |
 | `src/stoffdaten.js`, `src/fast-data.js` | Stoffdatenzugriff, CoolProp und Interpolationspfade |
-| `src/worker.js` | Berechnungs-Worker für HTTP(S)-Betrieb |
+| `src/worker.js` | Berechnungs-Worker |
+| `scripts/serve.ps1`, `RohrRunner.bat` | Installationsfreier lokaler Windows-Start für den Worker-Betrieb |
 | `data/` | Rohrkatalog und Stoffdatenreferenzen |
 | `vendor/coolprop/` | Lokale CoolProp-Laufzeit einschließlich Lizenzdatei |
 | `tests/` | Node.js-Tests für Editor und Rechenkern |
@@ -121,4 +122,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.1.9**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.1.10**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
