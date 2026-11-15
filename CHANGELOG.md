@@ -1,5 +1,9 @@
 # Änderungsprotokoll
 
+## 0.1.40 — Zustandsmarkierung der Kühlstellen vereinheitlichen
+
+- Gelbe und rote Kühlstellen erhalten keinen dicken linken Streifen mehr; eine ausgewählte Kühlstelle behält eine schmale umlaufende Kontur.
+
 ## 0.1.39 — Rohrabschnitte vollständig anklickbar
 
 - Der gesamte Rohrabschnitt lässt sich zur Auswahl anklicken; Rohrgrößen-Dropdowns behalten ihre eigene Bedienung.
