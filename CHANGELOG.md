@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.30 — Ergebnisspalten ohne Überlauf
+
+- SL-/FL-Dropdowns um etwa vier Zeichenbreiten verkürzt.
+- Spalten für Länge, Temperaturverluste und Geschwindigkeit innerhalb der Seitenleiste neu verteilt.
+
 ## 0.1.29 — Rohrdimensionen erhalten Platz
 
 - Längenwerte unter der zentrierten Spaltenüberschrift ausgerichtet.
