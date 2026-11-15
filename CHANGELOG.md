@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.32 — Geschwindigkeiten und Statushinweise
+
+- SL- und FL-Geschwindigkeit stets in getrennten Zeilen dargestellt.
+- „SL prüfen“ und „FL prüfen“ unter den Rohrgrößen entfernt.
+
 ## 0.1.31 — Erste Ergebnisspalten ausgerichtet
 
 - Länge, Kühlstellenname und ihre Überschriften auf eine gemeinsame linke Flucht gesetzt.
