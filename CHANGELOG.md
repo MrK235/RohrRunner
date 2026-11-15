@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.1.18 — Kompakte Rohrdimensionen
+
+- Rohrgrößen-Auswahlliste zeigt Außendurchmesser × Wandstärke kompakt, etwa `10x1mm`.
+- Automatisch gewählte Dimension wird im ersten Eintrag als `10x1mm (auto)` ausgewiesen.
+
 ## 0.1.17 — Prüfhinweis im Rohrgrößenfeld
 
 - SL-/FL-Prüfhinweis direkt unter der jeweiligen Rohrgröße platziert.
