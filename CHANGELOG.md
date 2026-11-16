@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.12 — Fließrichtung unabhängig von der Zeichenrichtung geprüft
+
+- Der Solver liefert bei umgedrehten Kanten und vertauschter Zeichenreihenfolge dieselben SL-/FL-Druckverluste, auch mit Höhendifferenzen: FL vom Verbund weg, SL zum Verbund hin.
+- Ergebniswarnungen folgen jetzt ebenfalls dem tatsächlichen Baum statt `edge.from`/`edge.to`. Leitungsnamen zeigen keine irreführende einzelne Fließrichtung mehr an.
+- Den unbenutzten Richtungsparameter der Rohrintegration entfernt; die Berechnungsrichtung bleibt durch die Druckrandbedingungen bestimmt.
+
 ## 0.2.11 — Abhängigkeiten bei Rohränderungen geprüft
 
 - Die Auswirkungen einer manuellen Saugrohränderung auf Massenstrom, Flüssigkeitsverlust und gemeinsame Stammleitungen mit synthetischen Lastfällen geprüft; ein unbelasteter Seitenast bleibt unverändert.

@@ -16,7 +16,7 @@ Nicht Teil des Modells sind Druckgasleitungen, transkritisches CO₂, Ventil- od
 
 ## 2. Eingabemodell und Netzprüfung
 
-Ein Projekt enthält Knoten und gerichtete Leitungsabschnitte. Der Netzeditor speichert die Geometrie als Punkte in der PDF-Zeichenebene. Die Berechnung akzeptiert ausschließlich einen zusammenhängenden, kreisfreien Baum mit:
+Ein Projekt enthält Knoten und Leitungsabschnitte mit gespeicherter Zeichenrichtung (`from`/`to`). Diese Richtung beschreibt nur die Erfassung und ist keine Fließrichtung. Der Netzeditor speichert die Geometrie als Punkte in der PDF-Zeichenebene. Die Berechnung akzeptiert ausschließlich einen zusammenhängenden, kreisfreien Baum mit:
 
 - genau einem Anlagenstart vom Typ `start`;
 - mindestens einer Kühlstelle vom Typ `endpoint` mit positiver Kälteleistung;
@@ -101,6 +101,7 @@ Die Saugseite wird in acht, die Flüssigkeitsseite in vier Teilabschnitte integr
 
 Am Anlagenstart werden Saugdruck aus Verdampfung und Taupunkt sowie Flüssigkeitsdruck aus Verflüssigung und Blasenpunkt gesetzt.
 
+- Der Solver verwurzelt den Baum unabhängig von Zeichenrichtung und Reihenfolge am Anlagenstart. FL fließt vom Start zu den Kühlstellen, SL von den Kühlstellen zum Start; die Höhendifferenz je Leitungstyp ist in dessen jeweiliger Fließrichtung einzugeben.
 - Flüssigkeitsdruck wird entlang des Netzes vom Anlagenstart zu den Kühlstellen vorwärts berechnet.
 - Saugdruck wird ausgehend vom bekannten Anlagenstartdruck entlang des Baums rückwärts zu den Endpunkten gelöst. Der Druck am Leitungsanfang wird iterativ so angepasst, dass Anfangsdruck minus Reibungs- und Höhenverluste den nachgelagerten Knotenwert ergibt.
 - Für jede Kühlstelle wird ein eigener Volllast-Lastfall ausgewertet.

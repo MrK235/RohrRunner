@@ -90,7 +90,7 @@
         return data.hydraulicPt(f,p,liquidT);
       }catch(error){throw new Error(`${error.message} (${type}, ${Number(p).toPrecision(5)} Pa)`);}
     }
-    function segment(edge,type,flow,p,size,direction=1){
+    function segment(edge,type,flow,p,size){
       if(flow<=0)return {drop:0,v:0,pOut:p,props:fluidProps(type,p)};
       const d=diOf(size),area=Math.PI*d*d/4,len=edge._lengthM,zeta=Number(edge.zeta)||0,steps=type==='suction'?8:4;
       let pressure=p, drop=0, vmaxSeen=0, vminSeen=Infinity, latest, phaseRisk=false;
@@ -116,13 +116,13 @@
         const liquidPByNode=new Map([[graph.start.id,liquidP]]), suc=new Map([[graph.start.id,rootP]]), line=new Map();
         for(let i=1;i<graph.order.length;i++){
           const id=graph.order[i], edge=parentEdge.get(id), pid=graph.parent.get(id).id, flow=massByNode.get(id), size=selected.get(`${edge.id}:liquid`), p=liquidPByNode.get(pid);
-          const r=segment(edge,'liquid',flow,p,size,1);liquidPByNode.set(id,r.pOut);line.set(`${edge.id}:liquid`,{...r,flow,pIn:p});
+          const r=segment(edge,'liquid',flow,p,size);liquidPByNode.set(id,r.pOut);line.set(`${edge.id}:liquid`,{...r,flow,pIn:p});
         }
         for(let i=1;i<graph.order.length;i++){
           const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,flow=massByNode.get(id),size=selected.get(`${edge.id}:suction`),out=suc.get(pid);
           let pin=Math.max(out+1, out*1.001),r;
-          for(let j=0;j<18;j++){r=segment(edge,'suction',flow,pin,size,-1);const residual=pin-r.drop-out;if(Math.abs(residual)<Math.max(.5,pin*1e-8))break;pin=Math.max(out+1,pin-residual*.75);}
-          r=segment(edge,'suction',flow,pin,size,-1);if(Math.abs(pin-r.drop-out)>Math.max(5,pin*1e-5))fail(`${edge.label||'Saugleitung'}: Druckrückrechnung konvergiert nicht.`);
+          for(let j=0;j<18;j++){r=segment(edge,'suction',flow,pin,size);const residual=pin-r.drop-out;if(Math.abs(residual)<Math.max(.5,pin*1e-8))break;pin=Math.max(out+1,pin-residual*.75);}
+          r=segment(edge,'suction',flow,pin,size);if(Math.abs(pin-r.drop-out)>Math.max(5,pin*1e-5))fail(`${edge.label||'Saugleitung'}: Druckrückrechnung konvergiert nicht.`);
           suc.set(id,pin);line.set(`${edge.id}:suction`,{...r,flow,pIn:pin,pOut:out});
         }
         let diff=0;
@@ -133,8 +133,8 @@
       }
       if(!converged)fail(`${graph.byId.get(target).name}: Massenstrom und Druckzustand konvergieren nicht.`);
       const liquidEnd=new Map([[graph.start.id,liquidP]]);
-      for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,pIn=liquidEnd.get(pid),r=segment(edge,'liquid',massByNode.get(id),pIn,selected.get(`${edge.id}:liquid`),1);liquidEnd.set(id,r.pOut);lineResults.set(`${edge.id}:liquid`,{...r,flow:massByNode.get(id),pIn});}
-      for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,out=suctionP.get(pid),flow=massByNode.get(id);let pin=out+100,r;for(let j=0;j<25;j++){r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`),-1);const err=pin-r.drop-out;if(Math.abs(err)<Math.max(.5,pin*1e-8))break;pin=Math.max(out+1,pin-err*.7);}r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`),-1);suctionP.set(id,pin);lineResults.set(`${edge.id}:suction`,{...r,flow,pIn:pin,pOut:out});}
+      for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,pIn=liquidEnd.get(pid),r=segment(edge,'liquid',massByNode.get(id),pIn,selected.get(`${edge.id}:liquid`));liquidEnd.set(id,r.pOut);lineResults.set(`${edge.id}:liquid`,{...r,flow:massByNode.get(id),pIn});}
+      for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,out=suctionP.get(pid),flow=massByNode.get(id);let pin=out+100,r;for(let j=0;j<25;j++){r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`));const err=pin-r.drop-out;if(Math.abs(err)<Math.max(.5,pin*1e-8))break;pin=Math.max(out+1,pin-err*.7);}r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`));suctionP.set(id,pin);lineResults.set(`${edge.id}:suction`,{...r,flow,pIn:pin,pOut:out});}
       const endpoint=graph.byId.get(target), psEnd=suctionP.get(target),plEnd=liquidEnd.get(target),sK=data.saturationAtPressure(f,psEnd).dewK-data.saturationAtPressure(f,rootP).dewK,lK=data.saturationAtPressure(f,liquidP).bubbleK-data.saturationAtPressure(f,plEnd).bubbleK;
       const phaseRisk=pathTo(target).some(id=>lineResults.get(`${id}:liquid`)?.phaseRisk);
       const remaining=phaseRisk?0:data.saturationAtPressure(f,plEnd).bubbleK-liquidT;

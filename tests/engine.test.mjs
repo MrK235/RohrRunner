@@ -102,6 +102,25 @@ test('R744 meldet erschöpfte Unterkühlung im verzweigten Netz ohne Stoffwertfe
   assert.ok(!moreSubcooling.issues.some(issue=>issue.type==='phase'));
 });
 
+test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network();
+  for(const edge of plan.edges)edge.thermal={suction:{mode:'manual',sizeId:'22x1',deltaZ:2},liquid:{mode:'manual',sizeId:'12x1',deltaZ:-2}};
+  const input={...settings,superheatK:25,subcoolingK:2,liquidLimitK:1,designPressureBar:28};
+  const original=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const reversed=structuredClone(plan);
+  reversed.nodes.reverse();reversed.edges.reverse();
+  for(const edge of reversed.edges){[edge.from,edge.to]=[edge.to,edge.from];edge.points.reverse()}
+  const result=context.RohrRunnerEngine.calculate(reversed,1,input,context.RohrStoffdaten,catalog);
+  for(const row of original.rows){const other=result.rows.find(item=>item.edgeId===row.edgeId&&item.type===row.type);assert.ok(other);for(const field of ['pressureDropPa','velocityMS','temperatureDropK','flowKgS'])assert.ok(Math.abs(row[field]-other[field])<1e-6,`${row.edgeId} ${row.type} ${field}`)}
+  for(const end of original.endpoints){const other=result.endpoints.find(item=>item.id===end.id);for(const field of ['suctionK','liquidK','remainingSubcoolingK'])assert.ok(Math.abs(end[field]-other[field])<1e-6,`${end.id} ${field}`)}
+  const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
+  const statusByEdge=runInContext(`(${fn})`,createContext({project:{...reversed,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}));
+  const status=statusByEdge({...result,issues:[{type:'liquid',targetId:'cold-a'}]});
+  assert.ok(status.has('main:liquid')&&status.has('branch-a:liquid'));
+  assert.equal(status.has('branch-b:liquid'),false);
+});
+
 test('Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast', async () => {
   await context.RohrStoffdaten.load();
   const input={...settings,superheatK:25,subcoolingK:2,liquidLimitK:1,designPressureBar:28,simultaneity:0};
