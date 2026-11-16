@@ -30,6 +30,25 @@ const network = (length = 8) => ({
     { id: 'branch-b', from: 'junction', to: 'cold-b', points: [{ x: length / 2, y: 0 }, { x: length / 2, y: length }] }]
 });
 
+test('metrischer Katalog und Browserdaten enthalten nur die freigegebenen Größen', async () => {
+  const browserCatalog=createContext({window:{}});
+  runInContext(read('data/pipe-catalog.js'),browserCatalog);
+  assert.deepEqual(JSON.parse(JSON.stringify(browserCatalog.window.RohrKatalog)),catalog);
+  const metric=catalog.series.find(series=>series.id==='cuprofrio-metric');
+  const has=(od,wall)=>metric.sizes.some(size=>size.odMm===od&&size.wallMm===wall);
+  assert.ok(has(88.9,2));
+  assert.ok(!has(35,1)&&!has(54,2));
+  const large=metric.sizes.find(size=>size.odMm===88.9&&size.wallMm===2);
+  assert.equal(large.catalogBar,26);
+  assert.ok(large.catalogBar>=24.98+1.01325);
+  assert.ok(large.catalogBar<28+1.01325);
+  await context.RohrStoffdaten.load();
+  for(const sizeId of ['35x1','54x2']){
+    const plan=network();plan.edges[0].thermal={liquid:{mode:'manual',sizeId}};
+    assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,{...settings,designPressureBar:28},context.RohrStoffdaten,catalog),/manuelle Rohrgröße/);
+  }
+});
+
 test('K65-Rohrgrößen tragen für R744 durchgehend Zollbezeichnungen', () => {
   const k65 = catalog.series.find(series => series.id === 'k65-inch-120bar');
   assert.equal(context.RohrRunnerEngine.sizeLabel(k65.sizes.find(size => size.inch === '3/4')), '3/4"');
@@ -249,7 +268,7 @@ test('Stoffwert-Grenzen knapp außerhalb der bisherigen Schaltwerte bleiben schn
 test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und reizen sie aus', async t => {
   await context.RohrStoffdaten.load();
   const input = { ...settings, fluid: 'R513A', simultaneity: 0.5, maxVelocityMS: 30, minVelocityMS: 0,
-    suctionLimitK: 2, liquidLimitK: 2 };
+    designPressureBar: 28, suctionLimitK: 2, liquidLimitK: 2 };
   const manyEndpoints = count => {
     const nodes = [{ id: 'plant', type: 'start', name: 'Verbund', x: 0, y: 0 }], edges = [];
     let previous = 'plant';
@@ -282,6 +301,8 @@ test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und 
     assert.ok(utilization >= 0.9, `${count}: Grenzwerte werden nicht ausreichend ausgenutzt (${utilization.toFixed(2)})`);
     t.diagnostic(`${count} Kühlstellen: gültig, max. Grenzwertausnutzung ${(utilization * 100).toFixed(1)} %, ${durationMs.toFixed(0)} ms`);
   }
+  const constrained=context.RohrRunnerEngine.calculate(manyEndpoints(10),1,{...input,designPressureBar:35},context.RohrStoffdaten,catalog);
+  assert.ok(constrained.issues.some(issue=>issue.type==='suction'),'35 bar: nicht erfüllte Sauggrenze wird gemeldet');
 });
 
 test('R744 transcritical and a missing terminal load are refused explicitly', async () => {

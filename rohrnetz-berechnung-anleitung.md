@@ -70,7 +70,7 @@ In der Oberfläche ist der Auslegungsdruck als Überdruck in bar angegeben. Der 
 catalogBar ≥ designPressureBar + 1.01325 bar
 ```
 
-Eine manuell festgelegte Größe muss in der gewählten Rohrserie enthalten und für den Auslegungsdruck zulässig sein. Die katalogisierten Druckwerte und ihre Temperatur-/Sicherheitsbedingungen sind keine Freigabe für die konkrete Anlage.
+Eine manuell festgelegte Größe muss in der gewählten Rohrserie enthalten und für den Auslegungsdruck zulässig sein. Im metrischen Katalog (`data/pipe-catalog.json`, Wieland 2026, gedruckte Seite 14, gerade cupromed/cuprofrio-Rohre) ist 88,9 × 2 mm mit 26 bar Katalog-Betriebsdruck bei 100 °C und Sicherheitsfaktor 3 hinterlegt; Außendurchmesser und Wandstärke sind in mm angegeben. Damit ist diese Größe bei den voreingestellten 28 bar Überdruck nicht auswählbar (Grenze: höchstens 24,98675 bar Überdruck gemäß obiger Filterformel). 35 × 1 mm und 54 × 2 mm sind auf Wunsch nicht mehr im angebotenen Katalog; bestehende manuelle Zuordnungen zu diesen Größen werden beim nächsten Rechenlauf abgewiesen. Durch die entfallenden Größen kann ein Netz bei höherem Auslegungsdruck (z. B. ein synthetisches 10-Kühlstellen-Netz bei 35 bar) die vorgegebenen Druckverlustgrenzen trotz automatischer Auswahl überschreiten; der Solver meldet diese Grenzverletzungen. Die katalogisierten Druckwerte und ihre Temperatur-/Sicherheitsbedingungen sind keine Freigabe für die konkrete Anlage.
 
 ## 6. Druckverluste
 

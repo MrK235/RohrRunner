@@ -54,11 +54,6 @@
         },
         {
           "odMm": 35,
-          "wallMm": 1,
-          "catalogBar": 33
-        },
-        {
-          "odMm": 35,
           "wallMm": 1.5,
           "catalogBar": 50
         },
@@ -76,11 +71,6 @@
           "odMm": 54,
           "wallMm": 1.5,
           "catalogBar": 32
-        },
-        {
-          "odMm": 54,
-          "wallMm": 2,
-          "catalogBar": 43
         },
         {
           "odMm": 64,

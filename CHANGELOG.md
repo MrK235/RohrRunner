@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.13 — Metrischen Rohrkatalog bereinigt
+
+- 35 × 1 mm und 54 × 2 mm aus dem metrischen Rohrkatalog entfernt; Browser- und Worker-Katalog synchronisiert.
+- 88,9 × 2 mm war bereits enthalten (Wieland 2026, gedruckte Seite 14, 26 bar bei 100 °C und Sicherheitsfaktor 3). Die Größe bleibt wegen der Druckfilterung beim Standard-Auslegungsdruck von 28 bar nicht auswählbar; Katalogdruck und Druckfilter wurden nicht verändert.
+
 ## 0.2.12 — Fließrichtung unabhängig von der Zeichenrichtung geprüft
 
 - Der Solver liefert bei umgedrehten Kanten und vertauschter Zeichenreihenfolge dieselben SL-/FL-Druckverluste, auch mit Höhendifferenzen: FL vom Verbund weg, SL zum Verbund hin.
