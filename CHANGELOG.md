@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.3 — Projektstart und Auswahl überarbeitet
+
+- Beim Start erscheint eine kompakte Projektauswahl mit Aktionen zum Öffnen gespeicherter Projekte, Anlegen eines leeren Projekts oder Laden eines PDF-Grundrisses.
+- PDF-Dateien lassen sich auf die Startansicht ziehen. Über das Markenlogo kann jederzeit zur Projektauswahl zurückgekehrt werden.
+- Gespeicherte Projekte werden beim Start nicht mehr automatisch geöffnet; sie bleiben lokal gespeichert und können über „Projekte“ ausgewählt werden.
+
 ## 0.2.2 — Steigleitungsprüfung und Bedienoberfläche
 
 - Die Steigleitungsprüfung verwendet standardmäßig 7 m/s; Werte darunter werden geprüft und Werte unter 5 m/s als kritisch markiert. Hinweise und farbliche Markierung betreffen nur die markierte Kühlstelle und ihre zugehörige Rohrstrecke.

@@ -2,11 +2,10 @@
 
 ## Versionsnummer, Änderungsprotokoll und Commit
 
-- Jede abgeschlossene Änderung erhält genau einen kleinstmöglichen Versionssprung pro zusammengehörigem Arbeitspaket: Erhöhe ausschließlich die Patchnummer von `x.y.z` auf `x.y.(z+1)`. Minor- oder Major-Sprünge nur auf ausdrücklichen Wunsch.
-- Halte die Version überall synchron: `package.json`, Versionsanzeige in `index.html`, Versionsangaben im `README.md` und ein neuer Eintrag ganz oben in `CHANGELOG.md`.
-- Aktualisiere diese Versionsdateien auch bei reinen Dokumentationsänderungen. Für mehrere getrennte Arbeitspakete nicht stillschweigend nur einen Patchsprung verwenden.
-- Wenn die angeforderte Änderung fertig und geprüft ist, erstelle einen aussagekräftigen Git-Commit für genau diese Änderung. Stage nur die zugehörigen Dateien; übernimm keine bereits vorhandenen, fremden Änderungen.
-- Ein Commit ist kein Push. Push nur, wenn der Nutzer es ausdrücklich verlangt oder ein konkreter Release-/Pull-Request-Ablauf das erfordert.
+- Versionssprünge und Einträge in `CHANGELOG.md` erst vornehmen, wenn der Nutzer ausdrücklich darum bittet oder einen Commit beauftragt. Änderungen bis dahin sammeln, damit zusammengehörige Arbeit in einem Versionssprung gebündelt werden kann.
+- Bei einem angeforderten Versionssprung oder Commit ausschließlich die Patchnummer erhöhen und Version sowie Versionsanzeige in `package.json`, `index.html` und `README.md` synchron halten; einen neuen Eintrag ganz oben in `CHANGELOG.md` ergänzen.
+- Nach Abschluss jeder angeforderten Änderung einen aussagekräftigen Git-Commit erstellen. Versionssprung und Changelog-Eintrag einschließen, ausschließlich die zugehörigen Dateien stagen und keine vorhandenen fremden Änderungen übernehmen.
+- Push nur auf ausdrücklichen Auftrag des Nutzers. Ein Commit ist kein Push.
 
 ## Projektkonventionen
 
