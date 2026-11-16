@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.16 — Bedienung im Editor verbessert
+
+- Rohrleitungen besitzen einen breiteren unsichtbaren Klickbereich, ohne die sichtbare Linienbreite zu ändern.
+- Rohrgrößen-Dropdowns in der Ergebnisliste verwenden den dunklen Standardhintergrund.
+- Eingabefelder in der Kühlstellenliste wählen beim Bearbeiten die Kühlstelle nicht mehr aus.
+
 ## 0.2.15 — Warnungen gezielt zuordnen
 
 - Sauggasgeschwindigkeitsüberschreitungen werden nur einmal je betroffener Rohrstrecke gemeldet; markiert werden die Strecke und die in den entsprechenden Lastfällen durchströmten Kühlstellen statt unbeteiligter Lastfall-Kühlstellen.
