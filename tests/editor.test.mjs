@@ -171,6 +171,10 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.match(app, /showSaveFilePicker/);
   assert.match(app, /document\.body\.append\(a\);a\.click\(\)/);
   assert.match(html, /id="saveDialog"/);
+  assert.match(html, /id="confirmDialog"/);
+  assert.doesNotMatch(app, /window\.(?:confirm|prompt)\(/);
+  assert.match(app, /\$\('resetProject'\)\.onclick=\(\)=>resetProject\(\)/);
+  assert.match(app, /project-rename/);
   assert.match(html, /id="downloadProject"/);
   assert.match(app, /vertical\?dimWidth:height/);
   assert.match(app, /vertical\?lenWidth:height/);
@@ -182,7 +186,7 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.deepEqual(missing, [], `Fehlende UI-Elemente: ${missing.join(', ')}`);
 
   const dialogs = [...html.matchAll(/<dialog\b[\s\S]*?<\/dialog>/g)].map(match => match[0]);
-  assert.equal(dialogs.length, 4);
+  assert.equal(dialogs.length, 5);
   for (const dialog of dialogs) {
     for (const button of dialog.matchAll(/<button\b([^>]*)>/g)) {
       assert.match(button[1], /\btype="(?:button|submit)"/, `Dialogbutton ohne expliziten Typ: ${button[0]}`);

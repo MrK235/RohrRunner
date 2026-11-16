@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.6 — Projektaktionen in der Anwendung bestätigen
+
+- Neues Projekt und dauerhaftes Löschen gespeicherter Projekte werden statt mit Browser-Bestätigungen über einen In-App-Dialog bestätigt.
+- Projekte lassen sich direkt in der Projektliste umbenennen, ohne Browser-Eingabedialog.
+- Die Schaltfläche „Neu“ öffnet die Bestätigung jetzt auch beim Klick in der Kopfzeile.
+
 ## 0.2.5 — Weitere Stoffwert-Umschaltgrenzen geprüft
 
 - Den Interpolationsbereich für R448A und R513A bei Verdampfung, Verflüssigung, Unterkühlung und Saugverlustgrenze erweitert; R448A bleibt auf höchstens 50 °C Flüssigkeitstemperatur begrenzt.
