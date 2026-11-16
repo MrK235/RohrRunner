@@ -54,7 +54,7 @@ Q_zweig = Q_ziel + s · Summe(Q_andere Kühlstellen im Zweig)
 ṁ_zweig ≈ Q_zweig / Δh
 ```
 
-Die Massenströme gemeinsamer Stammabschnitte werden aus den untergeordneten Zweigen aufsummiert. Nach der Druckrechnung aktualisiert der Solver den Endpunkt-Massenstrom anhand der Enthalpiedifferenz am berechneten Endzustand und wiederholt die Zustandsrechnung. Die Fixpunktschleife hat höchstens 12 Iterationen; wenn sie nicht konvergiert, wird ein Fehler ausgegeben.
+Die Massenströme gemeinsamer Stammabschnitte werden aus den untergeordneten Zweigen aufsummiert. Nach der Druckrechnung aktualisiert der Solver den Endpunkt-Massenstrom anhand der Enthalpiedifferenz am berechneten Endzustand und wiederholt die Zustandsrechnung. Deshalb kann eine Änderung am Saugrohr über den Massenstrom auch den FL-Wert derselben Kühlstelle geringfügig ändern. Bei gleichzeitiger Last ändern sich über gemeinsame Stammleitungen gegebenenfalls auch Werte anderer Kühlstellen; ein unbelasteter unabhängiger Seitenast (Gleichzeitigkeit 0) bleibt unverändert. Automatische Rohrgrößen werden bei jedem Lauf für das ganze Netz neu bestimmt. Die Fixpunktschleife hat höchstens 12 Iterationen; wenn sie nicht konvergiert, wird ein Fehler ausgegeben.
 
 ## 5. Rohrkatalog und manuelle Größen
 

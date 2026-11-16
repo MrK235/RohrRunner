@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.11 — Abhängigkeiten bei Rohränderungen geprüft
+
+- Die Auswirkungen einer manuellen Saugrohränderung auf Massenstrom, Flüssigkeitsverlust und gemeinsame Stammleitungen mit synthetischen Lastfällen geprüft; ein unbelasteter Seitenast bleibt unverändert.
+- Die fachliche Kopplung und die erneute automatische Auslegung des Gesamtnetzes in der Berechnungsanleitung erläutert. Das Berechnungsmodell wurde nicht verändert.
+
 ## 0.2.10 — Verlust- und Geschwindigkeitsbezeichnungen präzisiert
 
 - Die Berechnungsansicht bezeichnet die Grenzwerte als „Druckverlust SL max.“, „Druckverlust FL max.“ und „Sauggasgeschwindigkeit max.“.

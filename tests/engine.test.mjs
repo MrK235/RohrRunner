@@ -102,6 +102,31 @@ test('R744 meldet erschöpfte Unterkühlung im verzweigten Netz ohne Stoffwertfe
   assert.ok(!moreSubcooling.issues.some(issue=>issue.type==='phase'));
 });
 
+test('Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast', async () => {
+  await context.RohrStoffdaten.load();
+  const input={...settings,superheatK:25,subcoolingK:2,liquidLimitK:1,designPressureBar:28,simultaneity:0};
+  const plan=network();
+  for(const edge of plan.edges)edge.thermal={suction:{mode:'manual',sizeId:'22x1'},liquid:{mode:'manual',sizeId:'12x1'}};
+  const run=()=>context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const before=run();
+  plan.edges[1].thermal.suction.sizeId='28x1.5';
+  const after=run();
+  const endpoint=(result,id)=>result.endpoints.find(item=>item.id===id);
+  const row=(result,id,type)=>result.rows.find(item=>item.edgeId===id&&item.type===type);
+  assert.notEqual(row(before,'branch-a','liquid').flowKgS,row(after,'branch-a','liquid').flowKgS);
+  assert.notEqual(endpoint(before,'cold-a').liquidK,endpoint(after,'cold-a').liquidK);
+  assert.deepEqual(endpoint(before,'cold-b'),endpoint(after,'cold-b'));
+  for(const type of ['suction','liquid'])assert.deepEqual(row(before,'branch-b',type),row(after,'branch-b',type));
+  // Bei gemeinsamer Volllast ändert sich der Massenstrom im Stamm und damit auch der zweite Endpunkt.
+  input.simultaneity=1;
+  plan.edges[1].thermal.suction.sizeId='22x1';
+  const sharedBefore=run();
+  plan.edges[1].thermal.suction.sizeId='28x1.5';
+  const sharedAfter=run();
+  assert.notEqual(row(sharedBefore,'main','liquid').flowKgS,row(sharedAfter,'main','liquid').flowKgS);
+  assert.notEqual(endpoint(sharedBefore,'cold-b').liquidK,endpoint(sharedAfter,'cold-b').liquidK);
+});
+
 test('neue UI-Betriebspunkte sind für alle drei Kältemittel berechenbar', async () => {
   await context.RohrStoffdaten.load();
   for (const fluid of ['R513A','R448A','R744']) {
