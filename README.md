@@ -1,59 +1,70 @@
 # RohrRunner
 
-**RohrRunner 0.2.16** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**Rohrnetze zeichnen. Betriebspunkte prüfen. Ergebnisse nachvollziehen.**
 
-> RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
+RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und **technischen Vorbemessung von Kältemittelrohrnetzen**. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Kühlstellen, Lasten und Betriebspunkten. Der integrierte Solver ermittelt Rohrgrößen und zeigt Druckverluste, Geschwindigkeiten und Hinweise direkt am Netz und in der Ergebnisliste.
 
-## Funktionen
+**Version 0.2.17** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
-- PDF-Grundriss öffnen, per Drag-and-drop laden und mit zwei bekannten Punkten kalibrieren.
-- Einen Anlagenstart und beliebig viele Kühlstellen setzen; Rohrleitungen rechtwinklig zeichnen.
-- Knoten und Leitungsabschnitte verschieben, verzweigte Schnittpunkte automatisch verbinden sowie Änderungen rückgängig machen und wiederholen.
-- Betriebspunkt, Gleichzeitigkeit, Lasten, Rohrhöhen und zusätzliche Einzelwiderstände erfassen.
-- Saug- und Flüssigkeitsleitungen automatisch dimensionieren oder je Abschnitt eine Kataloggröße festlegen.
-- Druckverluste, Geschwindigkeiten, Rohrgrößen, Endpunktreserven und Grenzwertmeldungen anzeigen.
-- Berechnungsergebnisse als CSV, den Plan als PDF und ein vollständiges Projekt als `.rohrrunner` exportieren.
-- Die Seitenleiste über die Reiter **Kühlstellen**, **Berechnung** und **Ergebnis** bedienen; nach einem erfolgreichen Lauf öffnet sich die Ergebnisliste automatisch.
-- Mehrere Projekte lokal im Browser verwalten und automatisch samt PDF-Grundriss speichern.
+> [!IMPORTANT]
+> RohrRunner ist ein Planungs- und Vorbemessungswerkzeug, **keine technische Freigabe**. Ergebnisse und Anwendungsgrenzen müssen vor der Ausführung durch die verantwortliche Fachplanung geprüft werden. Es werden weder Normerfüllung noch global optimale Rohrgrößen zugesichert.
 
-## Schnellstart
+## Einblicke
 
-Es gibt keinen Build-Schritt und keine npm-Laufzeitabhängigkeiten.
+Die beiden Ansichten zeigen die Anwendung mit einem beispielhaften Netz bzw. den Projekteinstieg (Screenshots aus Version 0.2.16).
 
-1. `index.html` direkt im Browser öffnen oder unter Windows `RohrRunner.bat` doppelklicken. Der Berechnungs-Worker startet als Blob mit lokal gebündeltem Code; ein Server, Node.js und npm sind nicht erforderlich.
-2. Für die Entwicklung kann optional ein lokaler Node.js-Server gestartet werden:
+**Netz und Dimensionierung** — Rohrstrecken, berechnete Nennweiten und Kühlstellen im Zusammenhang:
 
-   ```powershell
-   npm run serve
-   ```
+![RohrRunner mit gezeichnetem Rohrnetz und Ergebnisliste zur Dimensionierung](Bildschirmfoto_20261116_224051.png)
 
-   Danach `http://127.0.0.1:4173` öffnen. Den Port kann `ROHRRUNNER_PORT` festlegen.
+**Projekteinstieg** — vorhandenes Projekt öffnen, ein leeres Netz beginnen oder einen PDF-Grundriss laden:
 
-3. PDF-Grundriss öffnen, den Maßstab kalibrieren, Anlagenstart und Kühlstellen einzeichnen, Leitungen verbinden und Lasten sowie Betriebsdaten erfassen. Für R744 muss die Verflüssigungstemperatur unter etwa 30,98 °C liegen.
-4. **Netz berechnen** wählen. Danach können Ergebnis-CSV, Plan-PDF oder die Projektdatei heruntergeladen werden.
+<img src="Bildschirmfoto_20261116_224214.png" alt="RohrRunner-Startansicht mit den Optionen Projekte, Neues Projekt und PDF laden" width="760">
 
-PDF-Import und PDF-Export benötigen eine Internetverbindung, weil PDF.js und pdf-lib beim Seitenaufruf von Cloudflare bzw. jsDelivr geladen werden. Rechenkern, Stoffdaten und CoolProp sind lokal gebündelt. Beim Öffnen über `file://` lädt die App das Worker-Bundle als Script und startet daraus einen Blob-Worker. Falls ein Browser Blob-Worker blockiert, rechnet die App automatisch im Hauptthread weiter.
+## In 5 Schritten zum Ergebnis
 
-## Bedienung
+1. **Starten:** `index.html` direkt im Browser öffnen; unter Windows alternativ `RohrRunner.bat` doppelklicken. Ein Server und Node.js sind für die Nutzung nicht nötig.
+2. **Plan vorbereiten:** Optional einen PDF-Grundriss laden (Dateiauswahl oder Drag-and-drop). Den Maßstab mit zwei Punkten und bekannter Entfernung kalibrieren oder `m / px` eintragen. Ohne PDF kann auf der leeren Fläche gearbeitet werden.
+3. **Netz zeichnen:** Einen Verbund und Kühlstellen setzen, Lasten in kW eintragen und rechtwinklige Leitungen verbinden. Knoten und Leitungsabschnitte lassen sich anschließend verschieben; Schnitte mit vorhandenen Leitungen erzeugen Abzweige.
+4. **Berechnen:** Im Reiter **Berechnung** Kältemittel, Temperaturen und weitere Vorgaben prüfen und **Netz berechnen** wählen. Die Ergebnisse erscheinen im Reiter **Ergebnis**.
+5. **Weiterarbeiten:** Rohrgrößen je Abschnitt prüfen oder manuell wählen, Hinweise beachten und Projekt, Ergebnis-CSV oder Plan-PDF exportieren.
 
-### Plan und Rohrnetz
+Für die optionale Entwicklung über einen lokalen HTTP-Server:
 
-- **PDF-Grundriss:** PDF-Datei auswählen oder auf die Planansicht ziehen. Aktuell wird Seite 1 verwendet.
-- **Maßstab:** Werkzeug aktivieren, zwei Punkte mit bekannter Entfernung anklicken und eine positive reale Länge eingeben. Der Maßstab wird als Meter pro PDF-Pixel gespeichert. Alternativ kann `m / px` direkt eingetragen werden.
-- **Start:** Einen Anlagenstart setzen. Ein Netz benötigt genau einen Start.
-- **Lasten:** Kühlstellen fortlaufend setzen und jeweils Name sowie Kälteleistung in kW eintragen. Dezimal-Komma und Dezimal-Punkt werden akzeptiert.
-- **Leitung:** Vom Start bzw. einem bestehenden Netzknoten aus orthogonale Abschnitte zeichnen. Bei einem Schnitt mit einer vorhandenen Leitung wird ein Abzweig erzeugt.
-- **Auswahl:** Knoten oder Leitungsabschnitt auswählen und ziehen. Die Ansicht kann durch Ziehen auf dem Hintergrund, mittlere Maustaste oder Leertaste verschoben werden; Mausrad und Zoom-Schaltflächen ändern den Zoom.
-- **Leitungsdaten:** Im Reiter **Kühlstellen** einen Abschnitt auswählen, um manuelle Rohrgrößen, Höhendifferenzen je Leitungstyp (einschließlich Steigeleitung), Zusatzlänge und Summe der Einzelwiderstände `Σζ` festzulegen. FL fließt vom Verbund zu den Kühlstellen, SL zurück zum Verbund – unabhängig von der Zeichenrichtung. Positive Höhendifferenzen bedeuten Anstieg in der jeweiligen Fließrichtung.
-- **Undo / Redo / Löschen:** Änderungen am Netz bearbeiten. **Neu** startet nach Bestätigung ein leeres Projekt.
+```bash
+npm run serve
+# anschließend http://127.0.0.1:4173 öffnen
+```
 
-### Betriebspunkt und Auslegung
+`ROHRRUNNER_PORT` kann den Port ändern. Dieser Weg benötigt Node.js, aber keine zusätzlichen npm-Pakete. Über `file://` startet der Berechnungs-Worker aus dem mitgelieferten Bundle; falls der Browser Blob-Worker sperrt, rechnet die App im Hauptthread weiter.
 
-Einstellbar sind Kältemittel, Gleichzeitigkeit, Verdampfungs- und Verflüssigungstemperatur, Sauggasüberhitzung, Unterkühlung, Grenzwerte für Druckverlust und Geschwindigkeit, Auslegungsdruck, Rauheit, Reibungszuschlag und Viskositätszuschlag. Die Oberfläche startet mit folgenden Werten:
+> **PDF-Hinweis:** PDF-Import und Plan-PDF-Export benötigen beim Seitenaufruf eine Internetverbindung für PDF.js und pdf-lib (CDN). Rechenkern, CoolProp und Stoffdaten liegen lokal im Repository. Ohne die PDF-Module bleibt die Arbeit auf der leeren Zeichenfläche möglich.
 
-| Parameter | Startwert |
+## Was RohrRunner kann
+
+| Bereich | Möglichkeiten |
+| --- | --- |
+| **Plan & Editor** | PDF-Seite 1 als Hintergrund, Kalibrierung, orthogonale Leitungen, Abzweige, Zoom und Verschieben, Undo/Redo. |
+| **Kühlstellen** | Namen, Kälteleistung, zusätzliche Rohrleitung und Steigleitung erfassen; Projekte mit mehreren Endpunkten bearbeiten. |
+| **Leitungsdaten** | Saug- und Flüssigkeitsrohrgrößen, Höhendifferenzen in Fließrichtung, Zusatzlänge und Einzelwiderstände `Σζ` je Abschnitt. |
+| **Auslegung** | Automatische Größenwahl oder manuelle Kataloggröße; Betriebspunkt und Grenzwerte für Druckverlust und Geschwindigkeit einstellen. |
+| **Ergebnisse** | Rohrstrecken und Kühlstellen gegenüberstellen, Temperaturverluste, Geschwindigkeiten und verbleibende Unterkühlung prüfen; Auffälligkeiten und Grenzverletzungen hervorheben. |
+| **Dateien** | Browserlokale Projekte samt PDF automatisch speichern; `.rohrrunner` importieren/exportieren, CSV-Ergebnisse und Plan-PDF herunterladen. |
+
+**Bedienhinweise:** Ein Klick auf einen Leitungsabschnitt öffnet seine Daten im Reiter **Kühlstellen**; ein unsichtbar verbreiterter Klickbereich erleichtert die Auswahl. Eingabefelder in der Kühlstellenliste lassen sich bearbeiten, ohne dadurch die Kühlstelle auszuwählen. Die Ansicht lässt sich auf freier Fläche, mit mittlerer Maustaste oder Leertaste verschieben; Mausrad und Zoom-Schaltflächen ändern den Zoom. Dezimalkomma und Dezimalpunkt werden bei Eingaben akzeptiert.
+
+### Berechnung und Rohrwahl
+
+Die automatische Dimensionierung wählt aus dem hinterlegten Katalog. Manuelle Rohrgrößen lassen sich auch direkt in der Ergebnisliste setzen: Danach erfolgt eine Nachrechnung, bei der die anderen zuletzt berechneten Größen festgehalten werden. **Netz berechnen** startet dagegen erneut die vollständige automatische Auslegung. Warnungen zeigen betroffene Abschnitte oder Kühlstellen an; orange kennzeichnet Prüfbedarf, rot eine Grenzverletzung.
+
+FL fließt vom Verbund zu den Kühlstellen, SL zurück zum Verbund — unabhängig von der Zeichenrichtung. Positive Höhendifferenzen bedeuten einen Anstieg in der jeweiligen Fließrichtung. Nicht eingetragene Höhendifferenzen werden mit 0 m angesetzt.
+
+### Kältemittel und Startwerte
+
+Unterstützt werden **R513A**, **R448A** (metrischer cupromed/cuprofrio-Katalog) und **R744 / CO₂** (Wieland K65 120 bar, **nur unterkritischer Betrieb**). Für R744 muss die Verflüssigungstemperatur unter etwa 30,98 °C liegen.
+
+| Einstellung | Startwert für R513A / R448A |
 | --- | ---: |
-| Kältemittel | R513A |
 | Gleichzeitigkeit | 1,00 |
 | Verdampfung / Verflüssigung | −10 °C / 45 °C |
 | Überhitzung / Unterkühlung | 25 K / 2 K |
@@ -63,63 +74,31 @@ Einstellbar sind Kältemittel, Gleichzeitigkeit, Verdampfungs- und Verflüssigun
 | Rohrrauheit | 1,5 µm |
 | Reibungs- / Viskositätszuschlag | 1,5 / 15 % |
 
-Beim Wechsel auf R744 gelten 5 °C Verflüssigung und 100 bar Überdruck als Vorgaben; Überhitzung, Unterkühlung und Druckverlustgrenze FL bleiben bei 25 K, 2 K und 1 K. Beim Wechsel zurück auf R448A oder R513A gelten wieder 45 °C und 28 bar als Vorgaben. „Zurücksetzen“ stellt die Vorgaben des aktuell gewählten Kältemittels wieder her. Bereits gespeicherte Betriebspunkte werden beim Öffnen nicht überschrieben. R744 wird nur unterkritisch gerechnet; Verflüssigungstemperaturen am oder über dem kritischen Punkt werden abgewiesen.
+Beim Wechsel auf R744 werden 5 °C Verflüssigung und 100 bar Überdruck vorgegeben; beim Wechsel zurück gelten wieder 45 °C und 28 bar. Die übrigen genannten Startwerte bleiben erhalten. Gespeicherte Betriebspunkte werden beim Öffnen nicht überschrieben.
 
-### Ergebnis
+## Projekte und Datenschutz
 
-Die Ergebnisliste gruppiert Saug- und Flüssigkeitsleitung je Abschnitt und zeigt Rohrgrößen, Temperaturverluste und Geschwindigkeiten nebeneinander. Rohrgrößen lassen sich direkt in der Tabelle ändern; die anschließende Nachrechnung hält alle anderen Größen fest. Der Knopf „Netz berechnen“ startet dagegen die vollständige automatische Auslegung neu. Kühlstellen zeigen die tatsächliche Verdampfungstemperatur am Endpunkt, Saug- und Flüssigkeitstemperaturverlust, verbleibende Unterkühlung und die vorgegebene Kühlstellenleistung. Rohrabschnitte und Kühlstellen bleiben neutral und werden nur bei Auffälligkeiten orange oder bei Grenzverletzungen rot markiert. In der Kühlstellenliste wird der betroffene Endpunktwert zusätzlich hervorgehoben. Ergebnisse können als semikolongetrennte CSV mit UTF-8-BOM exportiert werden.
+Projekte werden **im verwendeten Browser** in IndexedDB gespeichert — einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. Über **Projekte** können sie geöffnet, umbenannt und gelöscht werden. Eine exportierte `.rohrrunner`-Datei enthält bei geladenem Plan auch dessen PDF als Base64 und eignet sich zur lokalen Übertragung oder Sicherung.
 
-## Kältemittel und Rohrkatalog
+Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung: Plan und Lasten werden im Browser verarbeitet. Für PDF-Funktionen lädt der Browser jedoch Bibliotheken von Cloudflare bzw. jsDelivr. **Projektdateien und Grundrisse können vertrauliche Daten enthalten.** Vor dem Teilen Inhalt und Metadaten prüfen; `.rohrrunner` und PDFs sind in `.gitignore` ausgeschlossen.
 
-Unterstützt werden:
+## Fachliche Grenzen
 
-- **R513A** und **R448A** mit dem metrischen cupromed/cuprofrio-Katalog.
-- **R744 (CO₂)** im unterkritischen Betrieb mit der zölligen Wieland-K65-120-bar-Serie.
+Berechnet werden stationäre, einphasige Saug- und Flüssigkeitsleitungen in einem zusammenhängenden, kreisfreien Netzbaum. Die Flüssigkeitstemperatur bleibt im Modell entlang der Flüssigkeitsleitung konstant. Die automatische Nennweitenwahl ist eine begrenzte Upgrade-Heuristik, **keine globale Kostenoptimierung**.
 
-Die Rohrgrößen, Wandstärken, Katalogdruckangaben und Datenquellen liegen in `data/pipe-catalog.json`; `data/pipe-catalog.js` stellt denselben Katalog für direkt geöffnete HTML-Dateien bereit. Stoffdaten werden über CoolProp 8.0.0 WebAssembly aus `vendor/coolprop/` geladen. Für bestimmte R448A- und R513A-Bereiche nutzt der Solver vorberechnete Interpolationen und fällt außerhalb dieser Bereiche auf die CoolProp-Berechnung zurück. Quellen und Stoffwertannahmen stehen in `data/fluid-references.json` und `src/stoffdaten.js`.
+Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Verdichter- und Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten und Teillast-Ölrückführung. Details zu Annahmen, Gleichungen und Gültigkeitsbereichen stehen in der [Berechnungsanleitung](rohrnetz-berechnung-anleitung.md); bekannte Einschränkungen in [BUGS.md](BUGS.md).
 
-## Projekte, Speicherung und Datenschutz
+## Entwicklung und Mitwirkung
 
-- Automatisches Zwischenspeichern legt jedes Projekt einschließlich Netz, Einstellungen, Maßstab, letztem Berechnungsergebnis und geladenem PDF in der IndexedDB des verwendeten Browsers ab. Über **Projekte** lassen sich Einträge öffnen, umbenennen und löschen. Neue PDFs übernehmen ihren Dateinamen als Projektname.
-- Eine `.rohrrunner`-Projektdatei enthält Projekt, Netz und Einstellungen sowie, falls ein Grundriss geladen war, auch die PDF als Base64-Daten. Damit lässt sich eine Sitzung vollständig sichern und auf einem anderen Rechner öffnen.
-- Plan, Lasten und Projekte werden im aktuellen Programmablauf lokal verarbeitet; es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Für PDF-Bedienung lädt der Browser jedoch PDF.js und pdf-lib von den oben genannten CDNs.
-- Grundrisse und `.rohrrunner`-Dateien sind in `.gitignore` ausgeschlossen. Sie können Gebäude- und Projektdaten enthalten und gehören nur nach bewusster Prüfung in ein öffentliches Repository.
+RohrRunner besteht aus statischen Browserdateien ohne Build-Schritt für die Anwendung. Änderungen am Editor und an der Oberfläche liegen in `src/app.js` und `src/style.css`, Geometrie in `src/editor-core.js`, Berechnung in `src/engine.js` und Stoffdaten in `src/stoffdaten.js`. Der lokale Worker nutzt `src/worker.js` bzw. für direkt geöffnete HTML-Dateien `src/worker-bundle.js`.
 
-## Entwicklung und Tests
-
-Voraussetzung für den lokalen Testlauf ist Node.js. Zusätzliche npm-Pakete werden nicht benötigt.
-
-```powershell
-npm test
+```bash
+npm test                  # Node.js-Tests mit synthetischen Netzen
+npm run build:worker      # Worker-Bundle nach Änderungen am Worker aktualisieren
 ```
 
-Der Befehl führt `node --test tests/*.test.mjs` aus. Die Tests decken unter anderem Netzvalidierung, Reibungsfaktor, drei Kältemittel, Editor-Geometrie, Maßstabs-/UI-Verträge und den Exportwiederherstellungsfall mit synthetischen PDF-Bytes ab. Sie sind keine technische Anlagenabnahme.
+Der Testlauf benötigt Node.js, aber keine Installation weiterer Pakete. Er ersetzt keine fachliche Abnahme. Datenquellen für Katalog und Stoffwerte stehen in `data/pipe-catalog.json` und `data/fluid-references.json`; `data/pipe-catalog.js` ist die Browserfassung des Katalogs.
 
-Weitere Entwicklerhinweise: [CONTRIBUTING.md](CONTRIBUTING.md). Komponenten und Datenfluss: [ARCHITECTURE.md](ARCHITECTURE.md). Berechnungsmodell und Annahmen: [rohrnetz-berechnung-anleitung.md](rohrnetz-berechnung-anleitung.md).
+Mehr dazu: [Architektur](ARCHITECTURE.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungsprotokoll](CHANGELOG.md) · [Sicherheitsmeldungen](SECURITY.md).
 
-## Projektdateien
-
-| Pfad | Zweck |
-| --- | --- |
-| `index.html`, `src/style.css` | Browseroberfläche |
-| `src/app.js` | UI-Steuerung, PDF-Ansicht, Projektimport/-export und Ergebnisdarstellung |
-| `src/editor-core.js` | Geometrie- und Netzeditorfunktionen |
-| `src/engine.js` | Netzprüfung, Hydraulik, Dimensionierung und Ergebnisberechnung |
-| `src/stoffdaten.js`, `src/fast-data.js` | Stoffdatenzugriff, CoolProp und Interpolationspfade |
-| `src/worker.js`, `src/worker-bundle.js` | Worker-Quelle und generiertes Blob-Worker-Bundle |
-| `scripts/build-worker-bundle.mjs` | Aktualisiert das Bundle ohne externe Build-Abhängigkeiten |
-| `data/` | Rohrkatalog und Stoffdatenreferenzen |
-| `vendor/coolprop/` | Lokale CoolProp-Laufzeit einschließlich Lizenzdatei |
-| `tests/` | Node.js-Tests für Editor und Rechenkern |
-| `scripts/serve.mjs` | Optionaler lokaler HTTP-Server |
-| `CHANGELOG.md`, `BUGS.md`, `SECURITY.md` | Versionsnotizen, Fehler-/Einschränkungsübersicht und Sicherheitsmeldungen |
-
-## Technischer Umfang und Grenzen
-
-RohrRunner rechnet stationäre, einphasige Saug- und Flüssigkeitsleitungen in einem zusammenhängenden, kreisfreien Netzbaum. Nicht implementiert sind transkritisches CO₂, Druckgasleitungen, Verdichter-/Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten, Teillast-Ölrückführung oder ein global kostenoptimierender Nennweitenvergleich. Nicht eingetragene Höhenunterschiede gelten als 0 m; die Flüssigkeitstemperatur bleibt entlang der Flüssigkeitsleitung konstant. Die automatische Nennweitenwahl ist eine begrenzte Upgrade-Heuristik.
-
-Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-berechnung-anleitung.md); bekannte Einschränkungen und Hinweise zu Fehlerberichten stehen in [BUGS.md](BUGS.md).
-
-## Version und Lizenz
-
-Der Softwarestand ist **0.2.16**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+**Lizenzhinweis:** Für die mitgelieferte CoolProp-Laufzeit liegt eine MIT-Lizenz unter `vendor/coolprop/LICENSE`. Für RohrRunner selbst ist derzeit keine separate Projektlizenz enthalten.

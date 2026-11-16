@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.17 — GitHub-README mit Einblicken
+
+- README für GitHub neu gestaltet: Schnellstart, Bedienung, Auslegung, Datenhaltung, technische Grenzen und Entwicklerhinweise übersichtlich dokumentiert.
+- Zwei Screenshots eines beispielhaften Netzes und der Startansicht ergänzt; Bilddateien im Repository verlinkt.
+
 ## 0.2.16 — Bedienung im Editor verbessert
 
 - Rohrleitungen besitzen einen breiteren unsichtbaren Klickbereich, ohne die sichtbare Linienbreite zu ändern.
