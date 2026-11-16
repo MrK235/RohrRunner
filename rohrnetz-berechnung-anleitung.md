@@ -31,7 +31,7 @@ Die hydraulische Länge eines Abschnitts ist die Summe der orthogonalen Planstre
 
 ## 3. Stoffzustände und Kältemittel
 
-CoolProp 8.0.0 wird lokal als WebAssembly geladen. Die Anwendung fordert Sättigungszustände sowie thermodynamische und hydraulische Stoffwerte an. `src/fast-data.js` kann innerhalb der dort definierten Temperatur-, Druck- und Überhitzungsbereiche vorberechnete Interpolationen für R448A und R513A bereitstellen; wenn Eingaben außerhalb dieser Bereiche liegen, verwendet der Solver den Stoffdatenzugriff ohne diesen Fast-Path.
+CoolProp 8.0.0 wird lokal als WebAssembly geladen. Die Anwendung fordert Sättigungszustände sowie thermodynamische und hydraulische Stoffwerte an. `src/fast-data.js` kann bei R448A und R513A für 3 bis 40 K Überhitzung (bei passenden weiteren Eingaben sowie innerhalb der tabellierten Druckbereiche) vorberechnete Interpolationen bereitstellen; außerhalb dieser Bereiche verwendet der Solver CoolProp direkt. Die Stützpunkte werden für den jeweiligen Betriebspunkt mit CoolProp erzeugt; die Interpolation ersetzt keine zusätzliche technische Validierung.
 
 Für die Saugleitung gilt die Taupunkttemperatur plus eingestellte Überhitzung. Für die Flüssigkeitsleitung wird eine konstante Flüssigkeitstemperatur `T_liquid = T_condensation − subcooling` angesetzt. Bei zeotropen Gemischen werden Blasen- und Taupunkt getrennt behandelt.
 

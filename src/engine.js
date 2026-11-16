@@ -139,11 +139,12 @@
     // Deterministic upgrade loop: evaluate whole-network endpoint cases, then grow the
     // pipe with the greatest weighted reduction on the currently failing path.
     const manual=new Set(edges.flatMap(e=>['suction','liquid'].filter(t=>e.thermal?.[t]?.mode==='manual').map(t=>`${e.id}:${t}`)));
-    let finalScenarios=[];
+    let finalScenarios=[], needsRecompute=false;
     // Bound the upgrade search by all possible catalog transitions in the network.
     const maxUpgradePasses=Math.max(1,edges.length*2*(sizes.length-1));
     for(let pass=0;pass<maxUpgradePasses;pass++){
       finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
+      needsRecompute=false;
       const rowByKey=new Map();for(const e of edges)for(const t of ['suction','liquid'])rowByKey.set(`${e.id}:${t}`,[]);
       for(const s of finalScenarios)for(const [key,r] of s.lineResults)rowByKey.get(key)?.push({scenario:s,result:r});
       const issues=[];
@@ -159,8 +160,9 @@
       const factor=Math.max(1.05,Math.pow(1+worstIssue.excess,.2)),targetDiameter=diOf(sizes[best.ix])*factor;
       let targetIndex=best.ix+1;while(targetIndex<sizes.length-1&&diOf(sizes[targetIndex])<targetDiameter)targetIndex++;
       selected.set(best.key,sizes[targetIndex]);
+      needsRecompute=true;
     }
-    finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
+    if(needsRecompute)finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
     const issues=[];
     for(const s of finalScenarios){if(s.suctionK>limS+1e-6)issues.push({targetId:s.targetId,type:'suction',message:`${s.name}: Saugverlust ${s.suctionK.toFixed(2)} K überschreitet ${limS} K.`});if(s.liquidK>limL+1e-6)issues.push({targetId:s.targetId,type:'liquid',message:`${s.name}: Flüssigkeitsverlust ${s.liquidK.toFixed(2)} K überschreitet ${limL} K.`});if(s.remainingSubcoolingK<=0)issues.push({targetId:s.targetId,type:'phase',message:`${s.name}: Flüssigkeit erreicht die Phasengrenze.`});for(const [key,r] of s.lineResults){if(key.endsWith(':suction')&&r.v>vmax+1e-6)issues.push({targetId:s.targetId,type:'velocity',message:`${s.name}: Sauggeschwindigkeit ${r.v.toFixed(1)} m/s überschreitet ${vmax} m/s.`});const edge=edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':')));if(key.endsWith(':suction')&&edge?._terminalRiser&&edge._terminalRiserNodeId===s.targetId&&r.vMin<vmin-1e-6){const critical=r.vMin<5-1e-6;issues.push({targetId:s.targetId,type:'oil-return',severity:critical?'critical':'check',message:`${s.name}: Steigleitung ${r.vMin.toFixed(1)} m/s – ${critical?'kritisch (unter 5 m/s)':'prüfen (unter '+vmin+' m/s)'}.`});}}}
     const rows=[];for(const edge of edges)for(const type of ['suction','liquid']){const runs=finalScenarios.map(s=>({s,r:s.lineResults.get(`${edge.id}:${type}`)})).filter(x=>x.r);const r=runs.reduce((best,x)=>x.r.drop>best.drop?x.r:best,runs[0]?.r);if(!r)continue;const size=selected.get(`${edge.id}:${type}`),pUp=Math.max(1000,r.pIn),pDown=Math.max(1000,r.pOut);const dT=Math.abs(data.saturationAtPressure(f,pUp).dewK-data.saturationAtPressure(f,pDown).dewK);rows.push({edgeId:edge.id,type,sizeId:idOf(size),sizeLabel:sizeLabelOf(size),diameterMm:diOf(size)*1000,lengthM:edge._lengthM,flowKgS:r.flow,flowKgH:r.flow*3600,velocityMS:r.v,pressureDropPa:r.drop,pressureDropBar:r.drop/1e5,temperatureDropK:dT,manual:manual.has(`${edge.id}:${type}`),psBar:size.catalogBar??120,branchCount:runs.length});}

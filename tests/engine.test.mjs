@@ -107,6 +107,34 @@ test('CoolProp checks all three requested refrigerants on a branched network', a
   }
 });
 
+test('25 K Überhitzung nutzt Stoffwert-Stützpunkte statt CoolProp in jedem Rohrschritt', async () => {
+  await context.RohrStoffdaten.load();
+  const input = { ...settings, superheatK: 25 };
+  const originalFast = context.RohrnetzFastData;
+  let calls = 0;
+  const data = { ...context.RohrStoffdaten,
+    hydraulicPt(...args) { calls++; return context.RohrStoffdaten.hydraulicPt(...args); },
+    state(...args) { calls++; return context.RohrStoffdaten.state(...args); },
+    saturationAtPressure(...args) { calls++; return context.RohrStoffdaten.saturationAtPressure(...args); } };
+  try {
+    context.RohrnetzFastData = null;
+    const start = performance.now();
+    const reference = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
+    const slowMs = performance.now() - start, slowCalls = calls;
+    calls = 0;
+    context.RohrnetzFastData = originalFast;
+    const fastStart = performance.now();
+    const fast = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
+    console.log(`25 K: CoolProp direkt ${slowMs.toFixed(0)} ms/${slowCalls} Aufrufe, Interpolation ${(performance.now() - fastStart).toFixed(0)} ms/${calls} Aufrufe`);
+    assert.ok(calls < slowCalls / 3, `CoolProp-Aufrufe: schnell ${calls}, Referenz ${slowCalls}`);
+    assert.equal(fast.valid, reference.valid);
+    for (let i = 0; i < fast.endpoints.length; i++) {
+      assert.ok(Math.abs(fast.endpoints[i].suctionK - reference.endpoints[i].suctionK) < 0.1);
+      assert.ok(Math.abs(fast.endpoints[i].liquidK - reference.endpoints[i].liquidK) < 0.1);
+    }
+  } finally { context.RohrnetzFastData = originalFast; }
+});
+
 test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und reizen sie aus', async t => {
   await context.RohrStoffdaten.load();
   const input = { ...settings, fluid: 'R513A', simultaneity: 0.5, maxVelocityMS: 30, minVelocityMS: 0,

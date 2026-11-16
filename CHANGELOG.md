@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.4 — Berechnung bei hoher Sauggasüberhitzung beschleunigt
+
+- R448A und R513A nutzen die Stoffwert-Stützpunkttabellen jetzt auch bei 25 K Sauggasüberhitzung (bis 40 K), statt für jeden Rohrschritt CoolProp direkt aufzurufen.
+- Ein abschließender Endpunkt-Lastfall wird nicht erneut berechnet, wenn seit der letzten Auswertung keine Rohrgröße geändert wurde.
+- Ein synthetischer Referenztest prüft die Abweichung der Ergebniswerte und die Anzahl direkter Stoffwertaufrufe.
+
 ## 0.2.3 — Projektstart und Auswahl überarbeitet
 
 - Beim Start erscheint eine kompakte Projektauswahl mit Aktionen zum Öffnen gespeicherter Projekte, Anlegen eines leeren Projekts oder Laden eines PDF-Grundrisses.

@@ -100,7 +100,7 @@
     if (!['R448A', 'R513A'].includes(settings.fluid)) return data;
     if (settings.evaporationC < -25 || settings.evaporationC > 5 ||
         settings.condensationC < 30 || settings.condensationC > 50 ||
-        settings.superheatK < 3 || settings.superheatK > 12 ||
+        settings.superheatK < 3 || settings.superheatK > 40 ||
         settings.subcoolingK < 2 || settings.subcoolingK > 5 ||
         settings.suctionLimitK > 3) return data;
     const key = [settings.fluid, settings.evaporationC, settings.condensationC,
