@@ -67,6 +67,11 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(read('src/worker-bundle.js').includes('window.RohrRunnerWorkerBundle = '),'generated standalone worker bundle exists');
 });
 
+test('Grenzwertfehler verwenden die Beschriftungen der Berechnungsansicht', () => {
+  for(const [key,value,label] of [['suctionLimitK',-1,'Druckverlustgrenze SL'],['liquidLimitK',-1,'Druckverlustgrenze FL'],['maxVelocityMS',41,'Sauggasgeschwindigkeit max.']])
+    assert.throws(()=>context.RohrRunnerEngine.calculate(network(),1,{...settings,[key]:value},null,catalog),new RegExp(label));
+});
+
 test('topology and scale validation reject loops and uncalibrated plans', () => {
   assert.throws(() => context.RohrRunnerEngine.analyze(network(), 0), /Kalibriere/);
   const loop = network(); loop.edges.push({ id: 'loop', from: 'cold-a', to: 'plant', points: [{ x: 8, y: 0 }, { x: 0, y: 0 }] });

@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.10 — Verlust- und Geschwindigkeitsbezeichnungen präzisiert
+
+- Die Berechnungsansicht bezeichnet die Grenzwerte als „Druckverlust SL max.“, „Druckverlust FL max.“ und „Sauggasgeschwindigkeit max.“.
+- Validierungs- und Ergebniswarnungen verwenden dieselben Begriffe; die Druckverlustwerte in K bleiben Sättigungstemperaturdifferenzen, nicht Druckdifferenzen in bar.
+
 ## 0.2.9 — Phasengrenze bei R744 ohne Stoffwertfehler behandeln
 
 - Bei erschöpfter Flüssigkeitsunterkühlung werden PT-Stoffwerte nicht mehr exakt am Sättigungsdruck angefordert; betroffene Endpunktpfade zeigen stattdessen 0 K verbleibende Unterkühlung und ein Phasenrisiko.

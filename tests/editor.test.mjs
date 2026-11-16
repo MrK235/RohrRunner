@@ -190,6 +190,8 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.match(app, /document\.body\.append\(a\);a\.click\(\)/);
   assert.doesNotMatch(html, /id="saveDialog"/);
   assert.match(html, /id="confirmDialog"/);
+  for(const [label,key] of [['Druckverlust SL max.','suctionLimitK'],['Druckverlust FL max.','liquidLimitK'],['Sauggasgeschwindigkeit max.','maxVelocityMS']])
+    assert.ok(html.includes(`<label>${label}<span class="field-unit"><input data-setting="${key}"`),`${label}: Beschriftung`);
   assert.doesNotMatch(app, /window\.(?:confirm|prompt)\(/);
   assert.match(app, /\$\('resetProject'\)\.onclick=\(\)=>resetProject\(\)/);
   assert.match(app, /project-rename/);

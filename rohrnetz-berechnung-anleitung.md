@@ -104,7 +104,7 @@ Am Anlagenstart werden Saugdruck aus Verdampfung und Taupunkt sowie Flüssigkeit
 - Flüssigkeitsdruck wird entlang des Netzes vom Anlagenstart zu den Kühlstellen vorwärts berechnet.
 - Saugdruck wird ausgehend vom bekannten Anlagenstartdruck entlang des Baums rückwärts zu den Endpunkten gelöst. Der Druck am Leitungsanfang wird iterativ so angepasst, dass Anfangsdruck minus Reibungs- und Höhenverluste den nachgelagerten Knotenwert ergibt.
 - Für jede Kühlstelle wird ein eigener Volllast-Lastfall ausgewertet.
-- Endpunkt-Saugverlust, Flüssigkeitsverlust und verbleibende Unterkühlung werden aus den berechneten Sättigungszuständen abgeleitet.
+- Endpunkt-Druckverlust SL und FL sowie verbleibende Unterkühlung werden aus den berechneten Sättigungszuständen abgeleitet. Die Druckverlustgrenzen in K bezeichnen Sättigungstemperaturdifferenzen, keine Druckdifferenzen in bar.
 
 ## 8. Automatische Dimensionierung
 
@@ -114,8 +114,8 @@ Wenn Grenzverletzungen auftreten, wertet eine Upgrade-Heuristik die betroffenen 
 
 Geprüft werden:
 
-- maximaler Saug- und Flüssigkeitsverlust in Kelvin;
-- maximale Sauggeschwindigkeit;
+- maximaler Druckverlust SL und FL in Kelvin (Sättigungstemperaturdifferenz);
+- maximale Sauggasgeschwindigkeit;
 - Mindestgeschwindigkeit nur am letzten Saugleitungsabschnitt zu einer ausdrücklich als „Steigleitung“ markierten Kühlstelle. Nicht markierte Kühlstellen und ihre Leitungsabschnitte lösen diese Prüfung nicht aus. Die zusätzliche Rohrleitung der Kühlstelle wird zur hydraulischen Länge dieses letzten Abschnitts addiert und in dessen Druck- und Stoffzustandsberechnung berücksichtigt. Das Kontrollfeld legt keine Höhendifferenz fest und erzeugt keinen zusätzlichen geodätischen Druckanteil. Eine tatsächliche Höhendifferenz ist weiterhin am Leitungsabschnitt einzutragen. Der Standardwert beträgt für alle Kältemittel 7 m/s; darunter lautet der Status „prüfen“, unter 5 m/s „kritisch“;
 - verbleibende Flüssigkeitsunterkühlung bzw. Erreichen der Phasengrenze.
 
