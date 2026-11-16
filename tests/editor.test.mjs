@@ -168,14 +168,15 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.doesNotMatch(html, /id="startBlank"|class="empty-state"/);
   assert.doesNotMatch(app, /\$\('startBlank'\)/);
   assert.match(app, /function createStart\(point\).*name:'Verbund'.*setTool\('endpoint'\)/);
-  assert.match(app, /showSaveFilePicker/);
+  assert.doesNotMatch(app, /showSaveFilePicker|prepareProjectDownload/);
+  assert.match(app, /async function exportProject\(\)\{try\{const contents=await projectFile\(\);download\(contents,.*?\.rohrrunner`,'application\/json'\)/);
   assert.match(app, /document\.body\.append\(a\);a\.click\(\)/);
-  assert.match(html, /id="saveDialog"/);
+  assert.doesNotMatch(html, /id="saveDialog"/);
   assert.match(html, /id="confirmDialog"/);
   assert.doesNotMatch(app, /window\.(?:confirm|prompt)\(/);
   assert.match(app, /\$\('resetProject'\)\.onclick=\(\)=>resetProject\(\)/);
   assert.match(app, /project-rename/);
-  assert.match(html, /id="downloadProject"/);
+  assert.doesNotMatch(html, /id="downloadProject"/);
   assert.match(app, /vertical\?dimWidth:height/);
   assert.match(app, /vertical\?lenWidth:height/);
   assert.match(app, /document\.addEventListener\('click'.*\[data-close\]/s);
@@ -186,7 +187,7 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.deepEqual(missing, [], `Fehlende UI-Elemente: ${missing.join(', ')}`);
 
   const dialogs = [...html.matchAll(/<dialog\b[\s\S]*?<\/dialog>/g)].map(match => match[0]);
-  assert.equal(dialogs.length, 5);
+  assert.equal(dialogs.length, 4);
   for (const dialog of dialogs) {
     for (const button of dialog.matchAll(/<button\b([^>]*)>/g)) {
       assert.match(button[1], /\btype="(?:button|submit)"/, `Dialogbutton ohne expliziten Typ: ${button[0]}`);

@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.7 — Projektdatei direkt herunterladen
+
+- „Sichern“ startet den Download der `.rohrrunner`-Projektdatei direkt, ohne vorgeschalteten In-App- oder Dateiauswahldialog.
+- Der nicht mehr benötigte Speicherdialog wurde entfernt. Die Download-Einstellungen des Browsers bestimmen weiterhin den Speicherort.
+
 ## 0.2.6 — Projektaktionen in der Anwendung bestätigen
 
 - Neues Projekt und dauerhaftes Löschen gespeicherter Projekte werden statt mit Browser-Bestätigungen über einen In-App-Dialog bestätigt.
