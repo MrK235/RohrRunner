@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.5 — Weitere Stoffwert-Umschaltgrenzen geprüft
+
+- Den Interpolationsbereich für R448A und R513A bei Verdampfung, Verflüssigung, Unterkühlung und Saugverlustgrenze erweitert; R448A bleibt auf höchstens 50 °C Flüssigkeitstemperatur begrenzt.
+- Synthetische Vergleiche unmittelbar außerhalb der bisherigen Grenzen prüfen Ergebnisabweichung und direkte CoolProp-Aufrufe. Außerhalb der neuen Bereiche bleibt der sichere Rückfall auf CoolProp erhalten.
+
 ## 0.2.4 — Berechnung bei hoher Sauggasüberhitzung beschleunigt
 
 - R448A und R513A nutzen die Stoffwert-Stützpunkttabellen jetzt auch bei 25 K Sauggasüberhitzung (bis 40 K), statt für jeden Rohrschritt CoolProp direkt aufzurufen.

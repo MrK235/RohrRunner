@@ -135,6 +135,45 @@ test('25 K Überhitzung nutzt Stoffwert-Stützpunkte statt CoolProp in jedem Roh
   } finally { context.RohrnetzFastData = originalFast; }
 });
 
+test('Fast-Path bleibt außerhalb geprüfter Bereiche und beim R448A-Viskositätslimit deaktiviert', () => {
+  const data = context.RohrStoffdaten;
+  for (const overrides of [
+    { fluid: 'R744' }, { superheatK: 2.9 }, { suctionLimitK: 5.01 },
+    { fluid: 'R448A', condensationC: 55, subcoolingK: 4 }
+  ]) assert.equal(context.RohrnetzFastData.create(data, { ...settings, ...overrides }), data);
+});
+
+test('Stoffwert-Grenzen knapp außerhalb der bisherigen Schaltwerte bleiben schnell und vergleichbar', async t => {
+  await context.RohrStoffdaten.load();
+  for (const overrides of [
+    { fluid: 'R513A', evaporationC: -26, condensationC: 29, subcoolingK: 5.1, suctionLimitK: 3.01 },
+    { fluid: 'R448A', evaporationC: 6, condensationC: 51, subcoolingK: 6, suctionLimitK: 4 }
+  ]) {
+    const input = { ...settings, ...overrides };
+    let calls = 0;
+    const data = { ...context.RohrStoffdaten,
+      hydraulicPt(...args) { calls++; return context.RohrStoffdaten.hydraulicPt(...args); },
+      state(...args) { calls++; return context.RohrStoffdaten.state(...args); },
+      saturationAtPressure(...args) { calls++; return context.RohrStoffdaten.saturationAtPressure(...args); } };
+    const originalFast = context.RohrnetzFastData;
+    try {
+      context.RohrnetzFastData = null;
+      const reference = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
+      const directCalls = calls;
+      calls = 0;
+      context.RohrnetzFastData = originalFast;
+      const fast = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
+      assert.ok(calls < directCalls / 3, `${input.fluid}: ${calls} statt ${directCalls} direkte Stoffwertaufrufe`);
+      assert.equal(fast.valid, reference.valid);
+      for (let i = 0; i < fast.endpoints.length; i++) {
+        assert.ok(Math.abs(fast.endpoints[i].suctionK - reference.endpoints[i].suctionK) < 0.1);
+        assert.ok(Math.abs(fast.endpoints[i].liquidK - reference.endpoints[i].liquidK) < 0.1);
+      }
+      t.diagnostic(`${input.fluid}: ${directCalls} → ${calls} direkte Stoffwertaufrufe`);
+    } finally { context.RohrnetzFastData = originalFast; }
+  }
+});
+
 test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und reizen sie aus', async t => {
   await context.RohrStoffdaten.load();
   const input = { ...settings, fluid: 'R513A', simultaneity: 0.5, maxVelocityMS: 30, minVelocityMS: 0,

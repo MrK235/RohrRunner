@@ -98,11 +98,12 @@
   }
   function create(data, settings) {
     if (!['R448A', 'R513A'].includes(settings.fluid)) return data;
-    if (settings.evaporationC < -25 || settings.evaporationC > 5 ||
-        settings.condensationC < 30 || settings.condensationC > 50 ||
+    if (settings.evaporationC < -35 || settings.evaporationC > 10 ||
+        settings.condensationC < 25 || settings.condensationC > 55 ||
         settings.superheatK < 3 || settings.superheatK > 40 ||
-        settings.subcoolingK < 2 || settings.subcoolingK > 5 ||
-        settings.suctionLimitK > 3) return data;
+        settings.subcoolingK < 1 || settings.subcoolingK > 10 ||
+        settings.suctionLimitK > 5 ||
+        (settings.fluid === 'R448A' && settings.condensationC - settings.subcoolingK > 50)) return data;
     const key = [settings.fluid, settings.evaporationC, settings.condensationC,
       settings.superheatK, settings.subcoolingK, settings.suctionLimitK].join('|');
     if (!cache.has(key)) {
