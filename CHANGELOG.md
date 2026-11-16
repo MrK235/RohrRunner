@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.15 — Warnungen gezielt zuordnen
+
+- Sauggasgeschwindigkeitsüberschreitungen werden nur einmal je betroffener Rohrstrecke gemeldet; markiert werden die Strecke und die in den entsprechenden Lastfällen durchströmten Kühlstellen statt unbeteiligter Lastfall-Kühlstellen.
+- Phasenrisiken markieren die betroffenen Flüssigkeitsabschnitte. Summierte Endpunkt-Druckverluste markieren die Kühlstelle; nur individuell grenzverletzende Abschnitte erhalten eine Streckenmarkierung.
+- Alte gespeicherte Ergebnisse ohne eindeutige Warnungszuordnung werden nicht als aktuelle Ergebnisse wiederhergestellt.
+
 ## 0.2.14 — Rohrgröße im Ergebnis gezielt nachrechnen
 
 - Änderungen an einer Rohrgröße in der Ergebnisliste lösen eine Nachrechnung mit den zuletzt berechneten Größen aller anderen SL- und FL-Leitungen aus; deren Auto-/Manuell-Modus im Projekt bleibt erhalten.

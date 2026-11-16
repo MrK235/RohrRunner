@@ -119,6 +119,17 @@ test('R744 meldet erschöpfte Unterkühlung im verzweigten Netz ohne Stoffwertfe
   assert.ok(result.endpoints.some(end=>end.remainingSubcoolingK===0));
   const moreSubcooling=context.RohrRunnerEngine.calculate(plan,1,{...input,subcoolingK:3},context.RohrStoffdaten,catalog);
   assert.ok(!moreSubcooling.issues.some(issue=>issue.type==='phase'));
+  const isolated=network();isolated.edges[1].thermal={liquid:{deltaZ:27}};
+  const branch=context.RohrRunnerEngine.calculate(isolated,1,input,context.RohrStoffdaten,catalog);
+  const phase=branch.issues.filter(issue=>issue.type==='phase');
+  assert.equal(phase.length,1);
+  assert.equal(phase[0].targetId,'cold-a');
+  assert.deepEqual([...phase[0].edgeIds],['branch-a']);
+  const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
+  const status=runInContext(`(${fn})`,createContext({project:{...isolated,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(branch);
+  assert.equal(status.get('branch-a:liquid'),'limit');
+  assert.equal(status.has('main:liquid'),false);
+  assert.equal(status.has('branch-b:liquid'),false);
 });
 
 test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung', async () => {
@@ -135,9 +146,53 @@ test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihen
   for(const end of original.endpoints){const other=result.endpoints.find(item=>item.id===end.id);for(const field of ['suctionK','liquidK','remainingSubcoolingK'])assert.ok(Math.abs(end[field]-other[field])<1e-6,`${end.id} ${field}`)}
   const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
   const statusByEdge=runInContext(`(${fn})`,createContext({project:{...reversed,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}));
-  const status=statusByEdge({...result,issues:[{type:'liquid',targetId:'cold-a'}]});
+  const flaggedRows=result.rows.map(row=>row.type==='liquid'&&['main','branch-a'].includes(row.edgeId)?{...row,temperatureDropK:2}:row);
+  const status=statusByEdge({...result,rows:flaggedRows,issues:[{type:'liquid',targetId:'cold-a'}]});
   assert.ok(status.has('main:liquid')&&status.has('branch-a:liquid'));
   assert.equal(status.has('branch-b:liquid'),false);
+});
+
+test('summierter Druckverlust markiert die Kühlstelle, nicht unkritische Einzelabschnitte', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network();for(const edge of plan.edges)edge.thermal={suction:{mode:'manual',sizeId:'22x1'},liquid:{mode:'manual',sizeId:'12x1'}};
+  const input={...settings,superheatK:25,subcoolingK:2,designPressureBar:28,simultaneity:0,suctionLimitK:1,maxVelocityMS:40};
+  const result=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const suction=result.issues.filter(issue=>issue.type==='suction');
+  assert.equal(suction.length,1);
+  assert.equal(suction[0].targetId,'cold-a');
+  assert.equal(suction[0].edgeIds.length,0);
+  const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
+  const status=runInContext(`(${fn})`,createContext({project:{...plan,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(result);
+  assert.equal(status.has('main:suction'),false);
+  assert.equal(status.has('branch-a:suction'),false);
+});
+
+test('Geschwindigkeitswarnung bleibt auf die betroffene Leitung und Kühlstelle begrenzt', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network();
+  for(const edge of plan.edges)edge.thermal={suction:{mode:'manual',sizeId:edge.id==='branch-a'?'16x1':'28x1.5'},liquid:{mode:'manual',sizeId:'12x1'}};
+  const input={...settings,superheatK:25,subcoolingK:2,designPressureBar:28,simultaneity:1,
+    suctionLimitK:30,liquidLimitK:30,maxVelocityMS:25,minVelocityMS:0};
+  const result=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const velocity=result.issues.filter(issue=>issue.type==='velocity');
+  assert.equal(velocity.length,1);
+  assert.equal(velocity[0].edgeId,'branch-a');
+  assert.deepEqual([...velocity[0].targetIds],['cold-a']);
+  const app=read('src/app.js'),statusFn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim(),stateFn=app.slice(app.indexOf('function endpointStates('),app.indexOf('  function showResult(')).trim();
+  const status=runInContext(`(${statusFn})`,createContext({project:{...plan,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(result);
+  assert.equal(status.get('branch-a:suction'),'limit');
+  assert.equal(status.has('branch-b:suction'),false);
+  assert.equal(status.has('main:suction'),false);
+  const endpoint=runInContext(`(${stateFn})`,createContext({}));
+  assert.equal(endpoint(result,'cold-a').other,'check');
+  assert.equal(endpoint(result,'cold-b').row,'');
+  plan.edges[0].thermal.suction.sizeId='16x1';
+  plan.edges[1].thermal.suction.sizeId='28x1.5';
+  const shared=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const sharedWarnings=shared.issues.filter(issue=>issue.type==='velocity');
+  assert.equal(sharedWarnings.length,1,'gemeinsame Leitung erscheint nur einmal');
+  assert.equal(sharedWarnings[0].edgeId,'main');
+  assert.deepEqual([...sharedWarnings[0].targetIds].sort(),['cold-a','cold-b']);
 });
 
 test('Nachrechnung einer Ergebnisgröße verändert keine anderen Rohrgrößen', async () => {
