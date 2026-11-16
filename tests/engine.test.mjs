@@ -85,6 +85,17 @@ test('terminal pipe allowance is added to the final section and riser is retaine
   assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._terminalRiser,false);
 });
 
+test('neue UI-Betriebspunkte sind für alle drei Kältemittel berechenbar', async () => {
+  await context.RohrStoffdaten.load();
+  for (const fluid of ['R513A','R448A','R744']) {
+    const input={...settings,fluid,superheatK:25,subcoolingK:2,liquidLimitK:1,
+      condensationC:fluid==='R744'?5:45,designPressureBar:fluid==='R744'?100:28};
+    const result=context.RohrRunnerEngine.calculate(network(),1,input,context.RohrStoffdaten,catalog);
+    assert.equal(result.endpoints.length,2,fluid);
+    assert.ok(result.rows.every(row=>Number.isFinite(row.pressureDropPa)),fluid);
+  }
+});
+
 test('CoolProp checks all three requested refrigerants on a branched network', async () => {
   await context.RohrStoffdaten.load();
   const cases = [

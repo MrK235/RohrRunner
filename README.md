@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.2.7** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.2.8** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -56,14 +56,14 @@ Einstellbar sind Kältemittel, Gleichzeitigkeit, Verdampfungs- und Verflüssigun
 | Kältemittel | R513A |
 | Gleichzeitigkeit | 1,00 |
 | Verdampfung / Verflüssigung | −10 °C / 45 °C |
-| Überhitzung / Unterkühlung | 5 K / 3 K |
-| Max. Saug- / Flüssigkeitsverlust | 2 K / 2 K |
+| Überhitzung / Unterkühlung | 25 K / 2 K |
+| Max. Saug- / Flüssigkeitsverlust | 2 K / 1 K |
 | Mindest- / Maximalgeschwindigkeit | 7 m/s / 30 m/s |
-| Auslegungsdruck | 35 bar Überdruck |
+| Auslegungsdruck | 28 bar Überdruck |
 | Rohrrauheit | 1,5 µm |
 | Reibungs- / Viskositätszuschlag | 1,5 / 15 % |
 
-Beim Wechsel auf R744 setzt die Oberfläche den Auslegungsdruck auf mindestens 100 bar. R744 wird nur unterkritisch gerechnet; Verflüssigungstemperaturen am oder über dem kritischen Punkt werden abgewiesen.
+Beim Wechsel auf R744 gelten 5 °C Verflüssigung und 100 bar Überdruck als Vorgaben; Überhitzung, Unterkühlung und Flüssigkeitsverlustgrenze bleiben bei 25 K, 2 K und 1 K. Beim Wechsel zurück auf R448A oder R513A gelten wieder 45 °C und 28 bar als Vorgaben. „Zurücksetzen“ stellt die Vorgaben des aktuell gewählten Kältemittels wieder her. Bereits gespeicherte Betriebspunkte werden beim Öffnen nicht überschrieben. R744 wird nur unterkritisch gerechnet; Verflüssigungstemperaturen am oder über dem kritischen Punkt werden abgewiesen.
 
 ### Ergebnis
 
@@ -122,4 +122,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.2.7**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.2.8**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.

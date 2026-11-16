@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.8 — Kältemittelspezifische Berechnungsvorgaben
+
+- R448A und R513A starten mit 25 K Überhitzung, 2 K Unterkühlung, 1 K Flüssigkeitsverlustgrenze und 28 bar Auslegungsdruck.
+- R744 verwendet ebenfalls 25 K, 2 K und 1 K; seine Verflüssigung startet bei 5 °C, der Auslegungsdruck bleibt bei 100 bar.
+- Beim Kältemittelwechsel und Zurücksetzen gelten die jeweiligen Vorgaben; gespeicherte Projekte behalten ihre eigenen Werte.
+
 ## 0.2.7 — Projektdatei direkt herunterladen
 
 - „Sichern“ startet den Download der `.rohrrunner`-Projektdatei direkt, ohne vorgeschalteten In-App- oder Dateiauswahldialog.

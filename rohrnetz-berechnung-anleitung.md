@@ -35,7 +35,7 @@ CoolProp 8.0.0 wird lokal als WebAssembly geladen. Die Anwendung fordert Sättig
 
 Für die Saugleitung gilt die Taupunkttemperatur plus eingestellte Überhitzung. Für die Flüssigkeitsleitung wird eine konstante Flüssigkeitstemperatur `T_liquid = T_condensation − subcooling` angesetzt. Bei zeotropen Gemischen werden Blasen- und Taupunkt getrennt behandelt.
 
-R744 wird ab einer Verflüssigungstemperatur am kritischen Punkt `304.1282 K` (etwa `30.98 °C`) abgewiesen. Druckgas-/Gaskühlerzustände werden nicht ausgewertet.
+R744 wird ab einer Verflüssigungstemperatur am kritischen Punkt `304.1282 K` (etwa `30.98 °C`) abgewiesen. Druckgas-/Gaskühlerzustände werden nicht ausgewertet. Die UI-Startwerte (R513A/R448A: 25 K Überhitzung, 2 K Unterkühlung, 1 K Flüssigkeitsverlustgrenze, 28 bar Überdruck; R744 zusätzlich 5 °C Verflüssigung und 100 bar Überdruck) sind Eingabevorgaben, keine technische Freigabe oder allgemeingültige Auslegungswerte. Gespeicherte Projekte behalten ihre eigenen Einstellungen.
 
 ## 4. Lastfälle und Massenströme
 

@@ -10,6 +10,23 @@ context.globalThis = context;
 runInContext(read('src/editor-core.js'), createContext(context), { filename: 'editor-core.js' });
 const editor = context.RohrRunnerEditor;
 
+test('Standard-Betriebspunkte sind je Kältemittel konsistent mit der Oberfläche', () => {
+  const app=read('src/app.js'),html=read('index.html');
+  const definitions=app.match(/  const defaults=\{[^\n]+\};\n  const defaultsForFluid=[^\n]+;/)?.[0];
+  assert.ok(definitions,'Vorgaben und Kältemittelauswahl vorhanden');
+  const getDefaults=runInContext(`${definitions}\ndefaultsForFluid`,createContext({}));
+  for(const fluid of ['R513A','R448A','R744']){
+    const values=getDefaults(fluid);
+    assert.equal(values.fluid,fluid);
+    for(const [key,value] of Object.entries({superheatK:25,subcoolingK:2,liquidLimitK:1,condensationC:fluid==='R744'?5:45,designPressureBar:fluid==='R744'?100:28})){
+      assert.equal(values[key],value,`${fluid}: ${key}`);
+      if(fluid==='R513A')assert.match(html,new RegExp(`data-setting="${key}"[^>]*value="${value}"`));
+    }
+  }
+  assert.match(app,/\['condensationC','superheatK','subcoolingK','liquidLimitK','designPressureBar'\]/);
+  assert.match(app,/resetSettings'\)\.onclick=.*defaultsForFluid\(document\.querySelector/);
+});
+
 test('frei definierbare Leistungen akzeptieren deutsche und internationale Dezimalwerte', () => {
   assert.equal(editor.parseDecimal('3,75'), 3.75);
   assert.equal(editor.parseDecimal('1.234,56'), 1234.56);
