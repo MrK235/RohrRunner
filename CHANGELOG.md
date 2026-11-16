@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.14 — Rohrgröße im Ergebnis gezielt nachrechnen
+
+- Änderungen an einer Rohrgröße in der Ergebnisliste lösen eine Nachrechnung mit den zuletzt berechneten Größen aller anderen SL- und FL-Leitungen aus; deren Auto-/Manuell-Modus im Projekt bleibt erhalten.
+- Druckverluste, Stoffzustände und Warnungen werden neu berechnet. Der Knopf „Netz berechnen“ führt weiterhin eine vollständige automatische Neuauslegung aus.
+
 ## 0.2.13 — Metrischen Rohrkatalog bereinigt
 
 - 35 × 1 mm und 54 × 2 mm aus dem metrischen Rohrkatalog entfernt; Browser- und Worker-Katalog synchronisiert.

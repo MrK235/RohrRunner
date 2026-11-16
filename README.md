@@ -1,6 +1,6 @@
 # RohrRunner
 
-**RohrRunner 0.2.13** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
+**RohrRunner 0.2.14** ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung verzweigter Kältemittelrohrnetze. Ein PDF-Grundriss dient als Zeichenfläche. Rohrnetz, Betriebspunkt und Lasten werden im Browser bearbeitet und mit dem lokalen Rechenkern ausgewertet.
 
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug. Die Berechnung ersetzt weder die verantwortliche Fachplanung noch Herstellerfreigaben, Normprüfung oder die Abnahme einer Anlage.
 
@@ -67,7 +67,7 @@ Beim Wechsel auf R744 gelten 5 °C Verflüssigung und 100 bar Überdruck als Vor
 
 ### Ergebnis
 
-Die Ergebnisliste gruppiert Saug- und Flüssigkeitsleitung je Abschnitt und zeigt Rohrgrößen, Temperaturverluste und Geschwindigkeiten nebeneinander. Rohrgrößen lassen sich direkt in der Tabelle ändern; danach ist eine neue Berechnung erforderlich. Kühlstellen zeigen die tatsächliche Verdampfungstemperatur am Endpunkt, Saug- und Flüssigkeitstemperaturverlust, verbleibende Unterkühlung und die vorgegebene Kühlstellenleistung. Rohrabschnitte und Kühlstellen bleiben neutral und werden nur bei Auffälligkeiten orange oder bei Grenzverletzungen rot markiert. In der Kühlstellenliste wird der betroffene Endpunktwert zusätzlich hervorgehoben. Ergebnisse können als semikolongetrennte CSV mit UTF-8-BOM exportiert werden.
+Die Ergebnisliste gruppiert Saug- und Flüssigkeitsleitung je Abschnitt und zeigt Rohrgrößen, Temperaturverluste und Geschwindigkeiten nebeneinander. Rohrgrößen lassen sich direkt in der Tabelle ändern; die anschließende Nachrechnung hält alle anderen Größen fest. Der Knopf „Netz berechnen“ startet dagegen die vollständige automatische Auslegung neu. Kühlstellen zeigen die tatsächliche Verdampfungstemperatur am Endpunkt, Saug- und Flüssigkeitstemperaturverlust, verbleibende Unterkühlung und die vorgegebene Kühlstellenleistung. Rohrabschnitte und Kühlstellen bleiben neutral und werden nur bei Auffälligkeiten orange oder bei Grenzverletzungen rot markiert. In der Kühlstellenliste wird der betroffene Endpunktwert zusätzlich hervorgehoben. Ergebnisse können als semikolongetrennte CSV mit UTF-8-BOM exportiert werden.
 
 ## Kältemittel und Rohrkatalog
 
@@ -122,4 +122,4 @@ Die vollständigen Modellannahmen stehen im [Berechnungsleitfaden](rohrnetz-bere
 
 ## Version und Lizenz
 
-Der Softwarestand ist **0.2.13**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.
+Der Softwarestand ist **0.2.14**. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Erhöhung der Patchnummer. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Jede Änderung wird dokumentiert und committed; ein Push erfolgt nur auf ausdrücklichen Wunsch. Die Versionsnummern in `package.json` und in der Oberfläche werden gemeinsam aktualisiert. Siehe [CONTRIBUTING.md](CONTRIBUTING.md) und [CHANGELOG.md](CHANGELOG.md). Im Repository liegt eine MIT-Lizenz für die mitgelieferte CoolProp-Laufzeit unter `vendor/coolprop/LICENSE`; eine separate Projektlizenz für RohrRunner ist derzeit nicht enthalten.

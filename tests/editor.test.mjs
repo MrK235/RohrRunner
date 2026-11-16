@@ -165,6 +165,29 @@ test('Rohrangaben an senkrechter Leitung haben Vorrang vor Kühlstellennamen', (
   assert.equal(inchResult.annotations[0].text, '3/4" / 1-3/8"');
 });
 
+test('Ergebnis-Nachrechnung hält alle anderen Rohrgrößen fest, ohne den Editor zu ändern', () => {
+  const app=read('src/app.js');
+  const helper=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
+  const project={nodes:[],edges:[
+    {id:'a',thermal:{suction:{mode:'manual',sizeId:'28x1.5'},liquid:{mode:'auto'}}},
+    {id:'b',thermal:{suction:{mode:'auto'},liquid:{mode:'manual',sizeId:'12x1'}}}
+  ]};
+  const make=runInContext(`(${helper})`,createContext({project,clone:value=>JSON.parse(JSON.stringify(value))}));
+  const locked={changedKey:'a:suction',rows:[
+    {edgeId:'a',type:'suction',sizeId:'22x1'}, {edgeId:'a',type:'liquid',sizeId:'15x1'},
+    {edgeId:'b',type:'suction',sizeId:'22x1'}, {edgeId:'b',type:'liquid',sizeId:'12x1'}
+  ]};
+  const calculated=make(locked);
+  assert.equal(calculated.edges[0].thermal.suction.sizeId,'28x1.5');
+  assert.equal(calculated.edges[0].thermal.liquid.sizeId,'15x1');
+  assert.equal(calculated.edges[1].thermal.suction.sizeId,'22x1');
+  assert.equal(calculated.edges[1].thermal.liquid.sizeId,'12x1');
+  assert.equal(project.edges[1].thermal.suction.mode,'auto');
+  project.edges[0].thermal.suction={mode:'auto',sizeId:null};
+  assert.equal(make(locked).edges[0].thermal.suction.mode,'auto','nur die geänderte Größe darf automatisch neu gewählt werden');
+  assert.match(app,/if\(locked\?\.rows\)for\(const row of result\.rows\)/);
+});
+
 test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente ab', () => {
   const html = read('index.html'), app = read('src/app.js');
   assert.match(html, /src\/editor-core\.js/);

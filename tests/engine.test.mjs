@@ -140,6 +140,21 @@ test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihen
   assert.equal(status.has('branch-b:liquid'),false);
 });
 
+test('Nachrechnung einer Ergebnisgröße verändert keine anderen Rohrgrößen', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network(),input={...settings,superheatK:25,subcoolingK:2,liquidLimitK:1,designPressureBar:28};
+  const before=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  const changed=plan.edges.find(edge=>edge.id==='branch-a');
+  changed.thermal={suction:{mode:'manual',sizeId:'28x1.5'}};
+  const app=read('src/app.js'),fn=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
+  const prepare=runInContext(`(${fn})`,createContext({project:plan,clone:value=>JSON.parse(JSON.stringify(value))}));
+  const frozen=prepare({rows:before.rows,changedKey:'branch-a:suction'});
+  const after=context.RohrRunnerEngine.calculate(frozen,1,input,context.RohrStoffdaten,catalog);
+  for(const row of before.rows){const next=after.rows.find(item=>item.edgeId===row.edgeId&&item.type===row.type);assert.equal(next.sizeId,row.edgeId==='branch-a'&&row.type==='suction'?'28x1.5':row.sizeId,`${row.edgeId}:${row.type}`)}
+  assert.equal(plan.edges[0].thermal,undefined,'automatische Größen bleiben im Projekt automatisch');
+  assert.notEqual(before.endpoints[0].suctionK,after.endpoints[0].suctionK,'Stoffwerte und Druckverluste werden neu gerechnet');
+});
+
 test('Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast', async () => {
   await context.RohrStoffdaten.load();
   const input={...settings,superheatK:25,subcoolingK:2,liquidLimitK:1,designPressureBar:28,simultaneity:0};
