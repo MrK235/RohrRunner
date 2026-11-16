@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.9 — Phasengrenze bei R744 ohne Stoffwertfehler behandeln
+
+- Bei erschöpfter Flüssigkeitsunterkühlung werden PT-Stoffwerte nicht mehr exakt am Sättigungsdruck angefordert; betroffene Endpunktpfade zeigen stattdessen 0 K verbleibende Unterkühlung und ein Phasenrisiko.
+- Ein synthetischer R744-Test prüft den Grenzfall mit 2 K und das Verhalten bei 3 K Unterkühlung. Die Grenze der stationären Einphasenrechnung bleibt bestehen.
+
 ## 0.2.8 — Kältemittelspezifische Berechnungsvorgaben
 
 - R448A und R513A starten mit 25 K Überhitzung, 2 K Unterkühlung, 1 K Flüssigkeitsverlustgrenze und 28 bar Auslegungsdruck.

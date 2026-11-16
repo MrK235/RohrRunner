@@ -95,7 +95,7 @@ Je Teilabschnitt wird der Druckverlust berechnet als:
 
 Dabei sind `L` die gesamte hydraulische Länge, `N` die Integrationsschritte, `D` der Innendurchmesser, `F` der Reibungszuschlag, `ζ` die Summe lokaler Einzelwiderstände, `ρ` die Dichte, `v` die mittlere Geschwindigkeit, `g = 9.80665 m/s²` und `Δz` die Höhendifferenz. Der eingestellte Viskositätszuschlag wird auf die Stoffwertviskosität angewendet. Höhendifferenzen werden je Leitungsart geführt; positives `Δz` bedeutet Anstieg in Fließrichtung.
 
-Die Saugseite wird in acht, die Flüssigkeitsseite in vier Teilabschnitte integriert. Stoffwerte werden während dieser Integration am jeweils aktuellen Druck ausgewertet. Flüssigkeitsdruck wird vor dem Unterschreiten der berechneten Phasengrenze begrenzt und als Phasenrisiko gemeldet.
+Die Saugseite wird in acht, die Flüssigkeitsseite in vier Teilabschnitte integriert. Stoffwerte werden während dieser Integration am jeweils aktuellen Druck ausgewertet. Flüssigkeitsdruck wird vor dem Unterschreiten der berechneten Phasengrenze mit einem kleinen relativen Abstand (10⁻⁵) oberhalb des Sättigungsdrucks begrenzt: PT-Stoffwerte sind exakt auf der Phasengrenze nicht eindeutig. Trifft ein Abschnitt diese Grenze, wird die verbleibende Unterkühlung des betroffenen Endpunktpfads konservativ mit 0 K ausgewiesen und ein Phasenrisiko gemeldet. Die Einphasenrechnung liefert für den dahinterliegenden Bereich keine Zweiphasen-Stoffwerte; größere Rohrgrößen können den Druckverlust gegebenenfalls verringern.
 
 ## 7. Druckrichtung und Endpunktzustände
 

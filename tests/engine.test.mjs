@@ -85,6 +85,18 @@ test('terminal pipe allowance is added to the final section and riser is retaine
   assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._terminalRiser,false);
 });
 
+test('R744 meldet erschöpfte Unterkühlung im verzweigten Netz ohne Stoffwertfehler', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network();
+  plan.edges[0].thermal={liquid:{deltaZ:27}};
+  const input={...settings,fluid:'R744',superheatK:25,subcoolingK:2,liquidLimitK:1,condensationC:5,designPressureBar:100};
+  const result=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
+  assert.ok(result.issues.some(issue=>issue.type==='phase'));
+  assert.ok(result.endpoints.some(end=>end.remainingSubcoolingK===0));
+  const moreSubcooling=context.RohrRunnerEngine.calculate(plan,1,{...input,subcoolingK:3},context.RohrStoffdaten,catalog);
+  assert.ok(!moreSubcooling.issues.some(issue=>issue.type==='phase'));
+});
+
 test('neue UI-Betriebspunkte sind für alle drei Kältemittel berechenbar', async () => {
   await context.RohrStoffdaten.load();
   for (const fluid of ['R513A','R448A','R744']) {

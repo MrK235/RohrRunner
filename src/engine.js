@@ -66,6 +66,8 @@
     data=root.RohrnetzFastData?.create(data,settings)||data;
     const rootP=data.saturationAtTemperature(f,te+273.15).dewPressurePa, liquidP=data.saturationAtTemperature(f,tc+273.15).bubblePressurePa, liquidT=tc+273.15-sc;
     const liquidPhaseLimit=data.saturationAtTemperature(f,liquidT).bubblePressurePa;
+    // PT-Stoffwerte sind am exakten Sättigungsdruck nicht eindeutig (Flüssigkeit/Dampf).
+    const liquidPhaseGuard=liquidPhaseLimit*(1+1e-5);
     const series=catalog.series.find(s=>s.id===(f==='R744'?'k65-inch-120bar':'cuprofrio-metric'));
     if(!series)fail('Für diesen Kältemittelkreis fehlt ein Rohrkatalog.');
     const sizes=series.sizes.filter(s=>(s.catalogBar??120)>=ps+1.01325 && diOf(s)>0).sort((a,b)=>diOf(a)-diOf(b));
@@ -100,7 +102,7 @@
         const dp=(ff*len/steps/d*fittings+zeta/steps)*dynamic+rho*G*dz;
         drop+=dp;vmaxSeen=Math.max(vmaxSeen,velocity);vminSeen=Math.min(vminSeen,velocity);
         const nextPressure=pressure-dp;
-        if(type==='liquid'&&nextPressure<liquidPhaseLimit){pressure=liquidPhaseLimit;phaseRisk=true;break;}
+        if(type==='liquid'&&nextPressure<=liquidPhaseGuard){pressure=liquidPhaseGuard;phaseRisk=true;break;}
         if(nextPressure<=1000){pressure=1000;phaseRisk=true;break;}
         pressure=nextPressure;
       }
@@ -133,7 +135,9 @@
       const liquidEnd=new Map([[graph.start.id,liquidP]]);
       for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,pIn=liquidEnd.get(pid),r=segment(edge,'liquid',massByNode.get(id),pIn,selected.get(`${edge.id}:liquid`),1);liquidEnd.set(id,r.pOut);lineResults.set(`${edge.id}:liquid`,{...r,flow:massByNode.get(id),pIn});}
       for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,out=suctionP.get(pid),flow=massByNode.get(id);let pin=out+100,r;for(let j=0;j<25;j++){r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`),-1);const err=pin-r.drop-out;if(Math.abs(err)<Math.max(.5,pin*1e-8))break;pin=Math.max(out+1,pin-err*.7);}r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`),-1);suctionP.set(id,pin);lineResults.set(`${edge.id}:suction`,{...r,flow,pIn:pin,pOut:out});}
-      const endpoint=graph.byId.get(target), psEnd=suctionP.get(target),plEnd=liquidEnd.get(target),sK=data.saturationAtPressure(f,psEnd).dewK-data.saturationAtPressure(f,rootP).dewK,lK=data.saturationAtPressure(f,liquidP).bubbleK-data.saturationAtPressure(f,plEnd).bubbleK,remaining=data.saturationAtPressure(f,plEnd).bubbleK-liquidT;
+      const endpoint=graph.byId.get(target), psEnd=suctionP.get(target),plEnd=liquidEnd.get(target),sK=data.saturationAtPressure(f,psEnd).dewK-data.saturationAtPressure(f,rootP).dewK,lK=data.saturationAtPressure(f,liquidP).bubbleK-data.saturationAtPressure(f,plEnd).bubbleK;
+      const phaseRisk=pathTo(target).some(id=>lineResults.get(`${id}:liquid`)?.phaseRisk);
+      const remaining=phaseRisk?0:data.saturationAtPressure(f,plEnd).bubbleK-liquidT;
       return {targetId:target,name:endpoint.name,evaporationC:data.saturationAtPressure(f,psEnd).dewK-273.15,coolingKW:Number(endpoint.coolingKW)||0,suctionK:sK,liquidK:lK,remainingSubcoolingK:remaining,suctionPressurePa:psEnd,liquidPressurePa:plEnd,lineResults,massByNode,suctionP,liquidEnd};
     }
     // Deterministic upgrade loop: evaluate whole-network endpoint cases, then grow the
