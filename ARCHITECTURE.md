@@ -36,7 +36,7 @@ Die Berechnung läuft über `Worker`. Unter `file://` lädt die App das generier
 | `src/worker.js` | Worker-Nachrichtenformat und Aufruf des Solvers |
 | `src/worker-bundle.js` | Generiertes, vollständig eingebettetes Bundle für Blob-Worker unter `file://` |
 | `scripts/build-worker-bundle.mjs` | Erzeugt das Bundle aus Worker, CoolProp, Stoffdaten und Solver |
-| `RohrRunner.bat` | Optionaler Windows-Shortcut zum Öffnen der HTML-Datei |
+| `RohrRunner.bat` / `RohrRunner.sh` | Starten den lokalen Server und öffnen die Anwendung im Standardbrowser |
 | `src/style.css` | Layout, Zeichenfläche, Inspector und responsive Anpassungen |
 | `data/pipe-catalog.json` | Rohrserien, Geometrie, Druckangaben, Bedingungen und Quellen |
 | `data/pipe-catalog.js` | Browser-Global `RohrKatalog` für direkt geöffnetes HTML und Worker |

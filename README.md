@@ -13,7 +13,7 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 
 ## Schnellstart
 
-1. `index.html` direkt im Browser öffnen; unter Windows alternativ `RohrRunner.bat` starten.
+1. Unter Windows `RohrRunner.bat`, unter Linux `./RohrRunner.sh` starten; beide Skripte starten den lokalen Server und öffnen RohrRunner im Browser. Alternativ kann `index.html` direkt geöffnet werden.
 2. Optional einen PDF-Grundriss laden und den Maßstab mit zwei Punkten oder über `m / px` kalibrieren.
 3. Einen Verbund und Kühlstellen setzen, Leistungen in kW eintragen und die Leitungen rechtwinklig verbinden.
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
@@ -96,6 +96,7 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `vendor/pdfjs/` und `vendor/pdf-lib/` – lokale PDF-Bibliotheken inklusive Lizenzen
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
 - `manifest.webmanifest`, `sw.js`, `src/pwa.js` – PWA-Manifest, Offline-Cache und Registrierung
+- `RohrRunner.bat`, `RohrRunner.sh` – Startskripte für lokalen Server und Browser
 
 ```bash
 npm test                 # nur Tests zu geänderten Dateien
