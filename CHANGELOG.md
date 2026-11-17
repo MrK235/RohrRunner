@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+## 0.2.20 — Release-Aufbereitung und CSV-Projektkopf
+
+- CSV-Export um kompakte Projektinformationen und Vorgabewerte in zweispaltiger Darstellung ergänzt; erweiterte interne Angaben werden nicht ausgegeben.
+- Ergebnisansicht und CSV verwenden dieselbe Reihenfolge der Rohrstrecken von den Kühlstellen über die T-Stücke bis zum Verbund.
+- README für den aktuellen Funktionsumfang, CSV-Export, Schnellstart und fachliche Grenzen neu strukturiert.
+- GitHub-Verknüpfung und Meep-meep-Wortmarke in der Oberfläche vereinheitlicht.
+
 ## 0.2.19 — Aussagekräftiger Berechnungs-CSV-Export
 
 - Berechnungs-CSV um Rohrstrecke, getrennte SL-/FL-Dimensionen, berechnete Temperaturen, Druckverluste, Geschwindigkeiten und Leistung ergänzt.
