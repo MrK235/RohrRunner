@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 0.2.19 — Aussagekräftiger Berechnungs-CSV-Export
+
+- Berechnungs-CSV um Rohrstrecke, getrennte SL-/FL-Dimensionen, berechnete Temperaturen, Druckverluste, Geschwindigkeiten und Leistung ergänzt.
+- Zahlenwerte werden einheitlich mit zwei Nachkommastellen und Einheiten im jeweiligen Feld ausgegeben.
+
 ## 0.2.18 — Materialliste exportieren
 
 - Materialliste in der rechten Seitenleiste ergänzt: Rohrlängen und T-Stücke werden jeweils leitungsübergreifend summiert; Armaflex-Schlauch wird nach Saugleitung und Flüssigkeitsleitung anhand des Rohr-Außendurchmessers gruppiert.

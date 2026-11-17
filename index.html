@@ -7,14 +7,14 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="topbar-left"><a class="brand" href="#" aria-label="RohrRunner Start, Version 0.2.18" title="RohrRunner Version 0.2.18"><span class="brand-mark">R</span><span><b>RohrRunner</b><small>VERSION 0.2.18 · THERMAL NETWORK STUDIO</small></span></a>
+    <div class="topbar-left"><a class="brand" href="#" aria-label="RohrRunner Start, Version 0.2.19" title="RohrRunner Version 0.2.19"><span class="brand-mark">R</span><span><b>RohrRunner</b><small>VERSION 0.2.19 · THERMAL NETWORK STUDIO</small></span></a>
       <div class="project-title"><div class="project-label-row"><span class="eyebrow">PROJEKT</span><span id="saveState" class="save-state" role="status" aria-live="polite"><i></i> Gespeichert</span></div><input id="projectName" value="Neues Rohrnetz" aria-label="Projektname"></div></div>
     <span class="badge draft" id="calcBadge" role="status" aria-live="polite"><i></i> ENTWURF</span>
     <div class="top-actions"><button id="projectsButton" class="icon-button" title="Gespeicherte Projekte verwalten">▤<span>Projekte</span></button><button id="resetProject" class="icon-button" title="Neues leeres Rohrnetz starten">＋<span>Neu</span></button><button id="importProject" class="icon-button" title="Projektdatei öffnen">↥<span>Öffnen</span></button><button id="exportProject" class="icon-button" title="Projektdatei sichern">↧<span>Sichern</span></button><input id="projectFile" type="file" accept=".rohrrunner,.rohrtanplan,application/json" hidden></div>
   </header>
   <section id="welcomeScreen" class="welcome-screen" aria-labelledby="welcomeTitle">
     <div class="welcome-modal">
-      <header class="welcome-top"><a class="brand welcome-brand" href="#" aria-label="RohrRunner Startseite"><span class="brand-mark">R</span><span><b>RohrRunner</b><small>ROHRNETZPLANUNG</small></span></a><div class="welcome-wordmark" aria-label="meep meep"><span>meep</span><span>meep</span></div><span class="welcome-version">Version 0.2.18</span></header>
+      <header class="welcome-top"><a class="brand welcome-brand" href="#" aria-label="RohrRunner Startseite"><span class="brand-mark">R</span><span><b>RohrRunner</b><small>ROHRNETZPLANUNG</small></span></a><div class="welcome-wordmark" aria-label="meep meep"><span>meep</span><span>meep</span></div><span class="welcome-version">Version 0.2.19</span></header>
       <div class="welcome-heading"><h1 id="welcomeTitle">Projekt öffnen oder neu anlegen</h1><p>Wählen Sie einen Einstieg.</p></div>
       <div class="welcome-actions"><button id="welcomeProjects" class="welcome-action"><span class="welcome-action-icon project-icon">▤</span><span><b>Projekte</b><small>Gespeicherte Projekte verwalten</small></span><i>→</i></button><button id="welcomeNew" class="welcome-action welcome-action-primary"><span class="welcome-action-icon">＋</span><span><b>Neues Projekt</b><small>Leeres Rohrnetz anlegen</small></span><i>→</i></button><button id="welcomePdf" class="welcome-action"><span class="welcome-action-icon pdf-icon">▧</span><span><b>PDF laden</b><small>Grundriss als Projektgrundlage öffnen</small></span><i>→</i></button></div>
       <div id="welcomeDropHint" class="welcome-drop-hint" aria-live="polite">PDF hier ablegen</div>
