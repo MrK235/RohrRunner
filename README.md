@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und **technischen Vorbemessung von Kältemittelrohrnetzen**. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Kühlstellen, Lasten und Betriebspunkten. Der integrierte Solver ermittelt Rohrgrößen und zeigt Druckverluste, Geschwindigkeiten und Hinweise direkt am Netz und in der Ergebnisliste.
 
-**Version 0.2.17** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 0.2.18** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 > [!IMPORTANT]
 > RohrRunner ist ein Planungs- und Vorbemessungswerkzeug, **keine technische Freigabe**. Ergebnisse und Anwendungsgrenzen müssen vor der Ausführung durch die verantwortliche Fachplanung geprüft werden. Es werden weder Normerfüllung noch global optimale Rohrgrößen zugesichert.

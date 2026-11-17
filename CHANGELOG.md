@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 0.2.18 — Materialliste exportieren
+
+- Materialliste in der rechten Seitenleiste ergänzt: Rohrlängen und T-Stücke werden jeweils leitungsübergreifend summiert; Armaflex-Schlauch wird nach Saugleitung und Flüssigkeitsleitung anhand des Rohr-Außendurchmessers gruppiert.
+- Anschlussgrößen von T-Stücken und Kugelabsperrventile je Kühlstellenanschluss werden gruppiert angezeigt; Materialgruppen sind einzeln einklappbar.
+- Materialliste als CSV exportierbar; Herstellerdaten werden nicht ausgegeben.
+
 ## 0.2.17 — GitHub-README mit Einblicken
 
 - README für GitHub neu gestaltet: Schnellstart, Bedienung, Auslegung, Datenhaltung, technische Grenzen und Entwicklerhinweise übersichtlich dokumentiert.
