@@ -134,7 +134,7 @@ body{min-width:0}
 .result-group>summary::after{content:"⌄";font:12px var(--mono);color:#7f939a}
 .result-group[open]>summary::after{content:"⌃"}
 .pipe-results>summary{margin-bottom:9px}
-.endpoint-results>summary{margin:0 0 9px 9px}
+.endpoint-results>summary{margin:0 0 9px}
 input[type="number"]{color-scheme:dark}
 input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{background-color:#111e26;filter:none;opacity:0;border-radius:3px;transition:opacity .12s ease}
 input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover::-webkit-outer-spin-button,input[type="number"]:focus::-webkit-inner-spin-button,input[type="number"]:focus::-webkit-outer-spin-button{opacity:.36}
