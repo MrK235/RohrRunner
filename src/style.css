@@ -22,6 +22,19 @@ dialog[open]{animation:dialog-in .12s ease-out}
 body{min-width:0}
 .shell{grid-template-columns:68px minmax(0,1fr) minmax(320px,390px)}
 .rail,.workspace,.inspector{min-width:0}
+.inspector-tabs{grid-template-columns:repeat(4,minmax(0,1fr));padding-right:10px;padding-left:10px}
+.materials{display:flex;flex-direction:column;gap:12px}
+.material-section{overflow:hidden;border:1px solid #34434b;border-radius:7px;background:#1a272f}
+.material-section-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-bottom:1px solid #2b3b44;background:#1d2d36}
+.material-section-heading b{color:#dce7e8;font:650 10px var(--sans)}
+.material-section-heading span{color:#7f939a;font:8px var(--mono)}
+.material-table{padding:2px 9px}
+.material-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:31px;border-bottom:1px solid #293941;color:#aebfc1;font:9px var(--mono)}
+.material-row:last-child{border-bottom:0}
+.material-row>span{min-width:0;overflow-wrap:anywhere}
+.material-row>b{flex:none;color:#d7e2e4;font:10px var(--mono)}
+.material-empty{margin:0;padding:9px 10px;color:#768a90;font-size:9px}
+.material-stale{margin:0 0 2px;padding:8px 9px;border:1px solid #73583a;border-radius:5px;background:#3b3125;color:#f0c98c;font-size:9px;line-height:1.4}
 .canvas-toolbar{min-width:0;overflow:hidden}
 .crumb{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .canvas-actions{min-width:0;flex:1;overflow-x:auto;justify-content:flex-end;scrollbar-width:thin}
