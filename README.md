@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Verbund, Kühlstellen, Lasten und Betriebspunkten.
 
-**Version 1.0.0** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 1.0.1** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 [Öffentliches Repository auf GitHub](https://github.com/MrK235/RohrRunner)
 
@@ -37,7 +37,8 @@ npm run serve
 - Betriebspunkte, Höhendifferenzen, Zusatzlängen und Einzelwiderstände je Abschnitt
 - Druckverluste, Geschwindigkeiten, Temperaturverluste und Warnungen
 - Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Verbund sortiert
-- Lokale Projektverwaltung, `.rohrrunner`-Import/-Export, Ergebnis-CSV und Plan-PDF
+- Lokale Projektverwaltung, `.rohrrunner`-Import, Ergebnis-CSV und Plan-PDF
+- Projektpaket als ZIP mit `.rohrrunner`, verfügbaren Berechnungs-/Material-CSV und PDF-Grundriss plus Plan-PDF
 
 ## Ergebnis-CSV
 
@@ -78,7 +79,7 @@ Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Ver
 
 ## Projekte und Datenschutz
 
-Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. Eine exportierte `.rohrrunner`-Datei kann das geladene PDF als Base64 enthalten.
+Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Original-Grundriss und dem exportierten Plan-PDF. Die `.rohrrunner`-Datei enthält den Grundriss zusätzlich eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
 
 Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen lädt der Browser Bibliotheken von Cloudflare bzw. jsDelivr.
 
@@ -91,6 +92,7 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `src/engine.js` – Berechnung und Dimensionierung
 - `src/stoffdaten.js` – Stoffdatenzugriff
 - `src/worker.js` / `src/worker-bundle.js` – Berechnungs-Worker
+- `src/zip.js` – ZIP-Erstellung für lokale Projektpakete
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
 
 ```bash

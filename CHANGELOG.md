@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 1.0.1 — Projektdateien als ZIP sichern
+
+- Die Schaltfläche „Sichern“ erstellt ein ZIP-Paket mit `.rohrrunner`, verfügbaren Berechnungs- und Material-CSV sowie Original-Grundriss und exportiertem Plan-PDF.
+- ZIP-Erstellung erfolgt lokal ohne zusätzliche Bibliothek.
+- ZIP-Erzeugung und Unicode-Dateinamen mit Tests abgesichert.
+
 ## 1.0.0 — Erste stabile Funktionsfassung
 
 - Funktionsumfang und fachliche Grenzen für den stabilen Release dokumentiert; unterstützt werden stationäre einphasige Saug-/Flüssigkeitsleitungen in zusammenhängenden Baum-Netzen sowie die vorhandenen Kältemittelmodi.

@@ -27,6 +27,7 @@ Die Berechnung läuft über `Worker`. Unter `file://` lädt die App das generier
 | --- | --- |
 | `index.html` | UI-Struktur, Standardwerte, Script-Reihenfolge und CDN-Einbindung der PDF-Bibliotheken |
 | `src/app.js` | UI-Ereignisse, Zeichnen/Ansicht, lokale Speicherung, Import/Export, Worker-Kommunikation und Ergebnisdarstellung |
+| `src/zip.js` | Erstellt lokal ZIP-Archive für Projektpakete ohne zusätzliche Laufzeitabhängigkeit |
 | `src/editor-core.js` | Unabhängige Geometrieoperationen wie rechtwinklige Pfade, Segmentkreuzungen, Verschieben und Löschen von Knoten/Leitungen |
 | `src/engine.js` | Baumvalidierung, Massenströme, hydraulische Segmentrechnung, Szenarien und automatische/manuelle Rohrwahl |
 | `src/stoffdaten.js` | CoolProp-Lader, Stoffwertzugriff, Phasenprüfung, Einheiten/Sättigungswerte und Viskositätskorrekturen |
@@ -54,8 +55,8 @@ Projekt- und Planinhalte werden im aktuellen Anwendungsablauf nicht an einen Pro
 
 `src/app.js` erstellt eine unveränderliche Kopie der Knoten und Leitungen und sendet diese mit Maßstab und Betriebseinstellungen an den Worker. `src/engine.js` prüft zuerst, ob das Netz genau einen Anlagenstart besitzt, verbunden, kreisfrei, rechtwinklig und maßstäblich ist. Ungültige Lasten oder Knotengrade brechen mit einer verständlichen Eingabemeldung ab.
 
-Der Solver liefert Ergebniszeilen pro Leitung und Typ (`suction`, `liquid`), Endpunktwerte und Grenzwertmeldungen. Manuelle Größen bleiben fest; automatische Größen werden aus der passenden Katalogserie gewählt. Nach Abschluss zeigt die UI das Ergebnis an und ermöglicht CSV- bzw. Plan-PDF-Export.
+Der Solver liefert Ergebniszeilen pro Leitung und Typ (`suction`, `liquid`), Endpunktwerte und Grenzwertmeldungen. Manuelle Größen bleiben fest; automatische Größen werden aus der passenden Katalogserie gewählt. Nach Abschluss zeigt die UI das Ergebnis an und ermöglicht CSV- bzw. Plan-PDF-Export. Die Projektpaket-Sicherung bündelt die `.rohrrunner`-Datei, verfügbare CSV-Dateien und Plan-PDFs über `src/zip.js` in einem unkomprimierten ZIP-Archiv.
 
 ## Tests
 
-`tests/editor.test.mjs` prüft Geometrie, Dezimalparser, Netzbearbeitung, Exportwiederherstellung und ausgewählte UI-Verträge. `tests/engine.test.mjs` prüft unter anderem Reibung, Kataloglabels, Netzvalidierung sowie gültige und explizit abgewiesene Berechnungsfälle. Ausführung: `npm test`.
+`tests/editor.test.mjs` prüft Geometrie, Dezimalparser, Netzbearbeitung, Exportwiederherstellung und ausgewählte UI-Verträge. `tests/zip.test.mjs` prüft ZIP-Struktur, CRC-32 und UTF-8-Dateinamen. `tests/engine.test.mjs` prüft unter anderem Reibung, Kataloglabels, Netzvalidierung sowie gültige und explizit abgewiesene Berechnungsfälle. Ausführung: `npm test`.

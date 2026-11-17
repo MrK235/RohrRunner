@@ -209,7 +209,7 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.doesNotMatch(app, /\$\('startBlank'\)/);
   assert.match(app, /function createStart\(point\).*name:'Verbund'.*setTool\('endpoint'\)/);
   assert.doesNotMatch(app, /showSaveFilePicker|prepareProjectDownload/);
-  assert.match(app, /async function exportProject\(\)\{try\{const contents=await projectFile\(\);download\(contents,.*?\.rohrrunner`,'application\/json'\)/);
+  assert.match(app, /async function exportProject\(\)\{try\{project\.name=.*?files=\[\{name:`\$\{base\}\.rohrrunner`,data:await projectFile\(\)\}/);
   assert.match(app, /document\.body\.append\(a\);a\.click\(\)/);
   assert.doesNotMatch(html, /id="saveDialog"/);
   assert.match(html, /id="confirmDialog"/);
@@ -219,6 +219,9 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.match(app, /\$\('resetProject'\)\.onclick=\(\)=>resetProject\(\)/);
   assert.match(app, /project-rename/);
   assert.doesNotMatch(html, /id="downloadProject"/);
+  assert.match(html, /src="src\/zip\.js"/);
+  assert.match(app, /RohrRunnerZip\.create\(files\)/);
+  assert.match(app, /planPdfBytes\(\)/);
   assert.match(app, /vertical\?dimWidth:height/);
   assert.match(app, /vertical\?lenWidth:height/);
   assert.match(app, /document\.addEventListener\('click'.*\[data-close\]/s);
