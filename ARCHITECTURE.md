@@ -59,4 +59,4 @@ Der Solver liefert Ergebniszeilen pro Leitung und Typ (`suction`, `liquid`), End
 
 ## Tests
 
-`tests/editor.test.mjs` prüft Geometrie, Dezimalparser, Netzbearbeitung, Exportwiederherstellung und ausgewählte UI-Verträge. `tests/zip.test.mjs` prüft ZIP-Struktur, CRC-32 und UTF-8-Dateinamen. `tests/engine.test.mjs` prüft unter anderem Reibung, Kataloglabels, Netzvalidierung sowie gültige und explizit abgewiesene Berechnungsfälle. Ausführung: `npm test`.
+`tests/editor.test.mjs` prüft Geometrie, Dezimalparser, Netzbearbeitung, Exportwiederherstellung und ausgewählte UI-Verträge. `tests/browser-shell.test.mjs` prüft die statische Browserhülle ohne Solver-Initialisierung. `tests/zip.test.mjs` prüft ZIP-Struktur, CRC-32 und UTF-8-Dateinamen. `tests/engine.test.mjs` prüft unter anderem Reibung, Kataloglabels, Netzvalidierung sowie gültige und explizit abgewiesene Berechnungsfälle. Ausführung: `npm test` (ändertestbasierte Auswahl); `npm run test:all` führt die vollständige Suite aus.

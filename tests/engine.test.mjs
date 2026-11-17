@@ -62,30 +62,6 @@ test('Darcy friction helper follows laminar limit and turbulent monotonicity', (
   assert.ok(ff(100000, 1e-6, .01) < ff(10000, 1e-6, .01));
 });
 
-test('browser shell ships local calculation assets and workflow controls', () => {
-  const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat');
-  for(const path of ['data/pipe-catalog.js','src/stoffdaten.js','src/fast-data.js','src/engine.js','src/editor-core.js','src/app.js'])assert.ok(html.includes(path),`index.html: ${path}`);
-  for(const path of ['../vendor/coolprop/coolprop-local.js','../data/pipe-catalog.js','./stoffdaten.js','./fast-data.js','./engine.js'])assert.ok(worker.includes(path),`worker: ${path}`);
-  assert.ok(worker.includes('self.document =')&&worker.includes('document.currentScript.src'),'worker supplies the Emscripten script URL without a browser document');
-  for(const control of ['openPdf','exportPlanPdf','calibrate','calculate','exportCsv','projectFile','edgeEditor'])assert.ok(html.includes(`id="${control}"`),`UI: ${control}`);
-  for(const panel of ['panelTerminals','panelCalculation','panelResults'])assert.ok(html.includes(`id="${panel}"`),`sidebar tab panel: ${panel}`);
-  assert.ok(html.includes('role="tablist"')&&html.includes('Kühlstellen</button>')&&html.includes('Berechnung</button>')&&html.includes('Ergebnis</button>'),'sidebar exposes the three workflow tabs');
-  assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
-  assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
-  assert.ok(app.includes('`${size.odMm}x${size.wallMm}mm`')&&app.includes("new Option(`${size.label} (auto)`,'auto')")&&app.includes('autoSizeIdFor(edge,type,row)')&&app.includes("directLimit?'limit':'check'"),'calculated size is the selected auto entry and remains available after manual selection');
-  assert.ok(style.includes('.result-section.check')&&style.includes('.result-section.limit')&&!style.includes('.result-section.valid'),'normal pipe sections have no green status highlight');
-  assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
-  assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));
-  assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
-  assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
-  assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
-  assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
-  assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
-  assert.ok(launcher.includes('index.html'),'Windows shortcut opens the app directly');
-  assert.ok(read('scripts/build-worker-bundle.mjs').includes('src/worker-bundle.js'),'worker bundle can be regenerated from local sources');
-  assert.ok(read('src/worker-bundle.js').includes('window.RohrRunnerWorkerBundle = '),'generated standalone worker bundle exists');
-});
-
 test('Grenzwertfehler verwenden die Beschriftungen der Berechnungsansicht', () => {
   for(const [key,value,label] of [['suctionLimitK',-1,'Druckverlustgrenze SL'],['liquidLimitK',-1,'Druckverlustgrenze FL'],['maxVelocityMS',41,'Sauggasgeschwindigkeit max.']])
     assert.throws(()=>context.RohrRunnerEngine.calculate(network(),1,{...settings,[key]:value},null,catalog),new RegExp(label));

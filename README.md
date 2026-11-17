@@ -96,7 +96,8 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
 
 ```bash
-npm test
+npm test                 # nur Tests zu geänderten Dateien
+npm run test:all         # vollständige Testsuite, nur bei Bedarf
 npm run build:worker
 ```
 

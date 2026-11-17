@@ -5,7 +5,7 @@
 1. Repository auschecken und `index.html` direkt im Browser öffnen oder mit `npm run serve` über localhost starten.
 2. Änderungen an Oberfläche, Editor und Solver in den dafür vorgesehenen Dateien halten. Es gibt keinen Build-Schritt und kein separates Lint-Skript.
 3. Bei Änderungen an Geometrie, Validierung oder Berechnung passende synthetische Tests in `tests/` ergänzen bzw. anpassen.
-4. Tests mit `npm test` ausführen und das Ergebnis im Pull Request nennen.
+4. Tests mit `npm test` ausführen; der Runner wählt anhand der geänderten Dateien nur die relevanten Tests. Die vollständige Suite ist mit `npm run test:all` verfügbar und sollte nur bei Solver-/Katalogänderungen oder gezieltem Bedarf laufen.
 
 ## Fach- und Datenänderungen
 
