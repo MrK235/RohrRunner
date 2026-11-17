@@ -1,6 +1,6 @@
 # Bekannte Fehler und Einschränkungen
 
-Diese Datei hält reproduzierbare Defekte und für Nutzende sichtbare Einschränkungen fest. Sie ist kein Nachweis einer fehlerfreien oder vollständig geprüften Software. Beim Erstellen dieser Dokumentation wurde kein vollständiger manueller Browser- oder Anlagen-QA-Lauf durchgeführt.
+Diese Datei hält reproduzierbare Defekte und für Nutzende sichtbare Einschränkungen fest. Sie ist kein Nachweis einer fehlerfreien oder vollständig geprüften Software. Für Version 1.0.0 wurde ein manueller Browser-Test vom Projektverantwortlichen bestätigt; Browser- und Betriebssystemkombinationen wurden nicht systematisch abgedeckt. Eine unabhängige Verifikation der Berechnungsergebnisse anhand von Referenzfällen steht noch aus.
 
 ## Offene, reproduzierbare Defekte
 
@@ -22,7 +22,7 @@ Der Repository-Stand enthält derzeit keine bestätigten Fehlerberichte, die hie
 
 Für einen reproduzierbaren Fehler bitte ein GitHub-Issue mit folgenden Angaben erstellen:
 
-1. Version aus der Oberfläche (`0.1.1`) und Browser/Betriebssystem.
+1. Version aus der Oberfläche sowie Browser und Betriebssystem.
 2. Schritte, die zum Fehler führen, sowie erwartetes und tatsächliches Ergebnis.
 3. Fehlermeldung aus der Browserkonsole, falls vorhanden.
 4. Möglichst ein kleines, synthetisches Rohrnetz. Keine Kundenpläne, Gebäudegrundrisse oder echten Projektdateien öffentlich anhängen.

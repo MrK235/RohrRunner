@@ -20,6 +20,6 @@
 
 ## Pull Requests
 
-Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält einen Patchsprung: Bei `x.y.z` wird ausschließlich `z` erhöht, zum Beispiel `0.1.1` auf `0.1.2`. Pro zusammengehöriger Änderung gibt es einen Patchsprung. Minor- und Major-Versionen dürfen nur auf ausdrückliche Aufforderung erhöht werden.
+Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Für normale Änderungen wird ausschließlich die Patchnummer in `x.y.z` erhöht. Minor- und Major-Releases – einschließlich `1.0.0` – erfolgen nur nach ausdrücklicher Freigabe.
 
-Versionsnummer in `package.json`, Versionsanzeige in `index.html` und Eintrag in `CHANGELOG.md` gemeinsam aktualisieren. Änderungen nach der Prüfung committen und auf `main` pushen. Dokumentationsänderungen folgen derselben Patchregel; sie erhalten keinen größeren Versionssprung.
+Bei einem Release Versionsnummer in `package.json`, Versionsanzeigen in `index.html` und `README.md` sowie Eintrag in `CHANGELOG.md` gemeinsam aktualisieren. Tests und manuelle Prüfungen mit Umfang und Grenzen dokumentieren. Änderungen nach der Prüfung committen; Push und GitHub-Release nur nach ausdrücklichem Auftrag.

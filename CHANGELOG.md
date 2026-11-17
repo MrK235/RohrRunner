@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+## 1.0.0 — Erste stabile Funktionsfassung
+
+- Funktionsumfang und fachliche Grenzen für den stabilen Release dokumentiert; unterstützt werden stationäre einphasige Saug-/Flüssigkeitsleitungen in zusammenhängenden Baum-Netzen sowie die vorhandenen Kältemittelmodi.
+- Release-Hinweise unterscheiden bestätigten manuellen Browser-Test, fehlende systematische Browser-/Betriebssystemmatrix und noch ausstehende unabhängige Berechnungsverifikation.
+- Versionsanzeigen, Beitragshinweise und veraltete Versionsbeispiele aktualisiert. RohrRunner erhält mit diesem Release keine neue Projektlizenz; die MIT-Lizenz gilt ausschließlich für die mitgelieferte CoolProp-Laufzeit.
+- Eine Ergebnislisten-Hilfsfunktion umgeordnet, damit der vorhandene Warnungszuordnungstest wieder ausführbar ist; Berechnungslogik unverändert.
+
 ## 0.2.20 — Release-Aufbereitung und CSV-Projektkopf
 
 - CSV-Export um kompakte Projektinformationen und Vorgabewerte in zweispaltiger Darstellung ergänzt; erweiterte interne Angaben werden nicht ausgegeben.

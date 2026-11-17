@@ -1,4 +1,4 @@
-# Berechnungsmodell von RohrRunner 0.1.0
+# Berechnungsmodell von RohrRunner
 
 Dieses Dokument beschreibt den implementierten Rechenkern in `src/engine.js`, den Stoffdatenzugriff in `src/stoffdaten.js` und den Interpolationspfad in `src/fast-data.js`. Es ist eine technische Dokumentation des Programmstands, keine Anlagenfreigabe oder normative Auslegungsanweisung.
 
