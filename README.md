@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Verbund, Kühlstellen, Lasten und Betriebspunkten.
 
-**Version 1.0.1** · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 1.0.1** · PWA · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 [Öffentliches Repository auf GitHub](https://github.com/MrK235/RohrRunner)
 
@@ -19,7 +19,7 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
 5. **Netz berechnen** wählen und die Ergebnisse im Reiter **Ergebnis** prüfen.
 
-Ein Server und Node.js sind für die Nutzung nicht erforderlich. Für die Entwicklung steht ein lokaler Server zur Verfügung:
+Ein Server und Node.js sind für die Nutzung nicht erforderlich. RohrRunner kann über das Web-App-Menü des Browsers als PWA installiert werden. Dafür wird die Anwendung einmal über HTTPS oder den lokalen Entwicklungsserver geöffnet; die lokalen Laufzeitdateien werden für die Offline-Nutzung gecacht. Für die Entwicklung steht ein lokaler Server zur Verfügung:
 
 ```bash
 npm run serve
@@ -95,6 +95,7 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `src/zip.js` – ZIP-Erstellung für lokale Projektpakete
 - `vendor/pdfjs/` und `vendor/pdf-lib/` – lokale PDF-Bibliotheken inklusive Lizenzen
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
+- `manifest.webmanifest`, `sw.js`, `src/pwa.js` – PWA-Manifest, Offline-Cache und Registrierung
 
 ```bash
 npm test                 # nur Tests zu geänderten Dateien

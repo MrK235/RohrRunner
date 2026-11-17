@@ -16,7 +16,8 @@ flowchart LR
   Engine --> Catalog[data/pipe-catalog.js]
   App --> BrowserStorage[IndexedDB: Projekte + PDFs]
   App --> ProjectFile[.rohrrunner: Netz + Einstellungen + optionale PDF]
-  App -. PDF-Bedienung .-> CDN[PDF.js / pdf-lib CDN]
+  App --> PWA[Manifest + Service Worker]
+  App -. PDF-Bedienung .-> PDF[PDF.js / pdf-lib lokal]
 ```
 
 Die Berechnung läuft über `Worker`. Unter `file://` lädt die App das generierte Bundle als Script und startet es als Blob-Worker, ohne zusätzlichen Server. Unter HTTP(S) wird `src/worker.js` direkt gestartet. Wenn der Browser den Worker blockiert, fällt die App auf den Hauptthread zurück. PDF.js und pdf-lib sind separate Client-Bibliotheken; sie werden für PDF-Import, Darstellung und Plan-PDF-Ausgabe gebraucht.
@@ -25,7 +26,7 @@ Die Berechnung läuft über `Worker`. Unter `file://` lädt die App das generier
 
 | Datei | Verantwortung |
 | --- | --- |
-| `index.html` | UI-Struktur, Standardwerte, Script-Reihenfolge und CDN-Einbindung der PDF-Bibliotheken |
+| `index.html` | UI-Struktur, Standardwerte, Script-Reihenfolge und lokale Bibliothekseinbindung |
 | `src/app.js` | UI-Ereignisse, Zeichnen/Ansicht, lokale Speicherung, Import/Export, Worker-Kommunikation und Ergebnisdarstellung |
 | `src/zip.js` | Erstellt lokal ZIP-Archive für Projektpakete ohne zusätzliche Laufzeitabhängigkeit |
 | `src/editor-core.js` | Unabhängige Geometrieoperationen wie rechtwinklige Pfade, Segmentkreuzungen, Verschieben und Löschen von Knoten/Leitungen |
@@ -41,7 +42,10 @@ Die Berechnung läuft über `Worker`. Unter `file://` lädt die App das generier
 | `data/pipe-catalog.js` | Browser-Global `RohrKatalog` für direkt geöffnetes HTML und Worker |
 | `data/fluid-references.json` | Quellen und dokumentierte Stoffwert-Referenzdaten |
 | `vendor/coolprop/` | Lokal mitgelieferte CoolProp-WASM-Laufzeit und zugehörige Lizenz |
-| `scripts/serve.mjs` | Kleiner, nur an `127.0.0.1` gebundener HTTP-Server für lokale Entwicklung |
+| `scripts/serve.mjs` | Kleiner, nur an `127.0.0.1` gebundener HTTP-Server für lokale Entwicklung und PWA-Installation |
+| `manifest.webmanifest` | Installations- und Darstellungsmetadaten der PWA |
+| `sw.js` | Offline-App-Shell und Cache-Verwaltung |
+| `src/pwa.js` | Registriert den Service Worker unter HTTP(S) |
 
 ## Daten und Speicherung
 
@@ -49,7 +53,7 @@ Das Projektobjekt enthält Versionsfeld, Projekt-ID und -Name, Knoten, Leitungen
 
 Automatisches Speichern hält mehrere Version-1-Projekte in der IndexedDB `rohrrunner.projects.v1`; PDF-Bytes liegen direkt im jeweiligen Projekt-Datensatz. `localStorage` enthält nur die ID des zuletzt geöffneten Projekts. Vorhandene Daten aus `rohrrunner.project.v1` werden beim ersten Start in die IndexedDB übernommen. Beim Export als `.rohrrunner` wird das PDF als `pdfBase64` in die JSON-Datei aufgenommen; der Import erkennt Version 1 und lädt die eingebettete PDF erneut. `.rohrtanplan` wird als ältere Dateiendung ebenfalls angenommen, sofern der Inhalt dem unterstützten Version-1-Schema entspricht.
 
-Projekt- und Planinhalte werden im aktuellen Anwendungsablauf nicht an einen Projektserver übertragen. Die PDF-Bibliotheken selbst kommen von externen CDNs. Es gibt keine Konten, Cloud-Synchronisierung oder Backend-API in diesem Repository.
+Projekt- und Planinhalte werden im aktuellen Anwendungsablauf nicht an einen Projektserver übertragen. Die PDF-Bibliotheken und Berechnungsdaten liegen lokal im Projekt und werden durch die PWA-App-Shell mit gecacht. Es gibt keine Konten, Cloud-Synchronisierung oder Backend-API in diesem Repository.
 
 ## Berechnungsaufruf
 

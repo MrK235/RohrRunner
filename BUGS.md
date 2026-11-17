@@ -10,7 +10,7 @@ Der Repository-Stand enthält derzeit keine bestätigten Fehlerberichte, die hie
 
 | Bereich | Verhalten | Auswirkung / Umgehung |
 | --- | --- | --- |
-| PDF-Abhängigkeiten | PDF.js und pdf-lib werden von Cloudflare bzw. jsDelivr geladen. | Für PDF-Import und PDF-Ausgabe ist eine Internetverbindung nötig. Die Netzberechnung und lokalen Stoffdaten liegen im Repository. |
+| PWA-Cache | Die PWA wird beim ersten Aufruf über HTTPS oder localhost installiert und cached anschließend die lokalen Laufzeitdateien. | Vor der ersten erfolgreichen Cache-Installation ist der Offline-Betrieb noch nicht verfügbar. |
 | Direktstart mit `file://` | Browser können dort keinen Web Worker laden; die App verwendet den Hauptthread. | Bei umfangreichen Netzen kann die Oberfläche während der Berechnung weniger flüssig sein. `npm run serve` aktiviert den Worker-Betrieb über localhost. |
 | Mehrseitige Pläne | Es wird Seite 1 der gewählten PDF angezeigt und verwendet. | Weitere PDF-Seiten müssen separat bereitgestellt werden; Seitenwechsel ist nicht implementiert. |
 | Browser-Speicher | IndexedDB speichert Projekte einschließlich PDF lokal im verwendeten Browserprofil. | Browserdaten können durch Nutzende oder Browserverwaltung gelöscht werden; für Austausch und externe Sicherung `.rohrrunner` exportieren. |

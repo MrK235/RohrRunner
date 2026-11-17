@@ -6,7 +6,8 @@ const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
 test('browser shell ships local calculation assets and workflow controls', () => {
-  const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat');
+  const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js');
+  assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);
   assert.match(html, /src="vendor\/pdfjs\/pdf\.min\.js"/);
   assert.match(html, /src="vendor\/pdf-lib\/pdf-lib\.min\.js"/);
   assert.match(app, /vendor\/pdfjs\/pdf\.worker\.min\.js/);
@@ -31,4 +32,9 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(launcher.includes('index.html'),'Windows shortcut opens the app directly');
   assert.ok(read('scripts/build-worker-bundle.mjs').includes('src/worker-bundle.js'),'worker bundle can be regenerated from local sources');
   assert.ok(read('src/worker-bundle.js').includes('window.RohrRunnerWorkerBundle = '),'generated standalone worker bundle exists');
+  assert.match(manifest, /"display": "standalone"/);
+  assert.match(manifest, /rohrRunner-192\.png/);
+  assert.match(manifest, /rohrRunner-512\.png/);
+  for(const asset of ['./index.html','./src/app.js','./vendor/coolprop/coolprop.wasm'])assert.ok(serviceWorker.includes(asset),`PWA cache: ${asset}`);
+  assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'/);
 });
