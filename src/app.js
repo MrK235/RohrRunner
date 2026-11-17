@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), svgNS='http://www.w3.org/2000/svg', STORAGE='rohrrunner.project.v1', DB_NAME='rohrrunner.projects.v1', ACTIVE='rohrrunner.activeProject.v1', appScriptUrl=document.currentScript.src, Editor=window.RohrRunnerEditor;
-  if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc=new URL('../vendor/pdfjs/pdf.worker.min.js',appScriptUrl).href;
   const defaults={fluid:'R513A',simultaneity:1,evaporationC:-10,condensationC:45,superheatK:25,subcoolingK:2,suctionLimitK:2,liquidLimitK:1,minVelocityMS:7,maxVelocityMS:30,designPressureBar:28,roughnessMicroM:1.5,fittingsFactor:1.5,viscosityMarginPercent:15};
   const defaultsForFluid=fluid=>({...defaults,fluid,...(fluid==='R744'?{condensationC:5,designPressureBar:100}:{})});
   const fresh=()=>({id:'rr-'+crypto.randomUUID(),name:'Neues Rohrnetz',nodes:[],edges:[],calibration:0,settings:{...defaults}});

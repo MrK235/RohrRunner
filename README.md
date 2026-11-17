@@ -26,7 +26,7 @@ npm run serve
 # anschließend http://127.0.0.1:4173 öffnen
 ```
 
-`ROHRRUNNER_PORT` kann den Port ändern. PDF-Import und Plan-PDF-Export benötigen beim Seitenaufruf eine Internetverbindung für PDF.js und pdf-lib. Rechenkern, CoolProp und Stoffdaten liegen lokal vor.
+`ROHRRUNNER_PORT` kann den Port ändern. Alle benötigten Laufzeitbibliotheken einschließlich PDF.js, pdf-lib und CoolProp liegen im Projekt und werden lokal geladen. Die Anwendung funktioniert daher auch ohne Internetverbindung; externe Links in der Oberfläche sind nur optionale Projektverweise.
 
 ## Funktionen
 
@@ -93,6 +93,7 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `src/stoffdaten.js` – Stoffdatenzugriff
 - `src/worker.js` / `src/worker-bundle.js` – Berechnungs-Worker
 - `src/zip.js` – ZIP-Erstellung für lokale Projektpakete
+- `vendor/pdfjs/` und `vendor/pdf-lib/` – lokale PDF-Bibliotheken inklusive Lizenzen
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
 
 ```bash
@@ -105,4 +106,4 @@ Der Testlauf benötigt Node.js, aber keine zusätzlichen npm-Pakete. Ein manuell
 
 Mehr dazu: [Architektur](ARCHITECTURE.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungsprotokoll](CHANGELOG.md) · [Sicherheitsmeldungen](SECURITY.md)
 
-**Lizenzhinweis:** Für die mitgelieferte CoolProp-Laufzeit liegt eine MIT-Lizenz unter `vendor/coolprop/LICENSE`. RohrRunner selbst hat derzeit keine separate Lizenzdatei oder erklärte Projektlizenz; die CoolProp-Lizenz gilt nicht für das übrige Projekt.
+**Lizenzhinweis:** Die Lizenzen der mitgelieferten Drittbibliotheken liegen bei `vendor/coolprop/LICENSE`, `vendor/pdfjs/LICENSE` und `vendor/pdf-lib/LICENSE`. RohrRunner selbst hat derzeit keine separate Lizenzdatei oder erklärte Projektlizenz; diese Drittbibliothekslizenzen gelten nicht für das übrige Projekt.
