@@ -19,7 +19,7 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
 5. **Netz berechnen** wählen und die Ergebnisse im Reiter **Ergebnis** prüfen.
 
-Ein Server und Node.js sind für die Nutzung nicht erforderlich. RohrRunner kann über das Web-App-Menü des Browsers als PWA installiert werden. Dafür wird die Anwendung einmal über HTTPS oder den lokalen Entwicklungsserver geöffnet; die lokalen Laufzeitdateien werden für die Offline-Nutzung gecacht. Für die Entwicklung steht ein lokaler Server zur Verfügung:
+Ein Server und Node.js sind für die Nutzung nicht erforderlich. RohrRunner kann über das Web-App-Menü des Browsers als PWA installiert werden. Dafür wird die Anwendung einmal über HTTPS oder den lokalen Entwicklungsserver geöffnet; die lokalen Laufzeitdateien werden für die Offline-Nutzung gecacht. Zusätzlich steht eine native Desktop-Verpackung mit Tauri zur Verfügung. Unter Linux wird daraus ein AppImage gebaut; die Windows-NSIS-Konfiguration ist vorbereitet und wird auf einem Windows-System gebaut. Für die Entwicklung steht ein lokaler Server zur Verfügung:
 
 ```bash
 npm run serve
@@ -102,9 +102,19 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 npm test                 # nur Tests zu geänderten Dateien
 npm run test:all         # vollständige Testsuite, nur bei Bedarf
 npm run build:worker
+
+# Desktop-Entwicklung und Linux-AppImage
+npm install
+npm run tauri:dev
+npm run tauri:build:linux
+
+# Windows auf einem Windows-System
+npm run tauri:build:windows
 ```
 
-Der Testlauf benötigt Node.js, aber keine zusätzlichen npm-Pakete. Ein manueller Browser-Test wurde vom Projektverantwortlichen bestätigt; eine systematische Prüfung aller Browser- und Betriebssystemkombinationen liegt nicht vor. Die Berechnungsergebnisse sind noch nicht unabhängig anhand von Referenzfällen verifiziert. Die Tests und der Browser-Test ersetzen keine fachliche Anlagenprüfung.
+Das Linux-AppImage liegt nach dem Build unter `src-tauri/target/release/bundle/appimage/`. Die Tauri-Anwendung lädt dieselben statischen Dateien wie die Browser- und PWA-Variante; Projekte und Berechnungen bleiben lokal. Für Windows ist das NSIS-Bundle einschließlich Anwendungssymbol und WebView2-Bootstrapper in `src-tauri/tauri.conf.json` vorbereitet.
+
+Der Browser-/Solver-Testlauf benötigt Node.js, aber keine zusätzlichen npm-Laufzeitpakete; die Tauri-CLI wird nur für Desktop-Entwicklung und -Builds benötigt. Ein manueller Browser-Test wurde vom Projektverantwortlichen bestätigt; eine systematische Prüfung aller Browser- und Betriebssystemkombinationen liegt nicht vor. Die Berechnungsergebnisse sind noch nicht unabhängig anhand von Referenzfällen verifiziert. Die Tests und der Browser-Test ersetzen keine fachliche Anlagenprüfung.
 
 Mehr dazu: [Architektur](ARCHITECTURE.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungsprotokoll](CHANGELOG.md) · [Sicherheitsmeldungen](SECURITY.md)
 

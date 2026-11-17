@@ -7,6 +7,14 @@
     "build:worker": "node scripts/build-worker-bundle.mjs",
     "serve": "node scripts/serve.mjs",
     "test": "node scripts/test.mjs",
-    "test:all": "node --test tests/*.test.mjs"
+    "test:all": "node --test tests/*.test.mjs",
+    "tauri:prepare": "node scripts/prepare-desktop.mjs",
+    "tauri:dev": "npm run tauri:prepare && tauri dev",
+    "tauri:build": "npm run tauri:prepare && tauri build",
+    "tauri:build:linux": "npm run tauri:prepare && tauri build --bundles appimage",
+    "tauri:build:windows": "npm run tauri:prepare && tauri build --bundles nsis"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.5"
   }
 }

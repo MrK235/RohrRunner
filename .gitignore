@@ -8,3 +8,6 @@ Thumbs.db
 *.[Pp][Dd][Ff]
 *.rohrrunner
 tmp/
+src-tauri/target/
+src-tauri/gen/
+dist/
