@@ -16,7 +16,7 @@ Der Repository-Stand enthält derzeit keine bestätigten Fehlerberichte, die hie
 | Browser-Speicher | IndexedDB speichert Projekte einschließlich PDF lokal im verwendeten Browserprofil. | Browserdaten können durch Nutzende oder Browserverwaltung gelöscht werden; für Austausch und externe Sicherung `.rohrrunner` exportieren. |
 | R744 | Nur unterkritische Fälle; transkritische Verflüssigung wird abgewiesen. | Druckgas-/Gaskühlerseite ist nicht implementiert. |
 | Rohrdimensionierung | Die automatische Wahl vergrößert Rohrgrößen mit einer begrenzten Heuristik. | Sie garantiert kein globales Kostenoptimum. Manuelle Größen und Grenzwertmeldungen fachlich prüfen. |
-| Hydraulisches Modell | Stationäre, einphasige Rechnung mit vereinfachten/konfigurierten Randbedingungen. | Keine Teillast-Ölrückführung, zeitabhängige Last, Ventilauslegung oder Herstellerfreigabe. Details: `rohrnetz-berechnung-anleitung.md`. |
+| Hydraulisches Modell | Stationäre, einphasige Rechnung mit vereinfachten/konfigurierten Randbedingungen. | Keine Teillast-Ölrückführung, zeitabhängige Last, Ventilauslegung oder Herstellerfreigabe. Details: `PLAN.md`. |
 
 ## Fehler melden
 

@@ -11,7 +11,7 @@
 
 - Neue Rohrdaten mit Quelle, Edition, Einheiten und Gültigkeitsbedingungen dokumentieren. `data/pipe-catalog.json` und das für den Browser verwendete `data/pipe-catalog.js` müssen zusammenpassen.
 - Stoffwertänderungen in `data/fluid-references.json`, `src/stoffdaten.js` und den Berechnungsannahmen nachvollziehbar belegen.
-- Solveränderungen in `rohrnetz-berechnung-anleitung.md` beschreiben. Abweichungen von Annahmen oder Konvergenzgrenzen sichtbar machen.
+- Solveränderungen in `PLAN.md` beschreiben. Abweichungen von Annahmen oder Konvergenzgrenzen sichtbar machen.
 - Keine Funktion als technische Freigabe, Normerfüllung oder global optimale Dimensionierung bezeichnen, wenn sie das nicht nachweist.
 
 ## Datenschutz in Beiträgen

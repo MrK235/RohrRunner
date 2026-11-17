@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Verbund, Kühlstellen, Lasten und Betriebspunkten.
 
-**Version 1.0.1** · PWA · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 1.0.2** · PWA · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 [Öffentliches Repository auf GitHub](https://github.com/MrK235/RohrRunner)
 
@@ -75,13 +75,13 @@ Beim Wechsel auf R744 werden passende CO₂-Startwerte gesetzt. Gespeicherte Bet
 
 Der Solver berechnet stationäre, einphasige Saug- und Flüssigkeitsleitungen in einem zusammenhängenden, kreisfreien Netzbaum. Die Flüssigkeitstemperatur bleibt im Modell entlang der Flüssigkeitsleitung konstant. Die automatische Rohrwahl ist eine begrenzte Upgrade-Heuristik und keine globale Kostenoptimierung.
 
-Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Verdichter- und Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten und eine vollständige Teillast-Ölrückführung. Annahmen, Gleichungen und Gültigkeitsbereiche stehen in der [Berechnungsanleitung](rohrnetz-berechnung-anleitung.md); bekannte Einschränkungen in [BUGS.md](BUGS.md).
+Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Verdichter- und Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten und eine vollständige Teillast-Ölrückführung. Annahmen, Gleichungen und Gültigkeitsbereiche stehen in der [Berechnungsanleitung](PLAN.md); bekannte Einschränkungen in [BUGS.md](BUGS.md).
 
 ## Projekte und Datenschutz
 
 Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Original-Grundriss und dem exportierten Plan-PDF. Die `.rohrrunner`-Datei enthält den Grundriss zusätzlich eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
 
-Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen lädt der Browser Bibliotheken von Cloudflare bzw. jsDelivr.
+Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen verwendet der Browser die lokal mitgelieferten Bibliotheken.
 
 ## Entwicklung
 

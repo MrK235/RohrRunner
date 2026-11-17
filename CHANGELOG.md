@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+## 1.0.2 — PWA, Startskripte und Dokumentation
+
+- RohrRunner kann als PWA installiert und nach dem ersten Cache-Aufbau offline genutzt werden.
+- Windows- und Linux-Startskripte starten den lokalen Server und öffnen die Anwendung im Standardbrowser.
+- Berechnungsdokumentation in `PLAN.md` umbenannt und veraltete Screenshots entfernt.
+- Lokale PDF-Bibliotheken und die PWA-Nutzung in der Dokumentation klargestellt.
+
 ## 1.0.1 — Projektdateien als ZIP sichern
 
 - Die Schaltfläche „Sichern“ erstellt ein ZIP-Paket mit `.rohrrunner`, verfügbaren Berechnungs- und Material-CSV sowie Original-Grundriss und exportiertem Plan-PDF.

@@ -10,7 +10,7 @@
 ## Projektkonventionen
 
 - Dieses Projekt ist eine lokale Browseranwendung ohne Build-Schritt. Änderungen an Oberfläche, Editor und Solver gehören in die vorhandenen Dateien und Strukturen; vermeide unnötige Abhängigkeiten.
-- Bei Solver- oder Fachänderungen Annahmen, Grenzen und Auswirkungen in `rohrnetz-berechnung-anleitung.md` dokumentieren. Keine technische Freigabe, Normerfüllung oder globale Optimalität behaupten, wenn sie nicht belegt ist.
+- Bei Solver- oder Fachänderungen Annahmen, Grenzen und Auswirkungen in `PLAN.md` dokumentieren. Keine technische Freigabe, Normerfüllung oder globale Optimalität behaupten, wenn sie nicht belegt ist.
 - Rohrkatalog-Änderungen mit Quelle, Ausgabe, Einheiten und Gültigkeitsbedingungen dokumentieren. `data/pipe-catalog.json` und `data/pipe-catalog.js` müssen konsistent bleiben. Stoffwertänderungen mit `data/fluid-references.json`, `src/stoffdaten.js` und den Berechnungsannahmen abstimmen.
 - Für Beispiel- und Testdaten ausschließlich synthetische Netze verwenden. Keine Kundenpläne, echten `.rohrrunner`-Projektdateien oder personenbezogenen Daten in Änderungen aufnehmen.
 - Nutze vorhandene Tests in `tests/` passend zum geänderten Verhalten. Führe Tests aus, wenn der Nutzer sie verlangt oder die geltenden Arbeitsanweisungen es vorsehen; berichte klar, was geprüft wurde.
