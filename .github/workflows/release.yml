@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Linux AppImage
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Rust einrichten
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Tauri-Linux-Abhängigkeiten installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: npm-Abhängigkeiten installieren
+        run: npm ci
+
+      - name: AppImage bauen
+        run: npm run tauri:build:linux
+
+      - name: AppImage veröffentlichungsfähig ablegen
+        uses: actions/upload-artifact@v4
+        with:
+          name: rohrrunner-linux-appimage
+          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          if-no-files-found: error
+
+  build-windows:
+    name: Windows NSIS
+    runs-on: windows-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Node.js einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Rust einrichten
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: npm-Abhängigkeiten installieren
+        run: npm ci
+
+      - name: Windows-App bauen
+        run: npm run tauri:build:windows
+
+      - name: Windows-Installer veröffentlichungsfähig ablegen
+        uses: actions/upload-artifact@v4
+        with:
+          name: rohrrunner-windows-nsis
+          path: src-tauri/target/release/bundle/nsis/*
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release erstellen
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Release-Artefakte laden
+        uses: actions/download-artifact@v4
+        with:
+          pattern: rohrrunner-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: GitHub Release veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          test "v${version}" = "${GITHUB_REF_NAME}"
+          gh release create "${GITHUB_REF_NAME}" release-assets/* \
+            --title "RohrRunner ${GITHUB_REF_NAME}" \
+            --generate-notes

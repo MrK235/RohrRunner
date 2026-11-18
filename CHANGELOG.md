@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+## 1.0.4 — Erstes Desktop-Release
+
+- Release-Automatisierung für Linux-AppImage und Windows-NSIS-Installer ergänzt.
+- Beide Desktop-Artefakte werden bei einem passenden Versions-Tag gemeinsam als GitHub Release veröffentlicht.
+
 ## 1.0.3 — Tauri-Desktop-Verpackung
 
 - Linux-AppImage für die lokale RohrRunner-Desktopanwendung ergänzt.
