@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+## 1.0.3 — Tauri-Desktop-Verpackung
+
+- Linux-AppImage für die lokale RohrRunner-Desktopanwendung ergänzt.
+- Windows-NSIS-Build einschließlich Anwendungssymbol und WebView2-Bootstrapper vorbereitet.
+- Desktop-Build dokumentiert und mit der bestehenden statischen Browser-/PWA-Anwendung verbunden.
+
 ## 1.0.2 — PWA, Startskripte und Dokumentation
 
 - RohrRunner kann als PWA installiert und nach dem ersten Cache-Aufbau offline genutzt werden.
