@@ -6,7 +6,7 @@ const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
 test('browser shell ships local calculation assets and workflow controls', () => {
-  const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js');
+  const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
   assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);
   assert.match(html, /src="vendor\/pdfjs\/pdf\.min\.js"/);
   assert.match(html, /src="vendor\/pdf-lib\/pdf-lib\.min\.js"/);
@@ -28,6 +28,9 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
   assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
+  assert.ok(app.includes('window.__TAURI__?.core?.invoke')&&app.includes("invoke('save_export_file'")&&app.includes('Array.from(bytes)'),'desktop exports use the native save dialog');
+  assert.match(tauriConfig, /"withGlobalTauri": true/);
+  assert.ok(tauriLib.includes('tauri_plugin_dialog')&&tauriLib.includes('blocking_save_file')&&tauriLib.includes('generate_handler![save_export_file]'),'Tauri registers the native export command');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
   assert.ok(launcher.includes('scripts\\serve.mjs')&&launcher.includes('http://127.0.0.1:%ROHRRUNNER_PORT%/'),'Windows launcher starts the server and opens the browser');
   assert.ok(linuxLauncher.includes('#!/usr/bin/env bash')&&linuxLauncher.includes('scripts/serve.mjs')&&linuxLauncher.includes('xdg-open'),'Linux launcher starts the server and opens the browser');
