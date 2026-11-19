@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+# 1.0.8 — Frostschutz-Eingabe fein abstimmen
+
+- Temperaturwert bei der inversen Glykolberechnung während der Eingabe beibehalten, damit er sich in beide Richtungen schrittweise ändern lässt.
+- Glykolkonzentration auf 0,01 Masse-% abstufen, um die Frostschutztemperatur in 0,1 °C aufzulösen.
+
 # 1.0.7 — Frostschutztemperatur bearbeiten
 
 - Frostschutztemperatur im Kälteträgermodus stets anzeigen; bei Wasser 0 °C festsetzen.
