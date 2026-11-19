@@ -396,7 +396,7 @@
 - Auswahl und Verschieben ist das Standardwerkzeug beim Start; das Symbol zeigt eine Hand.
 - Nach dem Klick auf Netz berechnen wird das Auswahlwerkzeug aktiviert.
 
-Bemerkenswerte Änderungen des Projekts nach Version. Jede abgeschlossene Änderung, Fehlerkorrektur, Verbesserung und Erweiterung erhält den kleinstmöglichen Versionssprung: eine Patch-Erhöhung. Minor- und Major-Sprünge erfolgen nur auf ausdrückliche Aufforderung. Dokumentationsänderungen folgen derselben Regel.
+Bemerkenswerte Änderungen des Projekts nach Version. Versionssprünge und neue Einträge erfolgen nur auf ausdrückliche Aufforderung für eine Version oder ein Release. Änderungen werden bis dahin gesammelt; Minor- und Major-Sprünge bleiben ebenfalls ausdrücklich vorbehalten.
 
 ## 0.1.1 — Versionsregel und Dokumentation
 

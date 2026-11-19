@@ -2,9 +2,9 @@
 
 ## Versionsnummer, Änderungsprotokoll und Commit
 
-- Versionssprünge und Einträge in `CHANGELOG.md` erst vornehmen, wenn der Nutzer ausdrücklich darum bittet oder einen Commit beauftragt. Änderungen bis dahin sammeln, damit zusammengehörige Arbeit in einem Versionssprung gebündelt werden kann.
-- Bei einem angeforderten Versionssprung oder Commit ausschließlich die Patchnummer erhöhen und Version sowie Versionsanzeige in `package.json`, `index.html` und `README.md` synchron halten; einen neuen Eintrag ganz oben in `CHANGELOG.md` ergänzen.
-- Nach Abschluss jeder angeforderten Änderung einen aussagekräftigen Git-Commit erstellen. Versionssprung und Changelog-Eintrag einschließen, ausschließlich die zugehörigen Dateien stagen und keine vorhandenen fremden Änderungen übernehmen.
+- Versionssprünge, Versionsanzeigen und Einträge in `CHANGELOG.md` nur vornehmen, wenn der Nutzer ausdrücklich einen Versionssprung oder Release verlangt. Ein normaler Commit, Push oder eine sonstige Änderung löst keinen Versionswechsel aus.
+- Bei einem ausdrücklich angeforderten Versionssprung ausschließlich die Patchnummer erhöhen und Version sowie Versionsanzeige in `package.json`, `index.html` und `README.md` synchron halten; dann einen neuen Eintrag ganz oben in `CHANGELOG.md` ergänzen.
+- Nach Abschluss jeder angeforderten Änderung einen aussagekräftigen Git-Commit erstellen. Versionssprung und Changelog-Eintrag nur bei ausdrücklicher Release-/Versionsaufforderung einschließen; ausschließlich die zugehörigen Dateien stagen und keine vorhandenen fremden Änderungen übernehmen.
 - Push nur auf ausdrücklichen Auftrag des Nutzers. Ein Commit ist kein Push.
 
 ## Projektkonventionen
