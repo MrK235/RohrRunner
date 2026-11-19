@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "referenceState": "Alle Druckwerte absolut, außer R513A-psig-Werte; deren Umrechnung verwendet 101325 Pa Umgebungsdruck. Herstellerangaben sind gerundet.",
   "sources": {
     "R513A": "https://www.chemours.com/en/-/media/files/opteon/opteon-xp10-pressure-temperature-chart.pdf",
@@ -9,7 +9,17 @@
     "R513A_Climalife": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentr-513a-fp-en.pdf",
     "R448A_Climalife": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentr-448a-fp-en.pdf",
     "Climalife_Blue_Handbook": "https://climalife.com/wp-content/uploads/2022/09/uploadsassetsPractical20informationBLUE20HANDBOOKCarnet20Bleu202018_EN_BD.pdf",
-    "R513A_liquid_viscosity_experiment": "https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819"
+    "R513A_liquid_viscosity_experiment": "https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819",
+    "CoolProp_Incompressibles": "https://coolprop.org/fluid_properties/Incompressibles.html",
+    "CoolProp_MEG_fit": "https://coolprop.org/_downloads/4e6bd34ef1888b4daa1662944ee0ea7e/MEG_fitreport.pdf",
+    "CoolProp_MPG_fit": "https://coolprop.org/_downloads/b359aee6a82a4ab771fe34de39a6302d/all_incompressibles.pdf"
+  },
+  "secondaryWorkingFluids": {
+    "source": "CoolProp 8.0.0 incompressible working-fluid correlations based on Melinder reference data.",
+    "concentrationBasis": "mass fraction (mass-%)",
+    "range": "0 to 60 mass-%; model temperature range is wider, but RohrRunner rejects states at/below the model freezing temperature.",
+    "properties": ["densityKgM3", "specificHeatJKgK", "viscosityPaS", "freezeTemperatureC"],
+    "limits": "Generic aqueous glycol data; commercial corrosion inhibitor packages and product-specific material compatibility are not represented."
   },
   "saturation": {
     "R513A": {

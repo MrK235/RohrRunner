@@ -157,6 +157,55 @@
           "item": "433053972"
         }
       ]
+    },
+    {
+      "id": "viega-temponox",
+      "label": "Viega Temponox, Edelstahl 1.4520 (Modelle 1703 / 1703XL)",
+      "material": "Edelstahl 1.4520",
+      "standard": "DIN EN 10088-2 / DIN EN 10312",
+      "source": "https://www.viega.de/de/produkte/Katalog/Rohrleitungstechnik/Temponox/Rohre/Temponox-Rohr-1703.html",
+      "sourceEdition": "Viega Onlinekatalog, abgerufen 2026-11-19",
+      "catalogPressureCondition": "Temponox-System PN 16 laut Viega; keine Temperatur-/Konzentrationsfreigabe aus dieser Berechnung abgeleitet.",
+      "roughnessMicroM": 1.5,
+      "sizes": [
+        { "odMm": 15, "wallMm": 1, "item": "591175" },
+        { "odMm": 18, "wallMm": 1, "item": "591182" },
+        { "odMm": 22, "wallMm": 1.2, "item": "591199" },
+        { "odMm": 28, "wallMm": 1.2, "item": "591205" },
+        { "odMm": 35, "wallMm": 1.5, "item": "591212" },
+        { "odMm": 42, "wallMm": 1.5, "item": "591229" },
+        { "odMm": 54, "wallMm": 1.5, "item": "591236" },
+        { "odMm": 64, "wallMm": 1.5, "item": "792381" },
+        { "odMm": 76.1, "wallMm": 1.5, "item": "792398" },
+        { "odMm": 88.9, "wallMm": 1.5, "item": "792404" },
+        { "odMm": 108, "wallMm": 1.5, "item": "792411" }
+      ]
+    },
+    {
+      "id": "black-steel-en10255-medium",
+      "label": "Stahlrohr schwarz S195T, EN 10255 mittelschwer",
+      "material": "Unlegierter Stahl S195T, schwarz",
+      "standard": "EN 10255, mittelschwer, ohne Gewinde und Muffen",
+      "source": "https://www.bucher-stahl.de/fileadmin/user_upload/produkte/pdf/rohre.pdf",
+      "sourceEdition": "Bucher Stahl Rohrkatalog, abgerufen 2026-11-19",
+      "catalogPressureCondition": "Der Katalog nennt keine zulässigen Betriebsdrücke; keine Druckfreigabe wird aus den Abmessungen abgeleitet.",
+      "roughnessMicroM": 45,
+      "sizes": [
+        { "dn": 6, "inch": "1/8", "odMm": 10.2, "wallMm": 2 },
+        { "dn": 8, "inch": "1/4", "odMm": 13.5, "wallMm": 2.35 },
+        { "dn": 10, "inch": "3/8", "odMm": 17.2, "wallMm": 2.35 },
+        { "dn": 15, "inch": "1/2", "odMm": 21.3, "wallMm": 2.65 },
+        { "dn": 20, "inch": "3/4", "odMm": 26.9, "wallMm": 2.65 },
+        { "dn": 25, "inch": "1", "odMm": 33.7, "wallMm": 3.25 },
+        { "dn": 32, "inch": "1 1/4", "odMm": 42.4, "wallMm": 3.25 },
+        { "dn": 40, "inch": "1 1/2", "odMm": 48.3, "wallMm": 3.25 },
+        { "dn": 50, "inch": "2", "odMm": 60.3, "wallMm": 3.65 },
+        { "dn": 65, "inch": "2 1/2", "odMm": 76.1, "wallMm": 3.65 },
+        { "dn": 80, "inch": "3", "odMm": 88.9, "wallMm": 4.05 },
+        { "dn": 100, "inch": "4", "odMm": 114.3, "wallMm": 4.5 },
+        { "dn": 125, "inch": "5", "odMm": 139.7, "wallMm": 4.85 },
+        { "dn": 150, "inch": "6", "odMm": 165.1, "wallMm": 4.85 }
+      ]
     }
   ]
 }

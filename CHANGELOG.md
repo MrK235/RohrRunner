@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.0.5 — Wasser-Glykol-Kälteträgerkreise
+
+- Separaten Kälteträgermodus für Wasser, Ethylen- und Propylenglykol-Wasser ergänzt, mit konzentrationsabhängigen CoolProp-Stoffwerten.
+- Vor-/Rücklauf, Massen- und Volumenstrom, kritischen Kreisdruckverlust und Rohrgrößen je Rohrabschnitt dargestellt und exportiert.
+- Viega Temponox sowie schwarzes Stahlrohr S195T nach EN 10255 M als Rohrserien dokumentiert und auswählbar gemacht.
+- Gefrierpunktprüfung und sichtbare Hinweise zu Modellgrenzen, Inhibitoren und Werkstofffreigaben ergänzt.
+
 ## 1.0.4 — Erstes Desktop-Release
 
 - Release-Automatisierung für Linux-AppImage und Windows-NSIS-Installer ergänzt.

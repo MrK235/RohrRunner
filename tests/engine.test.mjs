@@ -358,3 +358,36 @@ test('R744 transcritical and a missing terminal load are refused explicitly', as
   const broken = network(); broken.nodes.find(n => n.id === 'cold-a').coolingKW = 0;
   assert.throws(() => context.RohrRunnerEngine.calculate(broken, 1, settings, context.RohrStoffdaten, catalog), /Leistung/);
 });
+
+test('Kälteträger-Stoffdaten liefern Wasser- und Glykolwerte im Modellbereich', async () => {
+  await context.RohrStoffdaten.load();
+  const water=context.RohrStoffdaten.secondaryPt('WATER',10,0),meg=context.RohrStoffdaten.secondaryPt('MEG',10,30),mpg=context.RohrStoffdaten.secondaryPt('MPG',10,30);
+  for(const state of [water,meg,mpg])assert.ok(state.densityKgM3>0&&state.specificHeatJKgK>0&&state.viscosityPaS>0);
+  assert.ok(meg.freezeTemperatureC<0&&mpg.freezeTemperatureC<0);
+  assert.throws(()=>context.RohrStoffdaten.secondaryPt('MEG',10,61),/0 und 60 Masse-%/);
+});
+
+test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in den gewählten Rohrserien', async () => {
+  await context.RohrStoffdaten.load();
+  const base={...settings,mode:'secondary',secondaryFluid:'WATER',glycolConcentrationMassPercent:0,supplyTemperatureC:6,returnTemperatureC:12,secondaryPipeSeries:'viega-temponox',secondaryPressureLimitKPa:50,secondaryMaxVelocityMS:1.5,roughnessMicroM:1.5};
+  const water=context.RohrRunnerEngine.calculate(network(),1,base,context.RohrStoffdaten,catalog);
+  assert.equal(water.valid,true,water.issues.map(issue=>issue.message).join(' '));
+  assert.equal(water.rows.length,6);
+  assert.ok(water.secondary.totalMassFlowKgS>0&&water.secondary.totalVolumeFlowM3H>0);
+  assert.ok(water.rows.every(row=>['suction','liquid'].includes(row.type)&&row.velocityMS<=1.5));
+  for(const [fluid,series,concentration] of [['MEG','black-steel-en10255-medium',30],['MPG','viega-temponox',30]]){
+    const result=context.RohrRunnerEngine.calculate(network(),1,{...base,secondaryFluid:fluid,glycolConcentrationMassPercent:concentration,secondaryPipeSeries:series,roughnessMicroM:catalog.series.find(item=>item.id===series).roughnessMicroM},context.RohrStoffdaten,catalog);
+    assert.equal(result.mode,'secondary');
+    assert.equal(result.rows.length,6);
+    assert.ok(result.rows.every(row=>row.diameterMm>0&&row.pressureDropKPa>=0));
+    assert.ok(result.secondary.concentrationMassPercent===30);
+  }
+});
+
+test('Kälteträger-Solver stoppt vor dem Gefrierpunkt und meldet manuelle Fremdgrößen', async () => {
+  await context.RohrStoffdaten.load();
+  const base={...settings,mode:'secondary',secondaryFluid:'MPG',glycolConcentrationMassPercent:30,supplyTemperatureC:6,returnTemperatureC:12,secondaryPipeSeries:'viega-temponox',secondaryPressureLimitKPa:50,secondaryMaxVelocityMS:1.5,roughnessMicroM:1.5};
+  assert.throws(()=>context.RohrRunnerEngine.calculate(network(),1,{...base,supplyTemperatureC:-35,returnTemperatureC:-30},context.RohrStoffdaten,catalog),/Gefrierpunkt/);
+  const plan=network();plan.edges[0].thermal={suction:{mode:'manual',sizeId:'165.1x4.85'}};
+  assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,base,context.RohrStoffdaten,catalog),/manuelle Rohrgröße/);
+});

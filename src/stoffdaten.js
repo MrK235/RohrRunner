@@ -14,6 +14,7 @@
   const stateCache = new Map();
   const scalarStateCache = new Map();
   const hydraulicStateCache = new Map();
+  const secondaryStateCache = new Map();
   const saturationTemperatureCache = new Map();
   const saturationPressureCache = new Map();
   const saturationStateCache = new Map();
@@ -217,6 +218,33 @@
     };
     return cacheSet(hydraulicStateCache, key, withDesignViscosity(code, pressurePa, temperatureK, raw));
   }
+  function secondaryPt(fluid, temperatureC, concentrationMassPercent = 0) {
+    if (!module) throw new Error('Stoffdaten zuerst mit load() initialisieren.');
+    finite(temperatureC, 'Temperatur'); finite(concentrationMassPercent, 'Glykolkonzentration');
+    const code = String(fluid).toUpperCase();
+    if (!['WATER', 'MEG', 'MPG'].includes(code)) throw new Error('Kälteträger nicht unterstützt: ' + fluid);
+    if (concentrationMassPercent < 0 || concentrationMassPercent > 60) throw new Error('Glykolkonzentration muss zwischen 0 und 60 Masse-% liegen.');
+    if (code === 'WATER' && concentrationMassPercent !== 0) throw new Error('Reines Wasser hat keine Glykolkonzentration.');
+    const temperatureK = temperatureC + 273.15;
+    const fluidName = code === 'WATER' || concentrationMassPercent === 0 ? 'Water' : `INCOMP::${code}-${concentrationMassPercent}%`;
+    const key = `${fluidName}|${numberKey(temperatureK)}`;
+    const cached = cacheGet(secondaryStateCache, key);
+    if (cached) return cached;
+    const freezeTemperatureK = code === 'WATER' || concentrationMassPercent === 0 ? 273.15
+      : module.PropsSI('T_freeze', 'T', 273.15, 'P', 101325, fluidName);
+    if (temperatureK <= freezeTemperatureK) throw new Error(`Betriebstemperatur erreicht den Stoffdaten-Gefrierpunkt (${(freezeTemperatureK - 273.15).toFixed(1)} °C).`);
+    const property = output => {
+      const value = module.PropsSI(output, 'T', temperatureK, 'P', 101325, fluidName);
+      if (!Number.isFinite(value) || value <= 0 || value >= 1e99) throw new Error(`Kein gültiger Kälteträger-Stoffwert (${output}) bei ${temperatureC} °C.`);
+      return value;
+    };
+    return cacheSet(secondaryStateCache, key, Object.freeze({
+      fluid: code, concentrationMassPercent, temperatureC, temperatureK,
+      densityKgM3: property('D'), specificHeatJKgK: property('C'), viscosityPaS: property('V'),
+      freezeTemperatureC: freezeTemperatureK - 273.15,
+      source: 'CoolProp 8.0.0 incompressible-fluid model'
+    }));
+  }
   function saturationTemperature(fluid, pressurePa, quality, guessK) {
     const key = `${String(fluid).toUpperCase()}|${numberKey(pressurePa)}|${quality}`;
     const cached = cacheGet(saturationTemperatureCache, key);
@@ -291,6 +319,6 @@
     if (cached !== undefined) return cached;
     return cacheSet(scalarStateCache, key, lookup(output, key1, value1, key2, value2, fluid));
   }
-  const api = Object.freeze({ version: 'CoolProp 8.0.0', fluids: Object.keys(names), load, pt, designPt, hydraulicPt, measuredR513aLiquidViscosity, saturationAtPressure, saturationAtTemperature, state });
+  const api = Object.freeze({ version: 'CoolProp 8.0.0', fluids: Object.keys(names), load, pt, designPt, hydraulicPt, secondaryPt, measuredR513aLiquidViscosity, saturationAtPressure, saturationAtTemperature, state });
   global.RohrStoffdaten = api;
 })(window);

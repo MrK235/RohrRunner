@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Verbund, Kühlstellen, Lasten und Betriebspunkten.
 
-**Version 1.0.4** · PWA · Tauri Desktop · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 1.0.5** · PWA · Tauri Desktop · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 [Öffentliches Repository auf GitHub](https://github.com/MrK235/RohrRunner)
 
@@ -35,6 +35,9 @@ npm run serve
 - Mehrere Kühlstellen mit frei definierbaren Leistungen
 - Saug- und Flüssigkeitsleitungen mit automatischer oder manueller Rohrwahl
 - Betriebspunkte, Höhendifferenzen, Zusatzlängen und Einzelwiderstände je Abschnitt
+- Getrennte Berechnungsarten für Kältemittelkreise und Kälteträgerkreise mit Wasser, Ethylen- oder Propylenglykol
+- Glykolkonzentration in Masse-%, Vor-/Rücklauftemperatur, kritischer Kreisdruckverlust und automatische Rohrwahl
+- Rohrserien Viega Temponox Edelstahl und schwarzes Stahlrohr S195T nach EN 10255 M
 - Druckverluste, Geschwindigkeiten, Temperaturverluste und Warnungen
 - Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Verbund sortiert
 - Lokale Projektverwaltung, `.rohrrunner`-Import, Ergebnis-CSV und Plan-PDF
@@ -56,7 +59,7 @@ Danach folgen die Ergebniswerte je Rohrstrecke in derselben Reihenfolge wie in d
 
 Zahlen werden mit zwei Nachkommastellen und der Einheit direkt hinter dem Wert ausgegeben. Das CSV nutzt Semikolontrennung und Dezimalkommas für eine gute Weiterverarbeitung in deutscher Tabellenkalkulation.
 
-## Kältemittel und Startwerte
+## Medien und Startwerte
 
 Unterstützt werden **R513A**, **R448A** und **R744 / CO₂**. R744 wird nur im unterkritischen Bereich ausgelegt; transkritische Druckgasleitungen sind nicht enthalten.
 
@@ -71,11 +74,13 @@ Unterstützt werden **R513A**, **R448A** und **R744 / CO₂**. R744 wird nur im 
 
 Beim Wechsel auf R744 werden passende CO₂-Startwerte gesetzt. Gespeicherte Betriebspunkte werden beim Öffnen eines Projekts nicht überschrieben.
 
+Für indirekte Kälteträgerkreise stehen Wasser, Ethylenglykol-Wasser und Propylenglykol-Wasser zur Verfügung. Die Glykolkonzentration wird als Masse-% eingegeben; das CoolProp-8.0.0-Stoffmodell deckt 0 bis 60 Masse-% ab. Der angezeigte Gefrierpunkt gehört zum Stoffdatenmodell und ist keine Produktempfehlung. Handelsübliche Inhibitorpakete und konkrete Produkt-/Werkstofffreigaben werden nicht modelliert.
+
 ## Berechnungsmodell und Grenzen
 
-Der Solver berechnet stationäre, einphasige Saug- und Flüssigkeitsleitungen in einem zusammenhängenden, kreisfreien Netzbaum. Die Flüssigkeitstemperatur bleibt im Modell entlang der Flüssigkeitsleitung konstant. Die automatische Rohrwahl ist eine begrenzte Upgrade-Heuristik und keine globale Kostenoptimierung.
+Der Kältemittel-Solver berechnet stationäre, einphasige Saug- und Flüssigkeitsleitungen in einem zusammenhängenden, kreisfreien Netzbaum. Der Kälteträger-Solver berechnet einen stationären, geschlossenen Flüssigkeitskreis und zählt Vor- und Rücklauf-Druckverluste entlang des ungünstigsten Pfads zusammen. Die eingezeichnete Baumstrecke repräsentiert den gemeinsamen Verlauf von Vor- und Rücklauf. Die automatische Rohrwahl ist eine begrenzte Upgrade-Heuristik und keine globale Kostenoptimierung.
 
-Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Verdichter- und Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten und eine vollständige Teillast-Ölrückführung. Annahmen, Gleichungen und Gültigkeitsbereiche stehen in der [Berechnungsanleitung](PLAN.md); bekannte Einschränkungen in [BUGS.md](BUGS.md).
+Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Verdichter- und Ventilauslegung, kombinierte Kreise, zeitabhängige Lasten, vollständige Teillast-Ölrückführung sowie Pumpenkennlinie, Durchflussabgleich, Druckhaltung und Wärmeaufnahme/Abgabe über die Kälteträgerrohre. Annahmen, Gleichungen und Gültigkeitsbereiche stehen in der [Berechnungsanleitung](PLAN.md); bekannte Einschränkungen in [BUGS.md](BUGS.md).
 
 ## Projekte und Datenschutz
 
