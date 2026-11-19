@@ -375,6 +375,7 @@ test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in
   assert.equal(water.rows.length,6);
   assert.ok(water.secondary.totalMassFlowKgS>0&&water.secondary.totalVolumeFlowM3H>0);
   assert.ok(water.secondary.totalPipeVolumeL>0);
+  assert.equal(water.secondary.glycolMassInPipesKg,0);
   const expectedPipeVolumeL=water.rows.reduce((sum,row)=>sum+Math.PI*((row.diameterMm-2*row.wallMm)/1000)**2/4*row.lengthM*1000,0);
   assert.ok(Math.abs(water.secondary.totalPipeVolumeL-expectedPipeVolumeL)<1e-9);
   assert.ok(water.rows.every(row=>['suction','liquid'].includes(row.type)&&row.velocityMS<=1.5));
@@ -384,6 +385,8 @@ test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in
     assert.equal(result.rows.length,6);
     assert.ok(result.rows.every(row=>row.diameterMm>0&&row.pressureDropKPa>=0));
     assert.ok(result.secondary.concentrationMassPercent===30);
+    assert.ok(result.secondary.glycolMassInPipesKg>0);
+    assert.ok(Math.abs(result.secondary.glycolMassInPipesKg-result.secondary.totalPipeVolumeL/1000*((result.rows[0].densityKgM3+result.rows[1].densityKgM3)/2)*0.3)<1e-9);
   }
 });
 

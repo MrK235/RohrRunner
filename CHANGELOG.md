@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.0.9 — Kälteträgerübersicht verdichten
+
+- Gleichzeitigkeit in die Auslegungskriterien verschoben und zentrale Ergebniswerte zusammengefasst.
+- Rohrleitungen, Armaflex, T-Stücke und Kugelhähne in der Kälteträger-Materialliste richtungsübergreifend nach Größe aufsummiert; T-Stücke mit Außendurchmesser statt DN ausgegeben.
+- Glykolmasse im Rohrnetz aus Innenvolumen, mittlerer Vor-/Rücklaufdichte und Massenanteil berechnet und ausgegeben.
+
 # 1.0.8 — Frostschutz-Eingabe fein abstimmen
 
 - Temperaturwert bei der inversen Glykolberechnung während der Eingabe beibehalten, damit er sich in beide Richtungen schrittweise ändern lässt.
