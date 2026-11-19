@@ -30,9 +30,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
   assert.ok(app.includes('window.__TAURI__?.core?.invoke')&&app.includes("invoke('save_export_file'")&&app.includes('Array.from(bytes)'),'desktop exports use the native save dialog');
   assert.match(tauriConfig, /"withGlobalTauri": true/);
-  assert.ok(tauriLib.includes('tauri_plugin_dialog')&&tauriLib.includes('blocking_save_file')&&tauriLib.includes('save_export_file'),'Tauri registers the native export command');
-  assert.ok(tauriLib.includes('tauri_plugin_updater')&&tauriLib.includes('check_for_update')&&tauriLib.includes('install_update'),'Tauri registers the automatic updater commands');
-  assert.ok(html.includes('updateNotice')&&app.includes("invoke('check_for_update')")&&app.includes("invoke('install_update')"),'desktop start window exposes update checking and installation');
+  assert.ok(tauriLib.includes('tauri_plugin_dialog')&&tauriLib.includes('blocking_save_file')&&tauriLib.includes('generate_handler![save_export_file]'),'Tauri registers the native export command');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
   assert.ok(launcher.includes('scripts\\serve.mjs')&&launcher.includes('http://127.0.0.1:%ROHRRUNNER_PORT%/'),'Windows launcher starts the server and opens the browser');
   assert.ok(linuxLauncher.includes('#!/usr/bin/env bash')&&linuxLauncher.includes('scripts/serve.mjs')&&linuxLauncher.includes('xdg-open'),'Linux launcher starts the server and opens the browser');

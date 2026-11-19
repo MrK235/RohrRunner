@@ -119,8 +119,6 @@ npm run tauri:build:windows
 
 Das Linux-AppImage liegt nach dem Build unter `src-tauri/target/release/bundle/appimage/`. Die Tauri-Anwendung lädt dieselben statischen Dateien wie die Browser- und PWA-Variante; Projekte und Berechnungen bleiben lokal. Für Windows ist das NSIS-Bundle einschließlich Anwendungssymbol und WebView2-Bootstrapper in `src-tauri/tauri.conf.json` vorbereitet.
 
-Die Linux- und Windows-Desktop-App prüft beim Öffnen des Startfensters automatisch das öffentliche GitHub-Release-Manifest. Wenn eine neuere signierte Version verfügbar ist, kann sie dort direkt heruntergeladen, installiert und gestartet werden. Die Release-Workflow-Datei erzeugt dafür die signierten Updater-Artefakte und `latest.json`. Vor dem ersten Release müssen im GitHub-Repository die Actions-Secrets `TAURI_SIGNING_PRIVATE_KEY` (Inhalt von `~/.tauri/rohrrunner.key`) und optional `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` hinterlegt werden; der private Schlüssel darf nicht committed oder veröffentlicht werden.
-
 Der Browser-/Solver-Testlauf benötigt Node.js, aber keine zusätzlichen npm-Laufzeitpakete; die Tauri-CLI wird nur für Desktop-Entwicklung und -Builds benötigt. Ein manueller Browser-Test wurde vom Projektverantwortlichen bestätigt; eine systematische Prüfung aller Browser- und Betriebssystemkombinationen liegt nicht vor. Die Berechnungsergebnisse sind noch nicht unabhängig anhand von Referenzfällen verifiziert. Die Tests und der Browser-Test ersetzen keine fachliche Anlagenprüfung.
 
 Mehr dazu: [Architektur](ARCHITECTURE.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungsprotokoll](CHANGELOG.md) · [Sicherheitsmeldungen](SECURITY.md)
