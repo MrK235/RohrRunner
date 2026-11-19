@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.0.7 — Frostschutztemperatur bearbeiten
+
+- Frostschutztemperatur im Kälteträgermodus stets anzeigen; bei Wasser 0 °C festsetzen.
+- Frostschutztemperatur und Glykolanteil im Bereich 0–60 Masse-% während der Eingabe gegenseitig aus dem CoolProp-Stoffmodell ableiten.
+- Stoffdatenmodell beim App-Start vorladen, damit die Temperatur ohne vorherige Berechnung verfügbar ist.
+
 # 1.0.6 — Kälteträger-Ergebnis- und Materialübersicht
 
 - Gleichzeitigkeit und Kälteträgerfeld in der Betriebspunktmaske getauscht; Kälteträger-Rohrrauheit in die erweiterten Einstellungen verschoben.
