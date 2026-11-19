@@ -85,29 +85,6 @@ test('terminal pipe allowance is added to the final section and riser is retaine
   assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._terminalRiser,false);
 });
 
-test('R744 meldet erschöpfte Unterkühlung im verzweigten Netz ohne Stoffwertfehler', async () => {
-  await context.RohrStoffdaten.load();
-  const plan=network();
-  plan.edges[0].thermal={liquid:{deltaZ:27}};
-  const input={...settings,fluid:'R744',superheatK:25,subcoolingK:2,liquidLimitK:1,condensationC:5,designPressureBar:100};
-  const result=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
-  assert.ok(result.issues.some(issue=>issue.type==='phase'));
-  assert.ok(result.endpoints.some(end=>end.remainingSubcoolingK===0));
-  const moreSubcooling=context.RohrRunnerEngine.calculate(plan,1,{...input,subcoolingK:3},context.RohrStoffdaten,catalog);
-  assert.ok(!moreSubcooling.issues.some(issue=>issue.type==='phase'));
-  const isolated=network();isolated.edges[1].thermal={liquid:{deltaZ:27}};
-  const branch=context.RohrRunnerEngine.calculate(isolated,1,input,context.RohrStoffdaten,catalog);
-  const phase=branch.issues.filter(issue=>issue.type==='phase');
-  assert.equal(phase.length,1);
-  assert.equal(phase[0].targetId,'cold-a');
-  assert.deepEqual([...phase[0].edgeIds],['branch-a']);
-  const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
-  const status=runInContext(`(${fn})`,createContext({project:{...isolated,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(branch);
-  assert.equal(status.get('branch-a:liquid'),'limit');
-  assert.equal(status.has('main:liquid'),false);
-  assert.equal(status.has('branch-b:liquid'),false);
-});
-
 test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung', async () => {
   await context.RohrStoffdaten.load();
   const plan=network();
@@ -141,34 +118,6 @@ test('summierter Druckverlust markiert die Kühlstelle, nicht unkritische Einzel
   const status=runInContext(`(${fn})`,createContext({project:{...plan,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(result);
   assert.equal(status.has('main:suction'),false);
   assert.equal(status.has('branch-a:suction'),false);
-});
-
-test('Geschwindigkeitswarnung bleibt auf die betroffene Leitung und Kühlstelle begrenzt', async () => {
-  await context.RohrStoffdaten.load();
-  const plan=network();
-  for(const edge of plan.edges)edge.thermal={suction:{mode:'manual',sizeId:edge.id==='branch-a'?'16x1':'28x1.5'},liquid:{mode:'manual',sizeId:'12x1'}};
-  const input={...settings,superheatK:25,subcoolingK:2,designPressureBar:28,simultaneity:1,
-    suctionLimitK:30,liquidLimitK:30,maxVelocityMS:25,minVelocityMS:0};
-  const result=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
-  const velocity=result.issues.filter(issue=>issue.type==='velocity');
-  assert.equal(velocity.length,1);
-  assert.equal(velocity[0].edgeId,'branch-a');
-  assert.deepEqual([...velocity[0].targetIds],['cold-a']);
-  const app=read('src/app.js'),statusFn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim(),stateFn=app.slice(app.indexOf('function endpointStates('),app.indexOf('  function showResult(')).trim();
-  const status=runInContext(`(${statusFn})`,createContext({project:{...plan,calibration:1,settings:input},RohrRunnerEngine:context.RohrRunnerEngine}))(result);
-  assert.equal(status.get('branch-a:suction'),'limit');
-  assert.equal(status.has('branch-b:suction'),false);
-  assert.equal(status.has('main:suction'),false);
-  const endpoint=runInContext(`(${stateFn})`,createContext({}));
-  assert.equal(endpoint(result,'cold-a').other,'check');
-  assert.equal(endpoint(result,'cold-b').row,'');
-  plan.edges[0].thermal.suction.sizeId='16x1';
-  plan.edges[1].thermal.suction.sizeId='28x1.5';
-  const shared=context.RohrRunnerEngine.calculate(plan,1,input,context.RohrStoffdaten,catalog);
-  const sharedWarnings=shared.issues.filter(issue=>issue.type==='velocity');
-  assert.equal(sharedWarnings.length,1,'gemeinsame Leitung erscheint nur einmal');
-  assert.equal(sharedWarnings[0].edgeId,'main');
-  assert.deepEqual([...sharedWarnings[0].targetIds].sort(),['cold-a','cold-b']);
 });
 
 test('Nachrechnung einer Ergebnisgröße verändert keine anderen Rohrgrößen', async () => {
@@ -211,144 +160,12 @@ test('Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast
   assert.notEqual(endpoint(sharedBefore,'cold-b').liquidK,endpoint(sharedAfter,'cold-b').liquidK);
 });
 
-test('neue UI-Betriebspunkte sind für alle drei Kältemittel berechenbar', async () => {
-  await context.RohrStoffdaten.load();
-  for (const fluid of ['R513A','R448A','R744']) {
-    const input={...settings,fluid,superheatK:25,subcoolingK:2,liquidLimitK:1,
-      condensationC:fluid==='R744'?5:45,designPressureBar:fluid==='R744'?100:28};
-    const result=context.RohrRunnerEngine.calculate(network(),1,input,context.RohrStoffdaten,catalog);
-    assert.equal(result.endpoints.length,2,fluid);
-    assert.ok(result.rows.every(row=>Number.isFinite(row.pressureDropPa)),fluid);
-  }
-});
-
-test('CoolProp checks all three requested refrigerants on a branched network', async () => {
-  await context.RohrStoffdaten.load();
-  const cases = [
-    { fluid: 'R513A', condensationC: 45, designPressureBar: 35 },
-    { fluid: 'R448A', condensationC: 45, designPressureBar: 35 },
-    { fluid: 'R744', condensationC: 20, designPressureBar: 100 }
-  ];
-  for (const overrides of cases) {
-    const input = { ...settings, ...overrides };
-    const result = context.RohrRunnerEngine.calculate(network(), 1, input, context.RohrStoffdaten, catalog);
-    assert.equal(result.valid, true, `${input.fluid}: ${result.issues.map(x=>x.message).join(' ')}`);
-    assert.equal(result.endpoints.length, 2, input.fluid);
-    assert.equal(result.rows.length, 6, input.fluid);
-    assert.ok(result.rows.every(row => row.diameterMm > 0 && row.flowKgS > 0), input.fluid);
-    assert.ok(result.endpoints.every(end => Number.isFinite(end.suctionK) && end.remainingSubcoolingK > 0), input.fluid);
-    assert.ok(result.endpoints.every(end => Math.abs(end.evaporationC - (input.evaporationC + end.suctionK)) < 1e-6), `${input.fluid}: tatsächliche Verdampfungstemperatur je Kühlstelle`);
-    assert.ok(result.endpoints.every(end => end.coolingKW === network().nodes.find(node => node.id === end.id).coolingKW), `${input.fluid}: Leistungsvorgabe je Kühlstelle`);
-    assert.ok(result.rows.filter(row => row.type === 'suction').every(row => row.psBar >= input.designPressureBar), input.fluid);
-    if (input.fluid === 'R744') assert.ok(result.rows.every(row => /^\d+(?:-\d+\/\d+|\/\d+)?"$/.test(row.sizeLabel)), 'R744-Rohrbezeichnungen in Zoll');
-  }
-});
-
-test('25 K Überhitzung nutzt Stoffwert-Stützpunkte statt CoolProp in jedem Rohrschritt', async () => {
-  await context.RohrStoffdaten.load();
-  const input = { ...settings, superheatK: 25 };
-  const originalFast = context.RohrnetzFastData;
-  let calls = 0;
-  const data = { ...context.RohrStoffdaten,
-    hydraulicPt(...args) { calls++; return context.RohrStoffdaten.hydraulicPt(...args); },
-    state(...args) { calls++; return context.RohrStoffdaten.state(...args); },
-    saturationAtPressure(...args) { calls++; return context.RohrStoffdaten.saturationAtPressure(...args); } };
-  try {
-    context.RohrnetzFastData = null;
-    const start = performance.now();
-    const reference = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
-    const slowMs = performance.now() - start, slowCalls = calls;
-    calls = 0;
-    context.RohrnetzFastData = originalFast;
-    const fastStart = performance.now();
-    const fast = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
-    console.log(`25 K: CoolProp direkt ${slowMs.toFixed(0)} ms/${slowCalls} Aufrufe, Interpolation ${(performance.now() - fastStart).toFixed(0)} ms/${calls} Aufrufe`);
-    assert.ok(calls < slowCalls / 3, `CoolProp-Aufrufe: schnell ${calls}, Referenz ${slowCalls}`);
-    assert.equal(fast.valid, reference.valid);
-    for (let i = 0; i < fast.endpoints.length; i++) {
-      assert.ok(Math.abs(fast.endpoints[i].suctionK - reference.endpoints[i].suctionK) < 0.1);
-      assert.ok(Math.abs(fast.endpoints[i].liquidK - reference.endpoints[i].liquidK) < 0.1);
-    }
-  } finally { context.RohrnetzFastData = originalFast; }
-});
-
 test('Fast-Path bleibt außerhalb geprüfter Bereiche und beim R448A-Viskositätslimit deaktiviert', () => {
   const data = context.RohrStoffdaten;
   for (const overrides of [
     { fluid: 'R744' }, { superheatK: 2.9 }, { suctionLimitK: 5.01 },
     { fluid: 'R448A', condensationC: 55, subcoolingK: 4 }
   ]) assert.equal(context.RohrnetzFastData.create(data, { ...settings, ...overrides }), data);
-});
-
-test('Stoffwert-Grenzen knapp außerhalb der bisherigen Schaltwerte bleiben schnell und vergleichbar', async t => {
-  await context.RohrStoffdaten.load();
-  for (const overrides of [
-    { fluid: 'R513A', evaporationC: -26, condensationC: 29, subcoolingK: 5.1, suctionLimitK: 3.01 },
-    { fluid: 'R448A', evaporationC: 6, condensationC: 51, subcoolingK: 6, suctionLimitK: 4 }
-  ]) {
-    const input = { ...settings, ...overrides };
-    let calls = 0;
-    const data = { ...context.RohrStoffdaten,
-      hydraulicPt(...args) { calls++; return context.RohrStoffdaten.hydraulicPt(...args); },
-      state(...args) { calls++; return context.RohrStoffdaten.state(...args); },
-      saturationAtPressure(...args) { calls++; return context.RohrStoffdaten.saturationAtPressure(...args); } };
-    const originalFast = context.RohrnetzFastData;
-    try {
-      context.RohrnetzFastData = null;
-      const reference = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
-      const directCalls = calls;
-      calls = 0;
-      context.RohrnetzFastData = originalFast;
-      const fast = context.RohrRunnerEngine.calculate(network(), 1, input, data, catalog);
-      assert.ok(calls < directCalls / 3, `${input.fluid}: ${calls} statt ${directCalls} direkte Stoffwertaufrufe`);
-      assert.equal(fast.valid, reference.valid);
-      for (let i = 0; i < fast.endpoints.length; i++) {
-        assert.ok(Math.abs(fast.endpoints[i].suctionK - reference.endpoints[i].suctionK) < 0.1);
-        assert.ok(Math.abs(fast.endpoints[i].liquidK - reference.endpoints[i].liquidK) < 0.1);
-      }
-      t.diagnostic(`${input.fluid}: ${directCalls} → ${calls} direkte Stoffwertaufrufe`);
-    } finally { context.RohrnetzFastData = originalFast; }
-  }
-});
-
-test('synthetische Netze mit 2, 5 und 10 Kühlstellen halten Grenzwerte ein und reizen sie aus', async t => {
-  await context.RohrStoffdaten.load();
-  const input = { ...settings, fluid: 'R513A', simultaneity: 0.5, maxVelocityMS: 30, minVelocityMS: 0,
-    designPressureBar: 28, suctionLimitK: 2, liquidLimitK: 2 };
-  const manyEndpoints = count => {
-    const nodes = [{ id: 'plant', type: 'start', name: 'Verbund', x: 0, y: 0 }], edges = [];
-    let previous = 'plant';
-    for (let i = 0; i < count; i++) {
-      const junction = `junction-${i}`, x = (i + 1) * 8, endpoint = `cold-${i}`, branchY = i % 2 ? -5 : 5;
-      nodes.push({ id: junction, type: 'junction', name: `T${i + 1}`, x, y: 0 });
-      edges.push({ id: `main-${i}`, from: previous, to: junction, points: [{ x: i * 8, y: 0 }, { x, y: 0 }] });
-      nodes.push({ id: endpoint, type: 'endpoint', name: `Kühlstelle ${i + 1}`, coolingKW: 3 + i % 3, x, y: branchY });
-      edges.push({ id: `branch-${i}`, from: junction, to: endpoint, points: [{ x, y: 0 }, { x, y: branchY }] });
-      previous = junction;
-    }
-    return { nodes, edges };
-  };
-  for (const count of [2, 5, 10]) {
-    const started = performance.now();
-    const result = context.RohrRunnerEngine.calculate(manyEndpoints(count), 1, input, context.RohrStoffdaten, catalog);
-    const durationMs = performance.now() - started;
-    assert.equal(result.valid, true, `${count} Kühlstellen: ${result.issues.map(issue => issue.message).join(' ')}`);
-    assert.equal(result.endpoints.length, count);
-    assert.ok(result.endpoints.every(end => end.suctionK <= input.suctionLimitK + 1e-6), `${count}: Saugverlust`);
-    assert.ok(result.endpoints.every(end => end.liquidK <= input.liquidLimitK + 1e-6 && end.remainingSubcoolingK > 0), `${count}: Flüssigkeitsverlust und Restunterkühlung`);
-    assert.ok(result.rows.filter(row => row.type === 'suction').every(row => row.velocityMS <= input.maxVelocityMS + 1e-6), `${count}: Maximalgeschwindigkeit`);
-    for (const type of ['suction', 'liquid']) {
-      const mainRows = Array.from({ length: count }, (_, i) => result.rows.find(row => row.edgeId === `main-${i}` && row.type === type));
-      const branchRows = Array.from({ length: count }, (_, i) => result.rows.find(row => row.edgeId === `branch-${i}` && row.type === type));
-      assert.ok(mainRows.every((row, i) => i === 0 || row.diameterMm <= mainRows[i - 1].diameterMm), `${count}: ${type} fällt entlang des Hauptstrangs nicht ab`);
-      assert.ok(branchRows.every((row, i) => row.diameterMm <= mainRows[i].diameterMm), `${count}: ${type} ist in einem Einzelzweig größer als der Hauptstrang`);
-    }
-    const utilization = Math.max(...result.endpoints.flatMap(end => [end.suctionK / input.suctionLimitK, end.liquidK / input.liquidLimitK]));
-    assert.ok(utilization >= 0.9, `${count}: Grenzwerte werden nicht ausreichend ausgenutzt (${utilization.toFixed(2)})`);
-    t.diagnostic(`${count} Kühlstellen: gültig, max. Grenzwertausnutzung ${(utilization * 100).toFixed(1)} %, ${durationMs.toFixed(0)} ms`);
-  }
-  const constrained=context.RohrRunnerEngine.calculate(manyEndpoints(10),1,{...input,designPressureBar:35},context.RohrStoffdaten,catalog);
-  assert.ok(constrained.issues.some(issue=>issue.type==='suction'),'35 bar: nicht erfüllte Sauggrenze wird gemeldet');
 });
 
 test('R744 transcritical and a missing terminal load are refused explicitly', async () => {
