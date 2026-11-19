@@ -43,13 +43,16 @@ jobs:
         run: npm ci
 
       - name: AppImage bauen
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: npm run tauri:build:linux
 
       - name: AppImage veröffentlichungsfähig ablegen
         uses: actions/upload-artifact@v4
         with:
           name: rohrrunner-linux-appimage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          path: src-tauri/target/release/bundle/appimage/*.AppImage*
           if-no-files-found: error
 
   build-windows:
@@ -72,6 +75,9 @@ jobs:
         run: npm ci
 
       - name: Windows-App bauen
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: npm run tauri:build:windows
 
       - name: Windows-Installer veröffentlichungsfähig ablegen
@@ -95,6 +101,9 @@ jobs:
           pattern: rohrrunner-*
           path: release-assets
           merge-multiple: true
+
+      - name: Updater-Manifest erzeugen
+        run: node scripts/generate-updater-manifest.mjs release-assets
 
       - name: GitHub Release veröffentlichen
         env:
