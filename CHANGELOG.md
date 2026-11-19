@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.0.6 — Kälteträger-Ergebnis- und Materialübersicht
+
+- Gleichzeitigkeit und Kälteträgerfeld in der Betriebspunktmaske getauscht; Kälteträger-Rohrrauheit in die erweiterten Einstellungen verschoben.
+- Frostschutzpunkt, summierter Auslegungsmassenstrom, Massenstrom je Vor-/Rücklaufstrecke und gesamtes Rohrinnenvolumen ergänzt; Glykolanteil wird bei Glykolgemischen ausgewiesen.
+- Kälteträger-Materialliste um Armaflex-Schlauch, T-Stücke und Kugelhähne mit DN-/Zoll-Größenhinweisen ergänzt.
+- Annahmen zu Innenvolumen und Nennweiten-Zuordnung in der Berechnungsanleitung dokumentiert.
+
 # 1.0.5 — Wasser-Glykol-Kälteträgerkreise
 
 - Separaten Kälteträgermodus für Wasser, Ethylen- und Propylenglykol-Wasser ergänzt, mit konzentrationsabhängigen CoolProp-Stoffwerten.

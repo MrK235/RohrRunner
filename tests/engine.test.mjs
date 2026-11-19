@@ -374,6 +374,9 @@ test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in
   assert.equal(water.valid,true,water.issues.map(issue=>issue.message).join(' '));
   assert.equal(water.rows.length,6);
   assert.ok(water.secondary.totalMassFlowKgS>0&&water.secondary.totalVolumeFlowM3H>0);
+  assert.ok(water.secondary.totalPipeVolumeL>0);
+  const expectedPipeVolumeL=water.rows.reduce((sum,row)=>sum+Math.PI*((row.diameterMm-2*row.wallMm)/1000)**2/4*row.lengthM*1000,0);
+  assert.ok(Math.abs(water.secondary.totalPipeVolumeL-expectedPipeVolumeL)<1e-9);
   assert.ok(water.rows.every(row=>['suction','liquid'].includes(row.type)&&row.velocityMS<=1.5));
   for(const [fluid,series,concentration] of [['MEG','black-steel-en10255-medium',30],['MPG','viega-temponox',30]]){
     const result=context.RohrRunnerEngine.calculate(network(),1,{...base,secondaryFluid:fluid,glycolConcentrationMassPercent:concentration,secondaryPipeSeries:series,roughnessMicroM:catalog.series.find(item=>item.id===series).roughnessMicroM},context.RohrStoffdaten,catalog);
