@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.0.10 — Kälteträger-Ergebnisdarstellung verfeinert
+
+- Kälteträger-Ergebnisliste bei Glykol mit kompakterer, ausgerichteter Tabellen- und Spaltendarstellung ergänzt.
+- Glykol-Leistung auf eine einheitliche Darstellung mit einer Nachkommastelle und Glykolanteile auf Prozentangaben umgestellt.
+- Kühlstellen vor Rohrstrecken angeordnet und die Rohrstreckenansicht um die nicht benötigte kg/s-Spalte reduziert.
+
 # 1.0.9 — Kälteträgerübersicht verdichten
 
 - Gleichzeitigkeit in die Auslegungskriterien verschoben und zentrale Ergebniswerte zusammengefasst.
