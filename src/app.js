@@ -1,6 +1,10 @@
 (() => {
   'use strict';
   const $ = id => document.getElementById(id), svgNS='http://www.w3.org/2000/svg', STORAGE='rohrrunner.project.v1', DB_NAME='rohrrunner.projects.v1', ACTIVE='rohrrunner.activeProject.v1', appScriptUrl=document.currentScript.src, Editor=window.RohrRunnerEditor;
+  const THEME_STORAGE='rohrrunner.theme.v1';
+  function setTheme(theme,save=true){const light=theme==='light';document.documentElement.dataset.theme=light?'light':'dark';const button=$('themeToggle');if(button){button.innerHTML=light?'◐<span>Dunkel</span>':'☼<span>Hell</span>';button.setAttribute('aria-label',light?'Dunkles Design aktivieren':'Helles Design aktivieren');button.title=light?'Dunkles Design aktivieren':'Helles Design aktivieren';button.setAttribute('aria-pressed',String(light))}document.querySelector('meta[name="theme-color"]')?.setAttribute('content',light?'#f2f5f6':'#101b24');if(save){try{localStorage.setItem(THEME_STORAGE,light?'light':'dark')}catch{}}}
+  setTheme(document.documentElement.dataset.theme,false);
+  $('themeToggle').addEventListener('click',()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light'));
   if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc=new URL('../vendor/pdfjs/pdf.worker.min.js',appScriptUrl).href;
   const defaults={mode:'refrigerant',fluid:'R513A',secondaryFluid:'WATER',glycolConcentrationMassPercent:30,supplyTemperatureC:6,returnTemperatureC:12,secondaryPipeSeries:'viega-temponox',secondaryPressureLimitKPa:50,secondaryMaxVelocityMS:1.5,secondaryRoughnessMicroM:1.5,simultaneity:1,evaporationC:-10,condensationC:45,superheatK:25,subcoolingK:2,suctionLimitK:2,liquidLimitK:1,minVelocityMS:7,maxVelocityMS:30,designPressureBar:28,roughnessMicroM:1.5,fittingsFactor:1.5,viscosityMarginPercent:15};
   const defaultsForFluid=fluid=>({...defaults,fluid,...(fluid==='R744'?{condensationC:5,designPressureBar:100}:{})});
