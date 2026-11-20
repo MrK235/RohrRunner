@@ -204,7 +204,8 @@ html[data-theme="light"] .material-stale { color: #704800; }
 html[data-theme="light"] .issue.critical { color: #a52e2e; }
 html[data-theme="light"] .export-csv { color: #34474d; border-color: #bdcbd0; }
 html[data-theme="light"] .export-csv:hover { color: #26373d; background: #e0e6e9; border-color: #9cafb5; }
-html[data-theme="light"] .project-row-actions [data-project-action="delete"]:hover,
+html[data-theme="light"] #deleteSelection:hover,
+html[data-theme="light"] #projectsDialog [data-project-action="delete"]:hover,
 html[data-theme="light"] .terminal-delete:hover { color: #a52e2e; background: #f9e1e1; border-color: #c96c62; }
 
 html[data-theme="light"] .material-section { background: #fff; border-color: #cbd7da; }
