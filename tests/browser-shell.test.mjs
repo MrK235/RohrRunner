@@ -1,9 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
 
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
+
+test('Steigleitung wird in Ergebnis, CSV und Materialmengen nur mit expliziter Teillänge geführt', () => {
+  const app=read('src/app.js');
+  assert.match(app, /length\.max=String\(drawnLength\)/);
+  const source=app.slice(app.indexOf('function splitRiserMaterialRows('),app.indexOf('  function renderMaterialList(')).trim();
+  const split=runInNewContext(`(${source})`);
+  const rows=split([{type:'suction',lengthM:9,riserLengthM:2,sizeId:'22x1',riserSizeId:'22x1'},
+    {type:'suction',lengthM:6,riserLengthM:1,sizeId:'22x1',riserSizeId:'18x1'},
+    {type:'liquid',lengthM:9,riserLengthM:0,sizeId:'12x1'}]);
+  assert.deepEqual(rows.map(row=>[row.lengthM,row.sizeId,row.riser]),[[7,'22x1',false],[2,'22x1',true],[5,'22x1',false],[1,'18x1',true],[9,'12x1',false]]);
+  assert.match(app, /\[true,'Steigleitung · Saugleitung'\]/);
+  assert.match(app, /row\.riser===riser/);
+  assert.match(app, /sl\.lengthM-sl\.riserLengthM/);
+  assert.match(app, /'Strecke ohne Steigleitung','Steigleitungslänge'/);
+  assert.doesNotMatch(app, /data-edge-field="suctionRiser"/);
+});
 
 test('browser shell ships local calculation assets and workflow controls', () => {
   const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
