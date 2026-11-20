@@ -144,6 +144,11 @@ html[data-theme="light"] .terminal-riser input { background: #fff; border-color:
 html[data-theme="light"] .terminal-riser input:checked { background: #d9e2e4; border-color: #687a7f; }
 html[data-theme="light"] .terminal-riser input:checked::after { color: #26373d; }
 html[data-theme="light"] .terminal-riser input:focus-visible { outline-color: #48656d; }
+html[data-theme="light"] .edge-card-head b,
+html[data-theme="light"] .edge-riser>span { color: #26373d; }
+html[data-theme="light"] .edge-card-grid label,
+html[data-theme="light"] .edge-card-details summary { color: #4f6268; }
+html[data-theme="light"] .edge-card-details { border-color: #c5d1d5; }
 
 html[data-theme="light"] .total-row,
 html[data-theme="light"] .terminal-total { color: #52676d; }

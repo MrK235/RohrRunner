@@ -85,6 +85,17 @@ test('terminal pipe allowance is added to the final section and riser is retaine
   assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._terminalRiser,false);
 });
 
+test('markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ihre Kühlstellen', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network();
+  plan.edges.find(edge=>edge.id==='main').suctionRiser=true;
+  plan.edges.find(edge=>edge.id==='main').extraLengthM=2;
+  const result=context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:30},context.RohrStoffdaten,catalog);
+  assert.equal(result.rows.find(row=>row.edgeId==='main'&&row.type==='suction').lengthM,6);
+  const risers=result.issues.filter(issue=>issue.type==='oil-return'&&issue.edgeId==='main');
+  assert.deepEqual(Array.from(risers,issue=>issue.targetId).sort(),['cold-a','cold-b']);
+});
+
 test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung', async () => {
   await context.RohrStoffdaten.load();
   const plan=network();
