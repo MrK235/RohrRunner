@@ -12,7 +12,7 @@ const editor = context.RohrRunnerEditor;
 
 test('Standard-Betriebspunkte sind je Kältemittel konsistent mit der Oberfläche', () => {
   const app=read('src/app.js'),html=read('index.html');
-  const definitions=app.match(/  const defaults=\{[^\n]+\};\n  const defaultsForFluid=[^\n]+;/)?.[0];
+  const definitions=app.match(/  const defaults=\{[^\n]+\};\r?\n  const defaultsForFluid=[^\n]+;/)?.[0];
   assert.ok(definitions,'Vorgaben und Kältemittelauswahl vorhanden');
   const getDefaults=runInContext(`${definitions}\ndefaultsForFluid`,createContext({}));
   for(const fluid of ['R513A','R448A','R744']){
@@ -45,6 +45,24 @@ test('jeder Leitungs-Klick erzeugt genau einen rechtwinkligen Richtungsabschnitt
   const finished = editor.finishOrthogonal(route.points, { x: 150, y: 120 }, route.axis);
   assert.equal(editor.isOrthogonal(finished), true);
   assert.deepEqual(finished.map(p => [p.x, p.y]), [[10, 10], [90, 10], [90, 80], [150, 80], [150, 120]]);
+});
+
+test('Doppelklick auf freier Fläche beendet die Leitung mit einem T-Stück', () => {
+  const app=read('src/app.js'),implementation=app.match(/  function finishPipeAt\(point\)\{[^\n]+\}/)?.[0];
+  assert.ok(implementation);
+  const connections=[],project={nodes:[{id:'start',type:'start',x:0,y:0}],edges:[]};
+  const sandbox={
+    project,pipeStart:project.nodes[0],pipePoints:[{x:0,y:0}],pipeAxis:null,selection:null,
+    Editor:{finishOrthogonal:(points,target)=>[...points,target]},routeLength:()=>40,routeHits:()=>[],
+    remember:()=>{},uid:()=> 'junction-1',addConnection:(from,to,route)=>connections.push({from,to,route}),
+    resetPipe:()=>{},renderAll:()=>{},invalidate:()=>{},$:()=>({textContent:''}),toast:message=>{throw Error(message)}
+  };
+  runInContext(`${implementation}\nglobalThis.finishPipeAt=finishPipeAt`,createContext(sandbox));
+  sandbox.finishPipeAt({x:40,y:0});
+  assert.equal(project.nodes[1].type,'junction');
+  assert.equal(project.nodes[1].name,'T-1');
+  assert.equal(project.nodes[1].coolingKW,undefined);
+  assert.equal(connections[0].to,project.nodes[1].id);
 });
 
 test('Schnittpunkte rechtwinkliger Rohre werden für automatische T-Stücke erkannt', () => {

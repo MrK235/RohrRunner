@@ -15,7 +15,7 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 
 1. Unter Windows `RohrRunner.bat`, unter Linux `./RohrRunner.sh` starten; beide Skripte starten den lokalen Server und öffnen RohrRunner im Browser. Alternativ kann `index.html` direkt geöffnet werden.
 2. Optional einen PDF-Grundriss laden und den Maßstab mit zwei Punkten oder über `m / px` kalibrieren.
-3. Einen Verbund und Kühlstellen setzen, Leistungen in kW eintragen und die Leitungen rechtwinklig verbinden.
+3. Einen Verbund und Kühlstellen setzen, Leistungen in kW eintragen und die Leitungen rechtwinklig verbinden. Beim Leitungszeichnen nimmt Rechtsklick den letzten Richtungswechsel zurück; Doppelklick beendet die Leitung mit einem T-Stück an der angeklickten Position.
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
 5. **Netz berechnen** wählen und die Ergebnisse im Reiter **Ergebnis** prüfen.
 
