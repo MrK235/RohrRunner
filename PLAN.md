@@ -139,6 +139,10 @@ Die Dimensionierungstests enthalten synthetische Baumstrukturen mit 2, 5 und 10 
 
 Ergebnisse sind vor einer Ausführung unabhängig fachlich, anhand der Anlagenrandbedingungen und der aktuellen Herstellerdaten zu prüfen.
 
+## Materialliste: T-Stücke und Reduzierungen
+
+Für jeden modellierten Abzweig mit mindestens drei angeschlossenen Leitungen und je Leitungsart wird ein gleiches T-Stück mit dem größten anliegenden Rohr-Außendurchmesser angesetzt. Jeder kleinere Anschluss erhält zusätzlich einen Absatznippel bzw. eine Reduzierung vom T-Stück-Außenmaß auf das kleinere Rohrmaß (z. B. 35a–22i). Gleiche Größen werden in der Materialliste und im Material-CSV summiert. Die Zuordnung ist eine Mengenannahme aus der berechneten Rohrdimensionierung: Bauform, Anschlussart, Herstellerverfügbarkeit und die technische Eignung der konkreten Formstücke sind nicht geprüft. Ein Knoten mit mehr als drei Anschlüssen wird weiterhin als ein Abzweig gezählt; die tatsächliche Aufteilung in mehrere Formstücke ist separat festzulegen.
+
 ## Sekundärkreis mit Wasser und Glykol
 
 Der Modus `secondary` bildet einen stationären, geschlossenen Kälteträgerkreis ab. Unterstützt werden reines Wasser sowie wässrige Ethylen- und Propylenglykollösungen. Die Konzentration ist Massenprozent; der CoolProp-8.0.0-Incompressible-Datensatz MEG/MPG deckt 0 bis 60 Masse-% ab. Dichte, Wärmekapazität, dynamische Viskosität und Gefrierpunkt werden temperatur- und konzentrationsabhängig aus diesem Stoffmodell bezogen. Zustände auf oder unter dem modellierten Gefrierpunkt werden abgewiesen. Die verwendeten Korrelationen basieren auf den in CoolProp dokumentierten Quellen, unter anderem Melinder; sie sind kein Datensatz für ein bestimmtes Handelsprodukt oder dessen Inhibitoren.

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rohrrunner-pwa-v2';
+const CACHE_NAME = 'rohrrunner-pwa-v3';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,9 +8,11 @@ const APP_SHELL = [
   './icons/rohrRunner-192.png',
   './icons/rohrRunner-512.png',
   './src/style.css',
+  './src/theme.css',
   './src/pwa.js',
   './src/app.js',
   './src/editor-core.js',
+  './src/materials.js',
   './src/engine.js',
   './src/fast-data.js',
   './src/stoffdaten.js',
