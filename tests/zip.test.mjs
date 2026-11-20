@@ -46,3 +46,34 @@ test('ZIP-Archiv unterstützt eine leere Dateiliste und begrenzt unzulässige Ei
   assert.equal(unzipStored(create([])).size, 0);
   assert.throws(() => create([{ name: '', data: '' }]), /Dateiname darf nicht leer sein/);
 });
+
+test('Projektpaket enthält die vollständige Projektdatei und einen PDF-Plan nur bei vorhandenem Grundriss', async () => {
+  const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
+  const exportFunction = app.match(/  async function exportProject\(\)\{[^\n]*\}/)?.[0];
+  assert.ok(exportFunction, 'ZIP-Exportfunktion vorhanden');
+  for (const withPdf of [false, true]) {
+    const savedProject = { version: 1, name: 'Testnetz', nodes: [], edges: [], lastResult: { valid: true }, pdfBase64: withPdf ? 'JVBERi0=' : null };
+    let archive;
+    const sandbox = {
+      project: { name: 'Testnetz' },
+      $: id => id === 'projectName' ? { value: 'Testnetz' } : { innerHTML: '' },
+      safeName: name => name,
+      projectFile: async () => JSON.stringify(savedProject),
+      calculationCsv: () => 'Berechnung',
+      materialCsv: () => 'Material',
+      pdfBytes: withPdf ? new Uint8Array([1]).buffer : null,
+      planPdfBytes: async includePdf => Uint8Array.from([includePdf ? 1 : 0]),
+      RohrRunnerZip: { create },
+      download: async data => { archive = data; return true; },
+      toast: message => { throw new Error(message); }
+    };
+    runInNewContext(`${exportFunction}\nglobalThis.runExport=exportProject`, sandbox);
+    await sandbox.runExport();
+    const files = unzipStored(archive);
+    assert.deepEqual(JSON.parse(new TextDecoder().decode(files.get('Testnetz.rohrrunner'))), savedProject);
+    assert.ok(files.has('Testnetz-berechnung.csv'));
+    assert.ok(files.has('Testnetz-materialliste.csv'));
+    assert.ok(files.has('Testnetz-plan-ohne-pdf.pdf'));
+    assert.equal(files.has('Testnetz-plan-mit-pdf.pdf'), withPdf);
+  }
+});

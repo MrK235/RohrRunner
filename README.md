@@ -41,7 +41,7 @@ npm run serve
 - Druckverluste, Geschwindigkeiten, Temperaturverluste und Warnungen
 - Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Verbund sortiert
 - Lokale Projektverwaltung, `.rohrrunner`-Import, Ergebnis-CSV und Plan-PDF
-- Projektpaket als ZIP mit `.rohrrunner`, verfügbaren Berechnungs-/Material-CSV und PDF-Grundriss plus Plan-PDF
+- Projektpaket als ZIP mit vollständiger `.rohrrunner`, verfügbaren Berechnungs-/Material-CSV und Plan-PDF; der Plan mit PDF-Grundriss wird nur bei geladenem PDF ergänzt
 
 ## Ergebnis-CSV
 
@@ -84,7 +84,7 @@ Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Ver
 
 ## Projekte und Datenschutz
 
-Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Original-Grundriss und dem exportierten Plan-PDF. Die `.rohrrunner`-Datei enthält den Grundriss zusätzlich eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
+Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der vollständigen `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Plan-PDF ohne Hintergrund. Wenn ein PDF-Grundriss geladen ist, enthält das ZIP zusätzlich den Plan mit PDF-Hintergrund. Die `.rohrrunner`-Datei enthält den geladenen Grundriss eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
 
 Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen verwendet der Browser die lokal mitgelieferten Bibliotheken.
 
