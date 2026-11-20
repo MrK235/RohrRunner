@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rohrrunner-pwa-v9';
+const CACHE_NAME = 'rohrrunner-pwa-v10';
 const APP_SHELL = [
   './',
   './index.html',

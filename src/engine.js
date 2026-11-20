@@ -36,6 +36,7 @@
       const terminalExtra=Number(terminal?.extraLengthM)||0;
       if(terminalExtra<0)fail(`${terminal.name||'Kühlstelle'}: zusätzliche Rohrleitung darf nicht negativ sein.`);
       e._lengthM = units * calibration + Math.max(0, Number(e.extraLengthM)||0) + terminalExtra;
+      if(e.suctionRiser&&e.riserLengthM!==undefined&&(!Number.isFinite(Number(e.riserLengthM))||Number(e.riserLengthM)<0||Number(e.riserLengthM)>e._lengthM+1e-6))fail(`${e.label||'Steigleitung'}: Steigleitungslänge muss zwischen 0 und der Rohrstreckenlänge liegen.`);
       e._terminalRiser=Boolean(terminal?.suctionRiser);e._terminalRiserNodeId=terminal?.id||null;
       adj.get(e.from).push(e); adj.get(e.to).push(e);
     }
@@ -114,6 +115,7 @@
     const baseGas=data.hydraulicPt(f,rootP,data.saturationAtPressure(f,rootP).dewK+sh), maxTerminalFlow=new Map();
     for(let i=graph.order.length-1;i>=0;i--){const id=graph.order[i],node=graph.byId.get(id);let flow=node.type==='endpoint'?Number(node.coolingKW)*1000/baseLift:0;for(const c of children.get(id))flow=Math.max(flow,maxTerminalFlow.get(c));maxTerminalFlow.set(id,flow);}
     for(const e of edges){const child=graph.order.find(id=>parentEdge.get(id)?.id===e.id),total=down.get(child)/baseLift,maxFlow=simultaneity*total+(1-simultaneity)*maxTerminalFlow.get(child);if(e.thermal?.suction?.mode!=='manual'){const first=sizes.find(size=>maxFlow/(baseGas.densityKgM3*Math.PI*diOf(size)**2/4)<=vmax);if(first)selected.set(`${e.id}:suction`,first);}}
+    for(const edge of edges)if(edge.suctionRiser&&edge.riserSizeId){const riser=sizes.find(size=>idOf(size)===edge.riserSizeId);if(!riser)fail(`${edge.label||'Steigleitung'}: Rohrgröße der Steigleitung ist für den Auslegungsdruck nicht verfügbar.`);const key=`${edge.id}:suction`;if(diOf(selected.get(key))<diOf(riser)){if(edge.thermal?.suction?.mode==='manual')fail(`${edge.label||'Steigleitung'}: Steigleitung darf nicht größer als das Saugrohr sein.`);selected.set(key,riser)}}
     const flowsFor=target=>{const q=new Map();for(let i=graph.order.length-1;i>=0;i--){const id=graph.order[i],nd=graph.byId.get(id);let watts=nd.type==='endpoint'?Number(nd.coolingKW)*1000*(id===target?1:simultaneity):0;for(const c of children.get(id))watts+=q.get(c)*baseLift;q.set(id,watts/baseLift);}return q;};
     function fluidProps(type,p){
       try{const sat=data.saturationAtPressure(f,p);
@@ -122,22 +124,30 @@
       }catch(error){throw new Error(`${error.message} (${type}, ${Number(p).toPrecision(5)} Pa)`);}
     }
     function segment(edge,type,flow,p,size){
-      if(flow<=0)return {drop:0,v:0,pOut:p,props:fluidProps(type,p)};
-      const d=diOf(size),area=Math.PI*d*d/4,len=edge._lengthM,zeta=Number(edge.zeta)||0,steps=type==='suction'?8:4;
-      let pressure=p, drop=0, vmaxSeen=0, vminSeen=Infinity, latest, phaseRisk=false;
-      for(let j=0;j<steps;j++){
-        latest=fluidProps(type,pressure);const rho=latest.densityKgM3,mu=latest.viscosityPaS*margin;
-        if(!(rho>0&&mu>0))fail('Ungültige Stoffwerte im Rohrabschnitt.');
-        const velocity=flow/(rho*area), re=rho*velocity*d/mu, ff=frictionFactor(re,rough,d), dynamic=.5*rho*velocity*velocity;
-        const dz=(Number(edge.thermal?.[type]?.deltaZ)||0)/steps;
-        const dp=(ff*len/steps/d*fittings+zeta/steps)*dynamic+rho*G*dz;
-        drop+=dp;vmaxSeen=Math.max(vmaxSeen,velocity);vminSeen=Math.min(vminSeen,velocity);
-        const nextPressure=pressure-dp;
-        if(type==='liquid'&&nextPressure<=liquidPhaseGuard){pressure=liquidPhaseGuard;phaseRisk=true;break;}
-        if(nextPressure<=1000){pressure=1000;phaseRisk=true;break;}
-        pressure=nextPressure;
+      if(flow<=0)return {drop:0,v:0,vMin:0,pOut:p,props:fluidProps(type,p)};
+      const len=edge._lengthM,zeta=Number(edge.zeta)||0,riserLength=type==='suction'&&edge.suctionRiser?(edge.riserLengthM===undefined?len:Number(edge.riserLengthM)):0;
+      const riserSize=edge.riserSizeId?sizes.find(candidate=>idOf(candidate)===edge.riserSizeId):size;
+      if(riserLength>0&&!riserSize)fail(`${edge.label||'Steigleitung'}: Rohrgröße der Steigleitung ist für den Auslegungsdruck nicht verfügbar.`);
+      const parts=riserLength>0&&riserLength<len?[{length:len-riserLength,size,riser:false},{length:riserLength,size:riserSize,riser:true}]:[{length:len,size:riserLength>0?riserSize:size,riser:riserLength>0}];
+      let pressure=p,drop=0,vmaxSeen=0,vminSeen=Infinity,mainVMax=0,riserVMin=Infinity,riserVMax=0,latest,phaseRisk=false;
+      for(const part of parts){
+        const d=diOf(part.size),area=Math.PI*d*d/4,steps=type==='suction'?8:4,share=len>0?part.length/len:1;
+        for(let j=0;j<steps;j++){
+          latest=fluidProps(type,pressure);const rho=latest.densityKgM3,mu=latest.viscosityPaS*margin;
+          if(!(rho>0&&mu>0))fail('Ungültige Stoffwerte im Rohrabschnitt.');
+          const velocity=flow/(rho*area),re=rho*velocity*d/mu,ff=frictionFactor(re,rough,d),dynamic=.5*rho*velocity*velocity;
+          const dz=(Number(edge.thermal?.[type]?.deltaZ)||0)*share/steps;
+          const dp=(ff*part.length/steps/d*fittings+zeta*share/steps)*dynamic+rho*G*dz;
+          drop+=dp;vmaxSeen=Math.max(vmaxSeen,velocity);vminSeen=Math.min(vminSeen,velocity);
+          if(part.riser){riserVMin=Math.min(riserVMin,velocity);riserVMax=Math.max(riserVMax,velocity)}else mainVMax=Math.max(mainVMax,velocity);
+          const nextPressure=pressure-dp;
+          if(type==='liquid'&&nextPressure<=liquidPhaseGuard){pressure=liquidPhaseGuard;phaseRisk=true;break;}
+          if(nextPressure<=1000){pressure=1000;phaseRisk=true;break;}
+          pressure=nextPressure;
+        }
+        if(phaseRisk)break;
       }
-      return {drop,v:vmaxSeen,vMin:vminSeen,pOut:pressure,props:latest,phaseRisk};
+      return {drop,v:vmaxSeen,vMin:vminSeen,mainVMax,riserVMin,riserVMax,pOut:pressure,props:latest,phaseRisk};
     }
     const scenarios=[];
     function solveScenario(target, retain=false){
@@ -186,7 +196,7 @@
       for(const s of finalScenarios){if(s.suctionK>limS)issues.push({type:'suction',target:s.targetId,excess:s.suctionK/limS-1,path:new Set(pathTo(s.targetId))});if(s.liquidK>limL||s.remainingSubcoolingK<=0)issues.push({type:'liquid',target:s.targetId,excess:Math.max(s.liquidK/limL-1,s.remainingSubcoolingK<=0?1:0),path:new Set(pathTo(s.targetId))});}
       for(const issue of issues){let worst=0;for(const [key,r] of rowByKey)if(key.endsWith(issue.type)&&issue.path.has(key.slice(0,key.lastIndexOf(':'))))worst=Math.max(worst,r.find(x=>x.scenario.targetId===(issue.scenarioTarget??issue.target))?.result.v||0);if(issue.type==='suction'&&worst>vmax)issue.excess=Math.max(issue.excess,worst/vmax-1);}
       // velocity limits are checked on each full-load target scenario.
-      for(const s of finalScenarios)for(const [key,r] of s.lineResults)if(key.endsWith(':suction')&&r.v>vmax){const edgeId=key.slice(0,key.lastIndexOf(':')),affected=terminalsByEdge.get(edgeId)?.filter(id=>s.massByNode.get(id)>0)||[];if(affected.length)issues.push({type:'suction',target:affected[0],scenarioTarget:s.targetId,excess:r.v/vmax-1,path:new Set([edgeId])});}
+      for(const s of finalScenarios)for(const [key,r] of s.lineResults)if(key.endsWith(':suction')&&(edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':')))?.riserSizeId?r.mainVMax:r.v)>vmax){const edgeId=key.slice(0,key.lastIndexOf(':')),affected=terminalsByEdge.get(edgeId)?.filter(id=>s.massByNode.get(id)>0)||[];if(affected.length)issues.push({type:'suction',target:affected[0],scenarioTarget:s.targetId,excess:(edges.find(e=>e.id===edgeId)?.riserSizeId?r.mainVMax:r.v)/vmax-1,path:new Set([edgeId])});}
       let worstIssue=issues.sort((a,b)=>b.excess-a.excess)[0];if(!worstIssue)break;
       const keys=[...rowByKey.keys()].filter(key=>key.endsWith(worstIssue.type)&&worstIssue.path.has(key.slice(0,key.lastIndexOf(':')))&&!manual.has(key));
       let best=null;
@@ -200,9 +210,9 @@
     if(needsRecompute)finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
     const issues=[], velocityByEdge=new Map();
     const directEdgeIds=(s,type,limit)=>pathTo(s.targetId).filter(id=>{const r=s.lineResults.get(`${id}:${type}`);return r&&Math.abs(data.saturationAtPressure(f,r.pIn).dewK-data.saturationAtPressure(f,r.pOut).dewK)>limit+1e-6});
-    for(const s of finalScenarios){if(s.suctionK>limS+1e-6)issues.push({targetId:s.targetId,type:'suction',edgeIds:directEdgeIds(s,'suction',limS),message:`${s.name}: Druckverlust SL ${s.suctionK.toFixed(2)} K überschreitet ${limS} K.`});if(s.liquidK>limL+1e-6)issues.push({targetId:s.targetId,type:'liquid',edgeIds:directEdgeIds(s,'liquid',limL),message:`${s.name}: Druckverlust FL ${s.liquidK.toFixed(2)} K überschreitet ${limL} K.`});if(s.remainingSubcoolingK<=0)issues.push({targetId:s.targetId,type:'phase',edgeIds:pathTo(s.targetId).filter(id=>s.lineResults.get(`${id}:liquid`)?.phaseRisk),message:`${s.name}: Flüssigkeit erreicht die Phasengrenze.`});for(const [key,r] of s.lineResults){if(key.endsWith(':suction')&&r.v>vmax+1e-6){const edgeId=key.slice(0,key.lastIndexOf(':')),current=velocityByEdge.get(edgeId)||{velocity:0,targetIds:new Set()};current.velocity=Math.max(current.velocity,r.v);for(const id of terminalsByEdge.get(edgeId)||[])if(s.massByNode.get(id)>0)current.targetIds.add(id);velocityByEdge.set(edgeId,current)}const edge=edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':')));if(key.endsWith(':suction')&&(edge?.suctionRiser||edge?._terminalRiser&&edge._terminalRiserNodeId===s.targetId)&&r.vMin<vmin-1e-6){const critical=r.vMin<5-1e-6;issues.push({targetId:s.targetId,edgeId:edge.id,type:'oil-return',severity:critical?'critical':'check',message:`${s.name}: Steigleitung ${r.vMin.toFixed(1)} m/s – ${critical?'kritisch (unter 5 m/s)':'prüfen (unter '+vmin+' m/s)'}.`});}}}
+    for(const s of finalScenarios){if(s.suctionK>limS+1e-6)issues.push({targetId:s.targetId,type:'suction',edgeIds:directEdgeIds(s,'suction',limS),message:`${s.name}: Druckverlust SL ${s.suctionK.toFixed(2)} K überschreitet ${limS} K.`});if(s.liquidK>limL+1e-6)issues.push({targetId:s.targetId,type:'liquid',edgeIds:directEdgeIds(s,'liquid',limL),message:`${s.name}: Druckverlust FL ${s.liquidK.toFixed(2)} K überschreitet ${limL} K.`});if(s.remainingSubcoolingK<=0)issues.push({targetId:s.targetId,type:'phase',edgeIds:pathTo(s.targetId).filter(id=>s.lineResults.get(`${id}:liquid`)?.phaseRisk),message:`${s.name}: Flüssigkeit erreicht die Phasengrenze.`});for(const [key,r] of s.lineResults){if(key.endsWith(':suction')&&r.v>vmax+1e-6){const edgeId=key.slice(0,key.lastIndexOf(':')),current=velocityByEdge.get(edgeId)||{velocity:0,targetIds:new Set()};current.velocity=Math.max(current.velocity,r.v);for(const id of terminalsByEdge.get(edgeId)||[])if(s.massByNode.get(id)>0)current.targetIds.add(id);velocityByEdge.set(edgeId,current)}const edge=edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':'))),riserVelocity=edge?.suctionRiser?r.riserVMin:r.vMin;if(key.endsWith(':suction')&&(edge?.suctionRiser||edge?._terminalRiser&&edge._terminalRiserNodeId===s.targetId)&&riserVelocity<vmin-1e-6){const critical=riserVelocity<5-1e-6;issues.push({targetId:s.targetId,edgeId:edge.id,type:'oil-return',severity:critical?'critical':'check',message:`${s.name} · ${edge.label||'Rohrstrecke '+(graph.byId.get(edge.from)?.name||edge.from)+' ↔ '+(graph.byId.get(edge.to)?.name||edge.to)}: Steigleitung ${riserVelocity.toFixed(1)} m/s – ${critical?'kritisch (unter 5 m/s)':'prüfen (unter '+vmin+' m/s)'}.`});}}}
     for(const [edgeId,{velocity,targetIds}] of velocityByEdge){const edge=edges.find(e=>e.id===edgeId),label=edge.label||`Leitung ${graph.byId.get(edge.from)?.name||edge.from} ↔ ${graph.byId.get(edge.to)?.name||edge.to}`;issues.push({edgeId,targetIds:[...targetIds],type:'velocity',message:`${label}: Sauggasgeschwindigkeit ${velocity.toFixed(1)} m/s überschreitet ${vmax} m/s.`})}
-    const rows=[];for(const edge of edges)for(const type of ['suction','liquid']){const runs=finalScenarios.map(s=>({s,r:s.lineResults.get(`${edge.id}:${type}`)})).filter(x=>x.r);const r=runs.reduce((best,x)=>x.r.drop>best.drop?x.r:best,runs[0]?.r);if(!r)continue;const size=selected.get(`${edge.id}:${type}`),pUp=Math.max(1000,r.pIn),pDown=Math.max(1000,r.pOut);const dT=Math.abs(data.saturationAtPressure(f,pUp).dewK-data.saturationAtPressure(f,pDown).dewK);rows.push({edgeId:edge.id,type,sizeId:idOf(size),sizeLabel:sizeLabelOf(size),diameterMm:diOf(size)*1000,lengthM:edge._lengthM,flowKgS:r.flow,flowKgH:r.flow*3600,powerKW:r.flow*baseLift/1000,evaporationTemperatureC:data.saturationAtPressure(f,r.pIn).dewK-273.15,liquidTemperatureC:liquidT-273.15,velocityMS:r.v,pressureDropPa:r.drop,pressureDropBar:r.drop/1e5,temperatureDropK:dT,manual:manual.has(`${edge.id}:${type}`),psBar:size.catalogBar??120,branchCount:runs.length});}
+    const rows=[];for(const edge of edges)for(const type of ['suction','liquid']){const runs=finalScenarios.map(s=>({s,r:s.lineResults.get(`${edge.id}:${type}`)})).filter(x=>x.r);const r=runs.reduce((best,x)=>x.r.drop>best.drop?x.r:best,runs[0]?.r);if(!r)continue;const size=selected.get(`${edge.id}:${type}`),pUp=Math.max(1000,r.pIn),pDown=Math.max(1000,r.pOut);const dT=Math.abs(data.saturationAtPressure(f,pUp).dewK-data.saturationAtPressure(f,pDown).dewK);rows.push({edgeId:edge.id,type,sizeId:idOf(size),sizeLabel:sizeLabelOf(size),diameterMm:diOf(size)*1000,lengthM:edge._lengthM,riserLengthM:edge.suctionRiser&&type==='suction'?(edge.riserLengthM===undefined?edge._lengthM:Number(edge.riserLengthM)):0,riserSizeId:edge.suctionRiser&&type==='suction'?(edge.riserSizeId||idOf(size)):null,riserVelocityMinMS:type==='suction'&&edge.suctionRiser?Math.min(...runs.map(x=>x.r.riserVMin??Infinity)):null,flowKgS:r.flow,flowKgH:r.flow*3600,powerKW:r.flow*baseLift/1000,evaporationTemperatureC:data.saturationAtPressure(f,r.pIn).dewK-273.15,liquidTemperatureC:liquidT-273.15,velocityMS:r.v,pressureDropPa:r.drop,pressureDropBar:r.drop/1e5,temperatureDropK:dT,manual:manual.has(`${edge.id}:${type}`),psBar:size.catalogBar??120,branchCount:runs.length});}
     const valid=issues.length===0;
     return {valid,issues,rows,endpoints:finalScenarios.map(s=>({id:s.targetId,name:s.name,evaporationC:s.evaporationC,coolingKW:s.coolingKW,suctionK:s.suctionK,liquidK:s.liquidK,remainingSubcoolingK:s.remainingSubcoolingK,suctionPressureBar:s.suctionPressurePa/1e5,liquidPressureBar:s.liquidPressurePa/1e5})),totalCoolingKW:graph.terminals.reduce((a,e)=>a+Number(e.coolingKW),0),fluid:f,settings:{...settings},model:{name:'RohrRunner stationär',refrigerant:f,assumptions:['Einphasige, stationäre Strömung','Nicht eingetragene Höhendifferenzen werden als 0 m angenommen','Flüssigkeitstemperatur bleibt entlang des Strangs konstant','Unterkritisches R744; keine Druckgasleitung','Gleichzeitigkeit als eigener Endpunkt-Lastfall','Automatische Rohrwahl ist eine begrenzte Heuristik, kein globales Kostenoptimum','Herstellerdaten und Einbauverantwortung separat prüfen']}};
     function pathTo(id){const out=[];while(id!==graph.start.id){const p=graph.parent.get(id);out.push(p.edge.id);id=p.id;}return out;}

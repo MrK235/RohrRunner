@@ -149,6 +149,13 @@ html[data-theme="light"] .edge-riser>span { color: #26373d; }
 html[data-theme="light"] .edge-card-grid label,
 html[data-theme="light"] .edge-card-details summary { color: #4f6268; }
 html[data-theme="light"] .edge-card-details { border-color: #c5d1d5; }
+html[data-theme="light"] .edge-card.check { background: #fff5e3; border-color: #c28b3f; }
+html[data-theme="light"] .edge-card.limit { background: #fff0ee; border-color: #c96c62; }
+html[data-theme="light"] .riser-open { background: #fff5e3; color: #805000; border-color: #c28b3f; }
+html[data-theme="light"] .riser-open:hover { background: #f4dfb8; }
+html[data-theme="light"] .riser-preview { color: #34474d; border-color: #c5d1d5; }
+html[data-theme="light"] .riser-preview.check { color: #805000; border-color: #c28b3f; }
+html[data-theme="light"] .riser-preview.limit { color: #a52e2e; border-color: #c96c62; }
 
 html[data-theme="light"] .total-row,
 html[data-theme="light"] .terminal-total { color: #52676d; }
