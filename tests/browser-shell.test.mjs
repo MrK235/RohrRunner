@@ -107,6 +107,24 @@ test('ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung übe
   assert.equal(edge.riserSizeId,'18x1');
 });
 
+test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Verbund', () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function resultEdgeOrder('),app.indexOf('  function projectForCalculation(')).trim();
+  const project={nodes:[{id:'start',type:'start',name:'Verbund'},{id:'tee',type:'junction',name:'T1'},{id:'cold-a',type:'endpoint',name:'Kühlstelle A'},{id:'cold-b',type:'endpoint',name:'Kühlstelle B'}],edges:[{id:'main',from:'start',to:'tee'},{id:'b',from:'tee',to:'cold-b'},{id:'a',from:'cold-a',to:'tee'}]};
+  const ordered=runInNewContext(`(${source})`,{project})();
+  assert.deepEqual(Array.from(ordered.orderedEdges,edge=>edge.id),['b','a','main']);
+  assert.equal(ordered.edgeNodes.get('a').child,'cold-a');
+  assert.equal(ordered.edgeNodes.get('main').parent,'start');
+  assert.match(app, /const nodes=new Map\(project.nodes.map\(node=>\[node.id,node\]\)\),\{orderedEdges,edgeNodes\}=resultEdgeOrder\(\)/);
+  assert.match(app, /for\(const edge of orderedEdges\)\{\s*const relation=edgeNodes.get\(edge.id\),child=relation\?\.child/);
+  assert.match(app, /from=target,to=source/);
+  project.edges.push({id:'draft',from:'start',to:'missing'});
+  assert.equal(runInNewContext(`(${source})`,{project})().orderedEdges.at(-1).id,'draft');
+  const draft={nodes:[{id:'start',type:'start'},{id:'cold',type:'endpoint'},{id:'tee',type:'junction'}],edges:[{id:'plant',from:'start',to:'tee'},{id:'terminal',from:'tee',to:'cold'}]};
+  assert.deepEqual(Array.from(runInNewContext(`(${source})`,{project:draft})().orderedEdges,edge=>edge.id),['terminal','plant']);
+  draft.nodes=draft.nodes.filter(node=>node.id!=='start');
+  assert.deepEqual(Array.from(runInNewContext(`(${source})`,{project:draft})().orderedEdges,edge=>edge.id),['terminal','plant']);
+});
+
 test('browser shell ships local calculation assets and workflow controls', () => {
   const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
   assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);
