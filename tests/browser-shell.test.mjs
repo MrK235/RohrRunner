@@ -6,14 +6,14 @@ import { runInNewContext } from 'node:vm';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
-test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt Prüfen-Button', () => {
+test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button', () => {
   const app=read('src/app.js');
   const result=app.slice(app.indexOf('function showResult('),app.indexOf('    const endpoints=document.createElement',app.indexOf('function showResult(')));
   assert.match(result,/document\.createTextNode\(`\$\{format\(sl\?\.lengthM\?\?fl\?\.lengthM,1\)\} m`\)/);
   assert.match(result,/velocity\.innerHTML=`<span>SL \$\{format\(sl\?\.velocityMS,1\)\}<\/span><span>FL \$\{format\(fl\?\.velocityMS,1\)\}<\/span>`/);
   assert.doesNotMatch(result,/riserVelocityMinMS|\+ ↑/);
-  assert.match(result,/riserButton\.textContent='Prüfen'/);
-  assert.match(read('src/style.css'),/\.riser-open\{[^}]*margin:3px 2px 0 0/);
+  assert.match(result,/riserButton\.textContent='SL prüfen'/);
+  assert.match(read('src/style.css'),/\.riser-open\{[^}]*margin:6px 2px 0 0/);
 });
 
 test('Steigleitung bleibt in Berechnung, CSV und Materialmengen als zusätzliche Sauglänge erhalten', () => {

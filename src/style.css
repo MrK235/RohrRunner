@@ -177,7 +177,7 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .edge-card.limit{border-color:#944b43;background:#302321}
 .result-title-row{display:flex;align-items:center;gap:4px;padding-right:7px}
 .result-title-row .result-section-title{flex:1;width:auto}
-.riser-open{flex:none;margin:3px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
+.riser-open{flex:none;margin:6px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
 .riser-dialog{width:min(380px,94vw)}
 .riser-dialog h2{margin-bottom:5px}
