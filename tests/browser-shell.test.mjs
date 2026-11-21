@@ -27,7 +27,7 @@ test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sau
 });
 
 test('Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale Steigleitung einmal', () => {
-  const app=read('src/app.js'),source=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function renderTerminals(')).trim();
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function updateLengthDisplays(')).trim();
   const node={id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3};
   const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[{from:'plant',to:'cold',extraLengthM:1,suctionRiser:true,riserLengthM:3,points:[{x:0,y:0},{x:4,y:0}]}]};
   const length=runInNewContext(`(${source})`,{project,edgePoints:edge=>edge.points});
@@ -39,6 +39,29 @@ test('Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale S
   assert.equal(length(node),12);
   project.edges[0].pipeRiser=false;
   assert.equal(length(node),7);
+});
+
+test('Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übrige Werte erst bei Bestätigung', () => {
+  const app=read('src/app.js');
+  const route=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function updateLengthDisplays(')).trim();
+  const update=app.slice(app.indexOf('function updateLengthDisplays('),app.indexOf('  function renderTerminals(')).trim();
+  const riser=app.slice(app.indexOf('function riserLengthFor('),app.indexOf('  function syncRiserButtons(')).trim();
+  const node={id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3};
+  const edge={id:'pipe',from:'plant',to:'cold',extraLengthM:1,pipeRiser:true,pipeRiserLengthM:5,points:[{x:0,y:0},{x:4,y:0}]};
+  const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[edge]};
+  const terminalLabel={textContent:''},edgeLabel={textContent:''};
+  const terminalRow={dataset:{terminalId:'cold'},querySelector:()=>terminalLabel},edgeCard={dataset:{edgeCard:'pipe'},querySelector:()=>edgeLabel};
+  const document={querySelectorAll:selector=>selector.startsWith('.terminal-card')?[terminalRow]:[edgeCard]};
+  const context={project,document,edgePoints:item=>item.points,format:(value)=>value.toFixed(1)};
+  const refresh=runInNewContext(`(()=>{${route};${riser};return ${update}})()`,context);
+  refresh();assert.equal(terminalLabel.textContent,'15.0 m');assert.equal(edgeLabel.textContent,'15.0 m');
+  edge.extraLengthM=4;refresh();assert.equal(terminalLabel.textContent,'18.0 m');assert.equal(edgeLabel.textContent,'18.0 m');
+  node.extraLengthM=5;refresh();assert.equal(terminalLabel.textContent,'21.0 m');assert.equal(edgeLabel.textContent,'21.0 m');
+  assert.match(app, /extra.oninput=\(\)=>\{/);
+  assert.match(app, /if\(key==='extraLengthM'\)\{field.onfocus=.*field.oninput=\(\)=>\{/);
+  assert.doesNotMatch(app, /name.oninput=|value.oninput=|riserLength.oninput=|riserLengthInput.oninput=/);
+  assert.match(app, /riserLabel.textContent='ja'/);
+  assert.match(app, /data-edge-riser="enabled"[^>]*> ja/);
 });
 
 test('Kühlstellen-Steigleitung bleibt nach Deaktivieren aus und wird nur einmal übernommen', () => {
