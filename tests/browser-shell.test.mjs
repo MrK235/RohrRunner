@@ -6,6 +6,21 @@ import { runInNewContext } from 'node:vm';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('SL prüfen erscheint nur bei betroffener oder bereits angepasster Steigleitung', () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function showRiserButton('),app.indexOf('  function syncRiserButtons(')).trim();
+  const visible=runInNewContext(`(${source})`,{riserLengthFor:edge=>edge.pipeRiser?edge.pipeRiserLengthM:0});
+  const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},result={issues:[]};
+  assert.equal(visible(edge,result),false);
+  result.issues=[{type:'oil-return',edgeId:'other'}];assert.equal(visible(edge,result),false);
+  result.issues=[{type:'velocity',edgeId:'e'}];assert.equal(visible(edge,result),false);
+  result.issues=[{type:'oil-return',edgeId:'e'}];assert.equal(visible(edge,result),true);
+  result.issues=[];edge.riserSizeId='18x1';assert.equal(visible(edge,result),true);
+  edge.pipeRiser=false;assert.equal(visible(edge,result),false);
+  assert.match(app,/riserButton\.hidden=!showRiserButton\(edge,result\)/);
+  assert.match(app,/showRiserButton\(edge,project\.lastResult\)/);
+  assert.match(read('src/style.css'),/\.riser-open\[hidden\]\{display:none\}/);
+});
+
 test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button', () => {
   const app=read('src/app.js');
   const result=app.slice(app.indexOf('function showResult('),app.indexOf('    const endpoints=document.createElement',app.indexOf('function showResult(')));
