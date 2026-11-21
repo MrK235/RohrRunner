@@ -101,6 +101,25 @@ test('markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ih
   assert.equal(status.has('branch-b:suction'),false);
 });
 
+test('Warnungen nennen und markieren nur betroffene Kühlstellen-Lastfälle', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network(),main=plan.edges.find(edge=>edge.id==='main'),branch=plan.edges.find(edge=>edge.id==='branch-b');
+  main.thermal={suction:{mode:'manual',sizeId:'22x1'}};
+  branch.suctionRiser=true;branch.riserLengthM=2;
+  const result=context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:30,maxVelocityMS:20},context.RohrStoffdaten,catalog);
+  const oil=result.issues.filter(issue=>issue.type==='oil-return');
+  const velocity=result.issues.find(issue=>issue.type==='velocity'&&issue.edgeId==='main');
+  assert.deepEqual(Array.from(oil,issue=>issue.targetId),['cold-b']);
+  assert.ok(oil[0].message.includes('Kühlstelle B'));
+  assert.deepEqual(Array.from(velocity.targetIds),['cold-a']);
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function endpointStates('),app.indexOf('  function renderSecondaryResult(')).trim();
+  const states=runInContext(`(${source})`,createContext({}));
+  assert.equal(states({...result,issues:oil},'cold-a').row,'');
+  assert.notEqual(states({...result,issues:oil},'cold-b').row,'');
+  assert.notEqual(states({...result,issues:[velocity]},'cold-a').row,'');
+  assert.equal(states({...result,issues:[velocity]},'cold-b').row,'');
+});
+
 test('eigener Steigleitungsdurchmesser wirkt nur auf die angegebene Teillänge', async () => {
   await context.RohrStoffdaten.load();
   const plan=network();
