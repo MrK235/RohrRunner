@@ -169,11 +169,12 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .edge-card{padding-right:8px}
 .edge-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
 .edge-card-head b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d9e4e5;font:600 10px var(--sans)}
-.edge-card-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(88px,.7fr);gap:8px;align-items:end}
+.edge-card-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(66px,.8fr) minmax(0,.65fr);gap:6px;align-items:end}
 .edge-card-grid label{min-width:0;display:flex;flex-direction:column;gap:4px;color:#91a3a8;font-size:8px}
 .edge-card-grid .field-unit{height:25px}
 .edge-riser>span{display:flex;align-items:center;gap:5px;height:25px;color:#d7e2e4;font-size:9px}
 .edge-riser input{margin:0;accent-color:#53e0b2}
+.edge-riser-length input{min-width:0;width:100%;font-size:9px}
 .edge-card-details{margin-top:7px;border-top:1px solid #34434b;padding-top:5px}
 .edge-card-details summary{cursor:pointer;color:#91a3a8;font-size:9px}
 .edge-card-details .form-grid{margin-top:8px}
