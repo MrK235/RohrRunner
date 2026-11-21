@@ -19,14 +19,16 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
 5. **Netz berechnen** wählen und die Ergebnisse im Reiter **Ergebnis** prüfen.
 
-Ein Server und Node.js sind für die Nutzung nicht erforderlich. RohrRunner kann über das Web-App-Menü des Browsers als PWA installiert werden. Dafür wird die Anwendung einmal über HTTPS oder den lokalen Entwicklungsserver geöffnet; die lokalen Laufzeitdateien werden für die Offline-Nutzung gecacht. Zusätzlich steht eine native Desktop-Verpackung mit Tauri zur Verfügung. Unter Linux wird daraus ein AppImage gebaut; die Windows-NSIS-Konfiguration ist vorbereitet und wird auf einem Windows-System gebaut. Für die Entwicklung steht ein lokaler Server zur Verfügung:
+Tastatur: Mit Tab die Zeichenfläche oder bestehende Knoten und Rohrstrecken fokussieren. Auf der Zeichenfläche verschieben Pfeiltasten die Position (Umschalt für Einzelschritte), Eingabe setzt einen Punkt; beim Leitungszeichnen nimmt Rückschritt die letzte Ecke zurück und **F** beendet die Leitung am aktuellen Punkt. Bestehende Knoten und Strecken werden mit Eingabe aktiviert. Das freie Verschieben vorhandener Objekte benötigt weiterhin einen Pointer.
+
+Ein Server und Node.js sind für die Nutzung nicht erforderlich. RohrRunner kann über das Web-App-Menü des Browsers als PWA installiert werden. Dafür wird die Anwendung einmal über HTTPS oder den lokalen Entwicklungsserver geöffnet; nur die bekannten lokalen Laufzeitdateien werden für die Offline-Nutzung gecacht. Zusätzlich steht eine native Desktop-Verpackung mit Tauri zur Verfügung. Unter Linux wird daraus ein AppImage gebaut; die Windows-NSIS-Konfiguration ist vorbereitet und wird auf einem Windows-System gebaut. Für die Entwicklung steht ein lokaler Server zur Verfügung:
 
 ```bash
 npm run serve
 # anschließend http://127.0.0.1:4173 öffnen
 ```
 
-`ROHRRUNNER_PORT` kann den Port ändern. Alle benötigten Laufzeitbibliotheken einschließlich PDF.js, pdf-lib und CoolProp liegen im Projekt und werden lokal geladen. Die Anwendung funktioniert daher auch ohne Internetverbindung; externe Links in der Oberfläche sind nur optionale Projektverweise.
+`ROHRRUNNER_PORT` kann den Port ändern. Die Desktop-WebView begrenzt Ressourcen über eine Content Security Policy; die lokal mitgelieferten PDF-/Stoffdatenmodule benötigen dabei weiterhin dynamische Codeauswertung (`unsafe-eval`). Alle benötigten Laufzeitbibliotheken einschließlich PDF.js, pdf-lib und CoolProp liegen im Projekt und werden lokal geladen. Die Anwendung funktioniert daher auch ohne Internetverbindung; externe Links in der Oberfläche sind nur optionale Projektverweise.
 
 ## Funktionen
 

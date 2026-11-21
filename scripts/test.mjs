@@ -4,14 +4,15 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-const allTests = ['tests/editor.test.mjs', 'tests/drawing-tools.test.mjs', 'tests/engine.test.mjs', 'tests/browser-shell.test.mjs', 'tests/worker-start.test.mjs', 'tests/zip.test.mjs'];
+const allTests = ['tests/editor.test.mjs', 'tests/drawing-tools.test.mjs', 'tests/engine.test.mjs', 'tests/browser-shell.test.mjs', 'tests/worker-start.test.mjs', 'tests/zip.test.mjs', 'tests/materials.test.mjs'];
 const testByGroup = {
   editor: 'tests/editor.test.mjs',
   drawing: 'tests/drawing-tools.test.mjs',
   engine: 'tests/engine.test.mjs',
   shell: 'tests/browser-shell.test.mjs',
   worker: 'tests/worker-start.test.mjs',
-  zip: 'tests/zip.test.mjs'
+  zip: 'tests/zip.test.mjs',
+  materials: 'tests/materials.test.mjs'
 };
 
 function changedFiles() {
@@ -30,7 +31,8 @@ function groupsFor(file) {
     return match ? [match[0]] : ['all'];
   }
   if (file === 'src/editor-core.js') return ['editor'];
-  if (file === 'src/app.js') return ['editor', 'drawing', 'shell', 'worker'];
+  if (file === 'src/app.js') return ['editor', 'drawing', 'shell', 'worker', 'materials'];
+  if (file === 'src/materials.js') return ['materials'];
   if (file === 'src/engine.js' || file === 'src/stoffdaten.js' || file === 'src/fast-data.js' || file.startsWith('data/')) return ['engine'];
   if (file === 'src/worker.js' || file === 'src/worker-bundle.js' || file === 'scripts/build-worker-bundle.mjs') return ['engine', 'worker'];
   if (file === 'src/zip.js') return ['zip'];

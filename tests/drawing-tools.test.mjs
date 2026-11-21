@@ -39,6 +39,20 @@ test('switching away from calibration releases its click interception', () => {
   assert.equal(intercepted, false);
 });
 
+test('Tastaturposition setzt Punkte und beendet Leitungen ohne Pointer', () => {
+  const source=app.slice(app.indexOf("  stage.addEventListener('focus'"),app.indexOf("  stage.addEventListener('contextmenu'"));
+  const listeners={},stage={addEventListener:(name,fn)=>listeners[name]=fn},net={querySelector:()=>null},fields={coordX:{},coordY:{}};
+  let point,finished,draws=0;const sandbox=createContext({stage,net,$:id=>fields[id],renderViewport:{width:100,height:80},keyboardPoint:{x:50,y:40},document:{activeElement:stage},drawNetwork:()=>draws++,tool:'endpoint',onCanvasClick:event=>{point=event.planPoint},selectCalibrationPoint:()=>{},finishPipeAt:p=>{finished=p},undoPipeCorner:()=>{},pipeStart:null});
+  runInContext(source,sandbox);
+  const event=key=>({key,target:stage,shiftKey:false,preventDefault(){},stopPropagation(){}});
+  listeners.keydown(event('ArrowRight'));listeners.keydown(event('Enter'));
+  assert.equal(point.x,60);assert.equal(point.y,40);assert.ok(draws>0);
+  sandbox.tool='pipe';sandbox.pipeStart={id:'start'};listeners.keydown(event('f'));
+  assert.equal(finished.x,60);
+  assert.match(app,/g\.setAttribute\('tabindex','0'\)/);
+  assert.match(app,/hitPath\.setAttribute\('tabindex','0'\)/);
+});
+
 test('stage accepts drawing clicks beyond the SVG page bounds', () => {
   assert.match(app, /stage\.addEventListener\('click',e=>\{if\(e\.target!==stage\)return;if\(tool==='calibrate'\)selectCalibrationPoint\(e\);else onCanvasClick\(e\)\}\)/);
   assert.match(app, /stage\.addEventListener\('dblclick',e=>\{if\(e\.target===stage\)onPipeDoubleClick\(e\)\}\)/);

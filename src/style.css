@@ -64,6 +64,10 @@ body{min-width:0}
 #network .length-annotation text,#network .dimension-annotation text{fill:#173238;font-family:'Segoe UI',sans-serif;font-weight:600;paint-order:stroke;stroke:#fff;stroke-linejoin:round;pointer-events:none}
 #network .network-node .node-name-label{fill:#173238;font-family:'Segoe UI',sans-serif;font-weight:600;paint-order:stroke;stroke:#fff;stroke-linejoin:round}
 #network .node-hit{fill:transparent;stroke:none;pointer-events:all}
+.stage:focus-visible{outline:2px solid var(--mint);outline-offset:-3px}
+#network .network-node:focus-visible .node-halo{stroke:var(--mint);stroke-width:3px!important}
+#network .pipe-hit:focus-visible{stroke:var(--mint);stroke-width:5px!important}
+#network .keyboard-cursor{fill:none;stroke:var(--mint);stroke-width:2;pointer-events:none}
 #network .pipe-line{pointer-events:none}
 #network .pipe-hit{fill:none;stroke:transparent;stroke-linecap:round;stroke-linejoin:round;pointer-events:stroke;cursor:pointer}
 .reset-sizing{display:block;width:100%;margin:-3px 0 10px;text-align:right}

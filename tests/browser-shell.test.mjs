@@ -275,6 +275,35 @@ test('Rohrwahl übernimmt nur die letzte erfolgreiche Nachrechnung', async () =>
   assert.equal(edge.riserSizeId,'15x1',preview.textContent);assert.equal(saved,1);assert.equal(shown,1);
 });
 
+test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () => {
+  const listeners={},saved=[],scope='http://127.0.0.1:4173/';
+  const self={registration:{scope},location:{origin:new URL(scope).origin},addEventListener:(type,handler)=>listeners[type]=handler};
+  const caches={match:async()=>null,open:async()=>({put:async(path)=>saved.push(path)})};
+  let response=new Response('ok',{status:200,headers:{'content-type':'text/html'}});
+  runInNewContext(read('sw.js'),{self,caches,URL,fetch:async()=>response,Set,Promise});
+  const request=(path,mode='no-cors',method='GET')=>{const event={request:{url:new URL(path,scope).href,mode,method},respondWith(promise){this.promise=promise}};listeners.fetch(event);return event};
+  assert.equal(request('private/customer.pdf').promise,undefined);
+  assert.equal(request('src/app.js','no-cors','POST').promise,undefined);
+  assert.equal(request('unknown','navigate').promise,undefined);
+  response=new Response('Fehler',{status:404,headers:{'content-type':'text/html'}});const missing=request('./','navigate');await missing.promise;
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(saved.length,0);
+  response=new Response('Falscher Inhalt',{status:200,headers:{'content-type':'text/plain'}});await request('./','navigate').promise;
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(saved.length,0);
+  response=new Response('App',{status:200,headers:{'content-type':'text/html'}});await request('./','navigate').promise;
+  await request('src/app.js').promise;
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(saved.length,2);
+});
+
+test('Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab', () => {
+  const config=JSON.parse(read('src-tauri/tauri.conf.json'));
+  assert.match(config.app.security.csp,/default-src 'self'/);
+  assert.match(config.app.security.csp,/object-src 'none'/);
+  assert.match(config.app.security.csp,/worker-src 'self' blob:/);
+  assert.match(read('scripts/test.mjs'),/tests\/materials\.test\.mjs/);
+  assert.match(read('index.html'),/id="stage"[^>]*tabindex="0"[^>]*aria-describedby="canvasHint"/);
+  assert.match(read('src/app.js'),/e\.target\.closest\?\.\('button,input,select,textarea,dialog,\[contenteditable\]'\)/);
+});
+
 test('browser shell ships local calculation assets and workflow controls', () => {
   const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
   assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);

@@ -20,6 +20,6 @@
 
 ## Pull Requests
 
-Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Für normale Änderungen wird ausschließlich die Patchnummer in `x.y.z` erhöht. Minor- und Major-Releases – einschließlich `1.0.0` – erfolgen nur nach ausdrücklicher Freigabe.
+Bitte beschreibe Zweck, sichtbare Auswirkungen, geänderte Berechnungsannahmen und Testabdeckung. Bei normalen Änderungen bleibt die Versionsnummer unverändert. Nur bei einem ausdrücklich beauftragten Release wird ausschließlich die Patchnummer in `x.y.z` erhöht; Minor- und Major-Releases erfolgen nur nach gesonderter Freigabe.
 
 Bei einem Release Versionsnummer in `package.json`, Versionsanzeigen in `index.html` und `README.md` sowie Eintrag in `CHANGELOG.md` gemeinsam aktualisieren. Tests und manuelle Prüfungen mit Umfang und Grenzen dokumentieren. Änderungen nach der Prüfung committen; Push und GitHub-Release nur nach ausdrücklichem Auftrag.

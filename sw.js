@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rohrrunner-pwa-v26';
+const CACHE_NAME = 'rohrrunner-pwa-v27';
 const APP_SHELL = [
   './',
   './index.html',
@@ -45,16 +45,22 @@ self.addEventListener('activate', event => {
   );
 });
 
+const shellUrls = new Set(APP_SHELL.map(path => new URL(path, self.registration.scope).href));
+const homeUrl = new URL('./', self.registration.scope);
+const indexUrl = new URL('./index.html', self.registration.scope);
+
 self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url);
-  if (requestUrl.origin !== self.location.origin) return;
+  if (event.request.method !== 'GET' || requestUrl.origin !== self.location.origin) return;
 
   if (event.request.mode === 'navigate') {
+    if (requestUrl.pathname !== homeUrl.pathname && requestUrl.pathname !== indexUrl.pathname) return;
     event.respondWith(
       fetch(event.request)
         .then(response => {
           const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
+          if (response.ok && response.headers.get('content-type')?.includes('text/html'))
+            caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
           return response;
         })
         .catch(() => caches.match('./index.html'))
@@ -62,6 +68,7 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  if (!shellUrls.has(requestUrl.href)) return;
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
       if (response.ok) {
