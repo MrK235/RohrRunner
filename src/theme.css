@@ -107,8 +107,7 @@ html[data-theme="light"] .form-grid label,
 html[data-theme="light"] .nodeForm label,
 html[data-theme="light"] #nodeForm label,
 html[data-theme="light"] #calForm label,
-html[data-theme="light"] .terminal-card-grid label,
-html[data-theme="light"] .terminal-card-grid .terminal-riser,
+html[data-theme="light"] .terminal-load,
 html[data-theme="light"] .terminal-card-length { color: #4f6268; }
 html[data-theme="light"] .field-unit,
 html[data-theme="light"] .form-grid select,
@@ -121,7 +120,7 @@ html[data-theme="light"] .project-rename {
   border-color: #c5d1d5;
 }
 html[data-theme="light"] .field-unit input,
-html[data-theme="light"] .terminal-card-head>input,
+html[data-theme="light"] .terminal-card:not(.edge-card)>input,
 html[data-theme="light"] .project-rename { color: #26373d; }
 html[data-theme="light"] .field-unit em,
 html[data-theme="light"] .terminal-card-length strong { color: #53676d; }

@@ -9,7 +9,7 @@ const read = path => readFileSync(new URL(path, root), 'utf8');
 test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sauglänge geführt', () => {
   const app=read('src/app.js');
   assert.match(app, /length\.readOnly=true/);
-  assert.match(app, /node\.suctionRiser\?Math\.max\(0,Number\(node\.riserLengthM\)\|\|0\):0/);
+  assert.match(app, /edge\.pipeRiser\?Math\.max\(0,Number\(edge\.pipeRiserLengthM\)\|\|0\):0/);
   const source=app.slice(app.indexOf('function splitRiserMaterialRows('),app.indexOf('  function renderMaterialList(')).trim();
   const split=runInNewContext(`(${source})`);
   const rows=split([{type:'suction',lengthM:9,riserLengthM:2,sizeId:'22x1',riserSizeId:'22x1'},
@@ -26,24 +26,20 @@ test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sau
   assert.match(app, /class="terminal-riser-length edge-riser-length"/);
   assert.match(app, /riserLength\.closest\('label'\)\.classList\.toggle\('disabled',!enabled\.checked\)/);
   assert.match(app, /riserLength\.disabled=!enabled\.checked/);
-  assert.match(read('src/style.css'), /\.terminal-card-grid \.terminal-riser,\.edge-card-grid \.terminal-riser/);
-  assert.match(app, /if\(!riserEnabled\.checked\)\{node\.riserLengthM=0;.*delete edge\.suctionRiser/);
+  assert.match(read('src/style.css'), /\.edge-card-grid \.terminal-riser/);
   assert.match(app, /function migrateTerminalRisers\(/);
 });
 
 test('Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale Steigleitung einmal', () => {
   const app=read('src/app.js'),source=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function updateLengthDisplays(')).trim();
-  const node={id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3};
-  const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[{from:'plant',to:'cold',extraLengthM:1,suctionRiser:true,riserLengthM:3,points:[{x:0,y:0},{x:4,y:0}]}]};
+  const node={id:'cold',type:'endpoint'};
+  const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[{from:'plant',to:'cold',extraLengthM:1,pipeRiser:true,pipeRiserLengthM:3,points:[{x:0,y:0},{x:4,y:0}]}]};
   const length=runInNewContext(`(${source})`,{project,edgePoints:edge=>edge.points});
-  assert.equal(length(node),10);
-  project.edges[0].pipeRiser=true;project.edges[0].pipeRiserLengthM=5;
-  assert.equal(length(node),15);
-  node.suctionRiser=false;node.riserLengthM=0;
-  delete project.edges[0].suctionRiser;
-  assert.equal(length(node),12);
+  assert.equal(length(node),8);
+  project.edges[0].extraLengthM=2;
+  assert.equal(length(node),9);
   project.edges[0].pipeRiser=false;
-  assert.equal(length(node),7);
+  assert.equal(length(node),6);
 });
 
 test('Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übrige Werte erst bei Bestätigung', () => {
@@ -51,52 +47,54 @@ test('Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übr
   const route=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function updateLengthDisplays(')).trim();
   const update=app.slice(app.indexOf('function updateLengthDisplays('),app.indexOf('  function renderTerminals(')).trim();
   const riser=app.slice(app.indexOf('function riserLengthFor('),app.indexOf('  function syncRiserButtons(')).trim();
-  const node={id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3};
-  const edge={id:'pipe',from:'plant',to:'cold',extraLengthM:1,pipeRiser:true,pipeRiserLengthM:5,points:[{x:0,y:0},{x:4,y:0}]};
+  const node={id:'cold',type:'endpoint'};
+  const edge={id:'pipe',from:'plant',to:'cold',extraLengthM:3,pipeRiser:true,pipeRiserLengthM:5,points:[{x:0,y:0},{x:4,y:0}]};
   const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[edge]};
   const terminalLabel={textContent:''},edgeLabel={textContent:''};
   const terminalRow={dataset:{terminalId:'cold'},querySelector:()=>terminalLabel},edgeCard={dataset:{edgeCard:'pipe'},querySelector:()=>edgeLabel};
   const document={querySelectorAll:selector=>selector.startsWith('.terminal-card')?[terminalRow]:[edgeCard]};
   const context={project,document,edgePoints:item=>item.points,format:(value)=>value.toFixed(1)};
   const refresh=runInNewContext(`(()=>{${route};${riser};return ${update}})()`,context);
-  refresh();assert.equal(terminalLabel.textContent,'15.0 m');assert.equal(edgeLabel.textContent,'15.0 m');
-  edge.extraLengthM=4;refresh();assert.equal(terminalLabel.textContent,'18.0 m');assert.equal(edgeLabel.textContent,'18.0 m');
-  node.extraLengthM=5;refresh();assert.equal(terminalLabel.textContent,'21.0 m');assert.equal(edgeLabel.textContent,'21.0 m');
-  assert.match(app, /extra.oninput=\(\)=>\{/);
+  refresh();assert.equal(terminalLabel.textContent,'12.0 m');assert.equal(edgeLabel.textContent,'12.0 m');
+  edge.extraLengthM=4;refresh();assert.equal(terminalLabel.textContent,'13.0 m');assert.equal(edgeLabel.textContent,'13.0 m');
+  edge.pipeRiserLengthM=7;refresh();assert.equal(terminalLabel.textContent,'15.0 m');assert.equal(edgeLabel.textContent,'15.0 m');
   assert.match(app, /if\(key==='extraLengthM'\)\{field.onfocus=.*field.oninput=\(\)=>\{/);
   assert.doesNotMatch(app, /name.oninput=|value.oninput=|riserLength.oninput=|riserLengthInput.oninput=/);
-  assert.match(app, /riserLabel.textContent='ja'/);
   assert.match(app, /data-edge-riser="enabled"[^>]*><span>ja<\/span>/);
 });
 
-test('Kühlstellen-Steigleitung bleibt nach Deaktivieren aus und wird nur einmal übernommen', () => {
+test('alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrecke', () => {
   const app=read('src/app.js');
   const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function renderAll(')).trim();
   const calculation=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
-  const project={nodes:[{id:'plant',type:'start'},{id:'cold',type:'endpoint'}],edges:[{id:'pipe',from:'plant',to:'cold',suctionRiser:true,riserLengthM:2,riserSizeId:'18x1'}]};
+  const project={nodes:[{id:'plant',type:'start'},{id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3}],edges:[{id:'pipe',from:'plant',to:'cold',extraLengthM:1,pipeRiser:true,pipeRiserLengthM:4,riserSizeId:'18x1',suctionRiser:true,riserLengthM:3}]};
   const context={project,clone:value=>JSON.parse(JSON.stringify(value))};
   const migrate=runInNewContext(`(${migration})`,context),forCalculation=runInNewContext(`(${calculation})`,context);
   migrate();
-  assert.equal(project.nodes[1].riserLengthM,2);
-  assert.equal(forCalculation().edges[0].riserLengthM,2);
-  project.edges[0].pipeRiser=true;project.edges[0].pipeRiserLengthM=4;
-  assert.equal(forCalculation().edges[0].riserLengthM,6);
-  project.nodes[1].suctionRiser=false;
+  assert.equal(project.edges[0].extraLengthM,3);
+  assert.equal(project.edges[0].pipeRiserLengthM,7);
+  assert.equal(project.edges[0].riserSizeId,'18x1');
+  assert.equal(project.nodes[1].extraLengthM,undefined);
+  assert.equal(project.nodes[1].riserLengthM,undefined);
+  assert.equal(project.nodes[1].suctionRiser,undefined);
   migrate();
-  const disabled=forCalculation().edges[0];
-  assert.equal(project.nodes[1].suctionRiser,false);
-  assert.equal(disabled.suctionRiser,true);
-  assert.equal(disabled.riserLengthM,4);
-  assert.equal(disabled.riserSizeId,'18x1');
-  project.nodes[1].suctionRiser=true;project.nodes[1].riserLengthM=3;
-  const enabled=forCalculation().edges[0];
-  assert.equal(enabled.riserLengthM,7);
-  assert.equal(enabled.riserSizeId,'18x1');
+  assert.equal(project.edges[0].extraLengthM,3);
+  assert.equal(project.edges[0].pipeRiserLengthM,7);
+  assert.equal(forCalculation().edges[0].riserLengthM,7);
   project.edges[0].pipeRiser=false;
-  project.nodes[1].suctionRiser=false;
-  const inactive=forCalculation().edges[0];
-  assert.equal(inactive.suctionRiser,false);
-  assert.equal(inactive.riserSizeId,undefined);
+  const disabled=forCalculation().edges[0];
+  assert.equal(disabled.suctionRiser,false);
+  assert.equal(disabled.riserSizeId,undefined);
+  assert.match(app, /function renderAll\(\)\{migrateTerminalRisers\(\)/);
+  const pending={nodes:[{id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3}],edges:[]};
+  const migratePending=runInNewContext(`(${migration})`,{project:pending});
+  migratePending();
+  assert.equal(pending.nodes[0].extraLengthM,2);
+  pending.nodes.push({id:'plant',type:'start'});
+  pending.edges.push({id:'pipe',from:'cold',to:'plant'});
+  migratePending();
+  assert.equal(pending.edges[0].extraLengthM,2);
+  assert.equal(pending.edges[0].pipeRiserLengthM,3);
 });
 
 test('ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung überführt', () => {
@@ -130,11 +128,12 @@ test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Verbund',
   assert.deepEqual(Array.from(runInNewContext(`(${source})`,{project:draft})().orderedEdges,edge=>edge.id),['terminal','plant']);
 });
 
-test('Kühlstellen ohne Mülleimer, Steigleitungslängen mit breiterem Feld', () => {
+test('Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile', () => {
   const app=read('src/app.js'),style=read('src/style.css');
-  assert.doesNotMatch(app, /terminal-delete|row\.append\(head,grid,del\)/);
-  assert.match(app, /row\.append\(head,grid\);list\.append\(row\)/);
-  assert.match(style, /\.terminal-card-grid\{[^}]*minmax\(90px,1\.2fr\)/);
+  const terminals=app.slice(app.indexOf('function renderTerminals('),app.indexOf('  function renderEdges('));
+  assert.match(terminals, /row\.append\(name,load,lengthBox\);list\.append\(row\)/);
+  assert.doesNotMatch(terminals, /extraLengthM|suctionRiser|riserLengthM|terminal-delete/);
+  assert.match(style, /\.terminal-card:not\(\.edge-card\)\{display:grid;grid-template-columns:/);
   assert.match(style, /\.edge-card-grid\{[^}]*minmax\(90px,1fr\)/);
   assert.ok(app.includes("$('deleteSelection').onclick=onDelete"));
 });
