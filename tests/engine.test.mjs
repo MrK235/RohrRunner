@@ -85,6 +85,23 @@ test('terminal pipe allowance is added to the final section without implicit ris
   assert.equal(graph.edges.find(edge=>edge.id==='branch-b')._lengthM,8);
 });
 
+test('Saugdruckrückrechnung lässt geodätischen Druckgewinn zu', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network(),edge=plan.edges.find(item=>item.id==='branch-a');
+  edge.thermal={suction:{mode:'manual',sizeId:'22x1',deltaZ:-120}};
+  const result=context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog);
+  assert.ok(result.rows.find(row=>row.edgeId===edge.id&&row.type==='suction').pressureDropPa<0);
+});
+
+test('Fehler bei Endpunkt-Stoffwerten werden mit Kühlstelle gemeldet', async () => {
+  await context.RohrStoffdaten.load();
+  const original=context.RohrnetzFastData;context.RohrnetzFastData=null;
+  let queries=0;const data={...context.RohrStoffdaten};
+  data.state=(...args)=>{if(args[1]==='H'&&++queries>2)throw new Error('synthetischer Stoffwertfehler');return context.RohrStoffdaten.state(...args)};
+  try{assert.throws(()=>context.RohrRunnerEngine.calculate(network(),1,settings,data,catalog),/Kühlstelle A: Stoffwerte am Endpunkt.*synthetischer Stoffwertfehler/)}
+  finally{context.RohrnetzFastData=original}
+});
+
 test('markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ihre Kühlstellen', async () => {
   await context.RohrStoffdaten.load();
   const plan=network();
@@ -99,6 +116,20 @@ test('markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ih
   const status=runInContext(`(${fn})`,createContext({project:{...plan,calibration:1,settings:{...settings,minVelocityMS:30}},RohrRunnerEngine:context.RohrRunnerEngine}))(result);
   assert.ok(['check','limit'].includes(status.get('main:suction')));
   assert.equal(status.has('branch-b:suction'),false);
+});
+
+test('Steigleitungsminimum berücksichtigt nur Lastfälle auf dem betroffenen Pfad', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network(),edge=plan.edges.find(item=>item.id==='branch-b');
+  edge.suctionRiser=true;edge.riserLengthM=2;edge.thermal={suction:{mode:'manual',sizeId:'22x1'}};
+  const calculate=simultaneity=>context.RohrRunnerEngine.calculate(plan,1,{...settings,simultaneity,minVelocityMS:0},context.RohrStoffdaten,catalog);
+  const atHalf=calculate(0.5),atFull=calculate(1);
+  const velocity=result=>result.rows.find(row=>row.edgeId===edge.id&&row.type==='suction').riserVelocityMinMS;
+  assert.ok(velocity(atHalf)>velocity(atFull)*0.8,`${velocity(atHalf)} statt ${velocity(atFull)} m/s`);
+  const threshold=Math.min(30,velocity(atHalf)*0.9);
+  const checked=context.RohrRunnerEngine.calculate(plan,1,{...settings,simultaneity:0.5,minVelocityMS:threshold},context.RohrStoffdaten,catalog);
+  assert.equal(checked.issues.some(issue=>issue.type==='oil-return'&&issue.edgeId===edge.id),false);
+  assert.ok(velocity(checked)>threshold);
 });
 
 test('Warnungen nennen und markieren nur betroffene Kühlstellen-Lastfälle', async () => {
