@@ -57,7 +57,7 @@ Danach folgen die Ergebniswerte je Rohrstrecke in derselben Reihenfolge wie in d
 - Geschwindigkeit SL und FL in m/s
 - Leistung in kW
 
-Zahlen werden mit zwei Nachkommastellen und der Einheit direkt hinter dem Wert ausgegeben. Das CSV nutzt Semikolontrennung und Dezimalkommas für eine gute Weiterverarbeitung in deutscher Tabellenkalkulation.
+Zahlen werden mit zwei Nachkommastellen und der Einheit direkt hinter dem Wert ausgegeben. Das CSV nutzt Semikolontrennung und Dezimalkommas für eine gute Weiterverarbeitung in deutscher Tabellenkalkulation. Namen, die Tabellenprogramme als Formel ausführen könnten, erhalten beim CSV-Export ein führendes Apostroph. Nach einer Änderung am Netz oder Betriebspunkt sind Berechnungs- und Material-CSV erst nach erneuter Berechnung wieder exportierbar; ein Projektpaket enthält weiterhin die aktuelle Projektdatei und Pläne, aber keine veralteten Ergebnis-CSV.
 
 ## Medien und Startwerte
 
@@ -86,7 +86,7 @@ Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Ver
 
 Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der vollständigen `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Plan-PDF ohne Hintergrund. Wenn ein PDF-Grundriss geladen ist, enthält das ZIP zusätzlich den Plan mit PDF-Hintergrund. Die `.rohrrunner`-Datei enthält den geladenen Grundriss eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
 
-Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen verwendet der Browser die lokal mitgelieferten Bibliotheken.
+Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Der Import ist auf 50 MiB pro Projektdatei, 3000 Knoten, 5000 Rohrstrecken und 25 MiB pro PDF begrenzt; PDF-Seiten mit einer Breite oder Höhe über 10000 PDF-Einheiten werden abgewiesen; die Rasterauflösung beim Zoomen ist begrenzt. Diese Grenzen schützen den Browser vor übergroßen Eingaben und sind keine fachlichen Auslegungsgrenzen. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen verwendet der Browser die lokal mitgelieferten Bibliotheken.
 
 ## Entwicklung
 

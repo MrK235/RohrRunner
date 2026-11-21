@@ -8,6 +8,49 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Veraltete Ergebnisse werden nicht exportiert und CSV-Namen sind keine Formeln', () => {
+  const app=read('src/app.js');
+  const helper=app.slice(app.indexOf('const csvSafeLabel='),app.indexOf('  function calculationCsv(')).trim();
+  const csv=app.slice(app.indexOf('function calculationCsv('),app.indexOf('  async function exportCsv(')).trim();
+  const material=app.slice(app.indexOf('function materialCsv('),app.indexOf('  async function exportMaterialCsv(')).trim();
+  const nodes=[{id:'plant',name:'Verbund'},{id:'cold',name:' =EVIL()'}],edges=[{id:'edge',from:'plant',to:'cold'}];
+  const project={name:'=FORMEL()',nodes,edges,resultStale:false,lastResult:{fluid:'R513A',settings:{},totalCoolingKW:1,rows:[{edgeId:'edge',type:'suction',lengthM:2,sizeId:'22x1',velocityMS:1}],issues:[]}};
+  const context={project,resultEdgeOrder:()=>({orderedEdges:edges,edgeNodes:new Map([['edge',{parent:'plant',child:'cold'}]])}),displaySizeLabel:()=> '22 × 1 mm',$:()=>({querySelectorAll:()=>[]})};
+  const api=runInNewContext(`(()=>{${helper};${csv};${material};return {calculationCsv,materialCsv}})()`,context);
+  const result=api.calculationCsv();assert.match(result,/"'=FORMEL\(\)"/);assert.match(result,/"' =EVIL\(\) → Verbund"/);
+  nodes[0].name=' =PLANT()';project.lastResult={mode:'secondary',settings:{},fluid:'WATER',secondary:{},rows:[{edgeId:'edge',type:'suction'}]};
+  assert.match(api.calculationCsv(),/"'=FORMEL\(\)"/);
+  assert.match(api.calculationCsv(),/"' =PLANT\(\) →  =EVIL\(\)"/);
+  const materialRow={querySelector:selector=>({b:{textContent:'2 m'},span:{textContent:'+FORMEL()'}}[selector])};
+  const section={querySelector:selector=>({'.material-section-heading b':{textContent:'=GRUPPE()'},'.material-unit':{textContent:'m'}}[selector]),querySelectorAll:()=>[materialRow]};
+  context.$=()=>({querySelectorAll:()=>[section]});
+  assert.match(api.materialCsv(),/"'=GRUPPE\(\)";"'\+FORMEL\(\)";"2";"m"/);
+  project.resultStale=true;assert.equal(api.calculationCsv(),null);assert.equal(api.materialCsv(),null);
+  assert.match(app,/,calculation=calculationCsv\(\),materials=materialCsv\(\)/);
+  assert.match(app,/\$\('exportCsv'\)\.classList\.add\('hidden'\);\$\('exportMaterialsCsv'\)\.classList\.add\('hidden'\)/);
+});
+
+test('Projekt- und PDF-Import haben Größen- und Komplexitätsgrenzen', async () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('const MAX_PDF_BYTES='),app.indexOf('  const fromBase64=')).trim();
+  const validate=runInNewContext(`(()=>{${source};return validateProjectImport})()`);
+  validate({version:1,nodes:[],edges:[],pdfBase64:null});
+  assert.throws(()=>validate({version:1,nodes:[],edges:[],pdfBase64:123}),/Eingebettetes PDF/);
+  assert.throws(()=>validate({version:1,nodes:Array(3001),edges:[]}),/zu viele Knoten/);
+  assert.throws(()=>validate({version:1,nodes:[],edges:Array(5001)}),/zu viele/);
+  assert.throws(()=>validate({version:1,nodes:[],edges:[],pdfBase64:'a'.repeat(Math.ceil(25*1024*1024/3)*4+1)}),/Eingebettetes PDF/);
+  const pdf=app.slice(app.indexOf('async function importPdfFile('),app.indexOf('  stage.addEventListener(\'dragover\'')).trim();
+  const importPdf=runInNewContext(`(${pdf})`,{MAX_PDF_BYTES:25*1024*1024});
+  await assert.rejects(importPdf({size:25*1024*1024+1,arrayBuffer:()=>{throw new Error('PDF wurde geladen')}}),/PDF ist zu groß/);
+  assert.match(app,/if\(file\.size>MAX_PROJECT_BYTES\)throw Error/);
+  assert.match(app,/if\(bytes\.byteLength>MAX_PDF_BYTES\)throw new Error/);
+  const load=app.slice(app.indexOf('async function loadPdfBytes('),app.indexOf("  $('openPdf')")).trim();
+  const old={destroy:()=>{}},next={getPage:async()=>({getViewport:()=>({width:12000,height:800})}),destroy(){this.destroyed=true}};
+  const ctx={MAX_PDF_BYTES:25*1024*1024,window:{pdfjsLib:{}},pdfjsLib:{getDocument:()=>({promise:Promise.resolve(next)})},pdf:old,pdfBytes:new ArrayBuffer(1),pdfName:'alt.pdf'};
+  const loadPdf=runInNewContext(`(${load})`,ctx);
+  await assert.rejects(loadPdf(new ArrayBuffer(10)),/PDF-Seite überschreitet/);
+  assert.equal(ctx.pdf,old);assert.equal(ctx.pdfName,'alt.pdf');assert.equal(next.destroyed,true);
+});
+
 test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten', async () => {
   const app=read('src/app.js');
   const stop=app.slice(app.indexOf('function stopPreviousCalculation('),app.indexOf('  function startEmpty(')).trim();
@@ -26,7 +69,7 @@ test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekt
   assert.equal(state.history.length,0);assert.equal(state.future.length,0);assert.equal(state.selection,null);
   assert.equal(ctx.pending.size,0);assert.equal(nodes.calculate.disabled,false);
   assert.equal(nodes.results.dataset.hasResult,'');assert.match(nodes.results.innerHTML,/Berechnung starten/);
-  assert.match(app,/const embeddedPdf=data\.pdfBase64;stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
+  assert.match(app,/const embeddedPdf=data\.pdfBase64;await persistProject\(\);stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
 });
 
 test('Lokaler Server liefert nur öffentliche Anwendungsdateien aus', async t => {
