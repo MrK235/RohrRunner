@@ -130,6 +130,15 @@ test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Verbund',
   assert.deepEqual(Array.from(runInNewContext(`(${source})`,{project:draft})().orderedEdges,edge=>edge.id),['terminal','plant']);
 });
 
+test('Kühlstellen ohne Mülleimer, Steigleitungslängen mit breiterem Feld', () => {
+  const app=read('src/app.js'),style=read('src/style.css');
+  assert.doesNotMatch(app, /terminal-delete|row\.append\(head,grid,del\)/);
+  assert.match(app, /row\.append\(head,grid\);list\.append\(row\)/);
+  assert.match(style, /\.terminal-card-grid\{[^}]*minmax\(90px,1\.2fr\)/);
+  assert.match(style, /\.edge-card-grid\{[^}]*minmax\(90px,1fr\)/);
+  assert.ok(app.includes("$('deleteSelection').onclick=onDelete"));
+});
+
 test('browser shell ships local calculation assets and workflow controls', () => {
   const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
   assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);
