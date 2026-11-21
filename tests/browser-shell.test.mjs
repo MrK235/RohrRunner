@@ -6,7 +6,17 @@ import { runInNewContext } from 'node:vm';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
-test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sauglänge geführt', () => {
+test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt Prüfen-Button', () => {
+  const app=read('src/app.js');
+  const result=app.slice(app.indexOf('function showResult('),app.indexOf('    const endpoints=document.createElement',app.indexOf('function showResult(')));
+  assert.match(result,/document\.createTextNode\(`\$\{format\(sl\?\.lengthM\?\?fl\?\.lengthM,1\)\} m`\)/);
+  assert.match(result,/velocity\.innerHTML=`<span>SL \$\{format\(sl\?\.velocityMS,1\)\}<\/span><span>FL \$\{format\(fl\?\.velocityMS,1\)\}<\/span>`/);
+  assert.doesNotMatch(result,/riserVelocityMinMS|\+ ↑/);
+  assert.match(result,/riserButton\.textContent='Prüfen'/);
+  assert.match(read('src/style.css'),/\.riser-open\{[^}]*margin:3px 2px 0 0/);
+});
+
+test('Steigleitung bleibt in Berechnung, CSV und Materialmengen als zusätzliche Sauglänge erhalten', () => {
   const app=read('src/app.js');
   assert.match(app, /riserLengthFor\(edge\)/);
   assert.match(app, /edge\.pipeRiser\?Math\.max\(0,Number\(edge\.pipeRiserLengthM\)\|\|0\):0/);
@@ -18,7 +28,6 @@ test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sau
   assert.deepEqual(rows.map(row=>[row.lengthM,row.sizeId,row.riser]),[[7,'22x1',false],[2,'22x1',true],[5,'22x1',false],[1,'18x1',true],[9,'12x1',false]]);
   assert.match(app, /\[true,'Steigleitung · Saugleitung'\]/);
   assert.match(app, /row\.riser===riser/);
-  assert.match(app, /sl\.lengthM-sl\.riserLengthM/);
   assert.match(app, /'Strecke ohne Steigleitung','Steigleitungslänge'/);
   assert.match(app, /data-edge-riser="enabled"/);
   assert.match(app, /data-edge-riser="length"/);
