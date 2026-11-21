@@ -2560,7 +2560,7 @@ dependencies = [
 
 [[package]]
 name = "rohrrunner"
-version = "1.0.4"
+version = "1.0.11"
 dependencies = [
  "serde",
  "serde_json",

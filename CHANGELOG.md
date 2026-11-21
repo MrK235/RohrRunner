@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.0.11 — Steigleitungen und Projektintegrität
+
+- Steigleitungen und Zusatzlängen auf Rohrstrecken konfigurierbar; getrennte Steigleitungsrohrgröße, stationäre Prüfung, Gesamtlänge und Materialmengen ergänzt. Warnungen werden nur betroffenen Kühlstellen-Lastfällen zugeordnet.
+- Solver-Randfälle für Saugdruckgewinn, Endpunkt-Stoffwerte und Steigleitungsminimum korrigiert; Worker-Fallback und Aufteilen von Rohrstrecken abgesichert.
+- Projektwechsel, CSV-Export, Projekt-/PDF-Import und lokalen Server abgesichert; veraltete Ergebnis-CSV gesperrt.
+- Tastaturbedienung der Zeichenfläche erweitert, PWA-Cache eingeschränkt und Desktop-CSP ergänzt. Browser-, Desktop- und unabhängige fachliche Prüfungen bleiben erforderlich; bekannte Grenzen stehen in `BUGS.md` und `PLAN.md`.
+
 # 1.0.10 — Kälteträger-Ergebnisdarstellung verfeinert
 
 - Kälteträger-Ergebnisliste bei Glykol mit kompakterer, ausgerichteter Tabellen- und Spaltendarstellung ergänzt.
