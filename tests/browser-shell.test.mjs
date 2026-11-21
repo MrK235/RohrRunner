@@ -22,6 +22,11 @@ test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sau
   assert.match(app, /'Strecke ohne Steigleitung','Steigleitungslänge'/);
   assert.match(app, /data-edge-riser="enabled"/);
   assert.match(app, /data-edge-riser="length"/);
+  assert.match(app, /class="terminal-riser edge-riser"/);
+  assert.match(app, /class="terminal-riser-length edge-riser-length"/);
+  assert.match(app, /riserLength\.closest\('label'\)\.classList\.toggle\('disabled',!enabled\.checked\)/);
+  assert.match(app, /riserLength\.disabled=!enabled\.checked/);
+  assert.match(read('src/style.css'), /\.terminal-card-grid \.terminal-riser,\.edge-card-grid \.terminal-riser/);
   assert.match(app, /if\(!riserEnabled\.checked\)\{node\.riserLengthM=0;.*delete edge\.suctionRiser/);
   assert.match(app, /function migrateTerminalRisers\(/);
 });
@@ -61,7 +66,7 @@ test('Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übr
   assert.match(app, /if\(key==='extraLengthM'\)\{field.onfocus=.*field.oninput=\(\)=>\{/);
   assert.doesNotMatch(app, /name.oninput=|value.oninput=|riserLength.oninput=|riserLengthInput.oninput=/);
   assert.match(app, /riserLabel.textContent='ja'/);
-  assert.match(app, /data-edge-riser="enabled"[^>]*> ja/);
+  assert.match(app, /data-edge-riser="enabled"[^>]*><span>ja<\/span>/);
 });
 
 test('Kühlstellen-Steigleitung bleibt nach Deaktivieren aus und wird nur einmal übernommen', () => {

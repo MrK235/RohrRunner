@@ -154,14 +154,14 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .terminal-card-grid .field-unit input{font-size:10px}
 .terminal-card-length{display:flex;align-items:center;gap:5px;white-space:nowrap;color:#91a3a8;font-size:8px}
 .terminal-card-length strong{color:#d7e2e4;font:500 9px var(--mono)}
-.terminal-card-grid .terminal-riser{height:39px;display:grid;grid-template-columns:15px 1fr;grid-template-rows:11px 25px;align-items:center;column-gap:5px;color:#91a3a8;font-size:8px;cursor:default}
+.terminal-card-grid .terminal-riser,.edge-card-grid .terminal-riser{height:39px;display:grid;grid-template-columns:15px 1fr;grid-template-rows:11px 25px;align-items:center;column-gap:5px;color:#91a3a8;font-size:8px;cursor:default}
 .terminal-riser>span:first-child{grid-column:1 / -1;grid-row:1}
 .terminal-riser input{grid-column:1;grid-row:2;margin:0;width:14px;height:14px;appearance:none;border:1px solid #82939a;border-radius:3px;background:#35444d;cursor:pointer}
 .terminal-riser input:checked{background:#87989f;border-color:#a1afb4}
 .terminal-riser input:checked::after{content:'✓';display:block;color:#17252e;font:700 12px/12px var(--sans);text-align:center}
 .terminal-riser input:focus-visible{outline:2px solid #a1afb4;outline-offset:2px}
 .terminal-riser input+span{grid-column:2;grid-row:2}
-.terminal-card-grid .terminal-riser-length{height:39px}
+.terminal-card-grid .terminal-riser-length,.edge-card-grid .terminal-riser-length{height:39px}
 .terminal-riser-length input{min-width:0;width:100%;font-size:9px}
 .terminal-riser-length.disabled{opacity:.45}
 .edge-list{display:flex;flex-direction:column;gap:5px}
@@ -172,9 +172,6 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .edge-card-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(66px,.8fr) minmax(0,.65fr);gap:6px;align-items:end}
 .edge-card-grid label{min-width:0;display:flex;flex-direction:column;gap:4px;color:#91a3a8;font-size:8px}
 .edge-card-grid .field-unit{height:25px}
-.edge-riser>span{display:flex;align-items:center;gap:5px;height:25px;color:#d7e2e4;font-size:9px}
-.edge-riser input{margin:0;accent-color:#53e0b2}
-.edge-riser-length input{min-width:0;width:100%;font-size:9px}
 .edge-card-details{margin-top:7px;border-top:1px solid #34434b;padding-top:5px}
 .edge-card-details summary{cursor:pointer;color:#91a3a8;font-size:9px}
 .edge-card-details .form-grid{margin-top:8px}
