@@ -155,6 +155,10 @@ html[data-theme="light"] .riser-open:hover { background: #f4dfb8; }
 html[data-theme="light"] .riser-preview { color: #34474d; border-color: #c5d1d5; }
 html[data-theme="light"] .riser-preview.check { color: #805000; border-color: #c28b3f; }
 html[data-theme="light"] .riser-preview.limit { color: #a52e2e; border-color: #c96c62; }
+html[data-theme="light"] .riser-dialog>label,
+html[data-theme="light"] .riser-dialog #riserCurrent,
+html[data-theme="light"] .riser-metrics span { color: #52676d; }
+html[data-theme="light"] .riser-dialog>label select { color: #26373d; background: #f8fafb; border-color: #c5d1d5; }
 
 html[data-theme="light"] .total-row,
 html[data-theme="light"] .terminal-total { color: #52676d; }

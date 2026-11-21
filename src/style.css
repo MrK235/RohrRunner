@@ -179,9 +179,17 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .result-title-row .result-section-title{flex:1;width:auto}
 .riser-open{flex:none;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
-.riser-dialog{width:min(460px,94vw)}
-.riser-dialog .form-grid{margin:14px 0}
-.riser-preview{min-height:40px;padding:10px;border:1px solid #465a5f;border-radius:6px;color:#c6d8d7;font-size:10px;line-height:1.5}
+.riser-dialog{width:min(380px,94vw)}
+.riser-dialog h2{margin-bottom:5px}
+.riser-dialog #riserCurrent{margin:0 0 14px;color:#91a3a8;font:10px var(--mono)}
+.riser-dialog>label{display:flex;flex-direction:column;gap:5px;color:#91a3a8;font-size:10px}
+.riser-dialog>label select{height:34px;padding:0 8px;border:1px solid #32434c;border-radius:5px;background:#111e26;color:#d5e0e2}
+.riser-preview{min-height:40px;margin-top:14px;padding:10px;border:1px solid #465a5f;border-radius:6px;color:#c6d8d7;font-size:10px;line-height:1.5}
+.riser-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.riser-metrics>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.riser-metrics span{color:#91a3a8;font-size:9px}
+.riser-metrics strong{font:600 15px var(--mono)}
+.riser-preview small{display:block;margin-top:10px;font-size:10px}
 .riser-preview.check{border-color:#95662d;color:#efbd70}
 .riser-preview.limit{border-color:#944b43;color:#f17676}
 .topbar .project-title{flex:0 1 180px;max-width:180px;min-width:0;overflow:hidden}

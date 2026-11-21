@@ -8,7 +8,7 @@ const read = path => readFileSync(new URL(path, root), 'utf8');
 
 test('Steigleitung wird in Ergebnis, CSV und Materialmengen als zusätzliche Sauglänge geführt', () => {
   const app=read('src/app.js');
-  assert.match(app, /length\.readOnly=true/);
+  assert.match(app, /riserLengthFor\(edge\)/);
   assert.match(app, /edge\.pipeRiser\?Math\.max\(0,Number\(edge\.pipeRiserLengthM\)\|\|0\):0/);
   const source=app.slice(app.indexOf('function splitRiserMaterialRows('),app.indexOf('  function renderMaterialList(')).trim();
   const split=runInNewContext(`(${source})`);
@@ -138,6 +138,40 @@ test('Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile'
   assert.ok(app.includes("$('deleteSelection').onclick=onDelete"));
 });
 
+test('Steigleitungsdialog zeigt vorhandene Werte und berechnet bei Rohrwahl neu', () => {
+  const app=read('src/app.js'),html=read('index.html');
+  const source=app.slice(app.indexOf('function renderRiserPreview('),app.indexOf('  function openRiserDialog(')).trim();
+  const preview={className:'',innerHTML:''},render=runInNewContext(`(${source})`,{$:()=>preview,displaySizeLabel:()=> '22 × 1 mm',format:(v,d)=>Number.isFinite(v)?v.toFixed(d):'—'});
+  const result={settings:{minVelocityMS:7},rows:[{edgeId:'e',type:'suction',riserLengthM:3,riserVelocityMinMS:8.4,temperatureDropK:0.42}],issues:[]};
+  render(result,'e');
+  assert.match(preview.innerHTML,/8\.4 m\/s/);
+  assert.match(preview.innerHTML,/7\.0 m\/s/);
+  assert.match(preview.innerHTML,/0\.42 K/);
+  result.issues=[{type:'oil-return',edgeId:'e',severity:'check'}];render(result,'e');
+  assert.match(preview.className,/check/);
+  assert.match(app, /renderRiserPreview\(project\.lastResult,edge\.id,project\.resultStale\)/);
+  assert.ok(app.includes("$('riserSize').addEventListener('change',()=>checkRiserDialog())"));
+  assert.doesNotMatch(html,/id="riserCheck"|id="riserLength"|id="riserApply"/);
+  assert.ok(!app.includes("$('riserCheck')")&&!app.includes("$('riserLength')")&&!app.includes("$('riserApply')"));
+  assert.match(app,/token!==dialog\._runId/);
+  assert.match(app,/edge\.riserSizeId=sizeId;project\.settings=settingsFromUI\(\);showResult\(result,0\)/);
+});
+
+test('Rohrwahl übernimmt nur die letzte erfolgreiche Nachrechnung', async () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('async function checkRiserDialog('),app.indexOf('  function resultEdgeOrder(')).trim();
+  const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},project={edges:[edge],lastResult:{rows:[]},resultStale:false,calibration:1};
+  const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},preview={},pending=[];
+  const result={rows:[{edgeId:'e',type:'suction'}]};let saved=0,shown=0;
+  const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserPreview:preview})[id],riserLengthFor:()=>2,
+    projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>new Promise(resolve=>pending.push(resolve))},
+    RohrRunnerEngine:{calculate:()=>result},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,renderRiserPreview:()=>{}};
+  const check=runInNewContext(`(${source})`,ctx);
+  const first=check();size.value='15x1';const second=check();
+  pending[0]();await first;assert.equal(shown,0);
+  pending[1]();await second;
+  assert.equal(edge.riserSizeId,'15x1',preview.textContent);assert.equal(saved,1);assert.equal(shown,1);
+});
+
 test('browser shell ships local calculation assets and workflow controls', () => {
   const html=read('index.html'),worker=read('src/worker.js'),style=read('src/style.css'),app=read('src/app.js'),thermo=read('src/stoffdaten.js'),launcher=read('RohrRunner.bat'),linuxLauncher=read('RohrRunner.sh'),manifest=read('manifest.webmanifest'),serviceWorker=read('sw.js'),pwa=read('src/pwa.js'),tauriConfig=read('src-tauri/tauri.conf.json'),tauriLib=read('src-tauri/src/lib.rs');
   assert.match(html, /rel="manifest" href="manifest\.webmanifest"/);
@@ -148,7 +182,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   for(const path of ['data/pipe-catalog.js','src/stoffdaten.js','src/fast-data.js','src/engine.js','src/editor-core.js','src/app.js'])assert.ok(html.includes(path),`index.html: ${path}`);
   for(const path of ['../vendor/coolprop/coolprop-local.js','../data/pipe-catalog.js','./stoffdaten.js','./fast-data.js','./engine.js'])assert.ok(worker.includes(path),`worker: ${path}`);
   assert.ok(worker.includes('self.document =')&&worker.includes('document.currentScript.src'),'worker supplies the Emscripten script URL without a browser document');
-  for(const control of ['openPdf','exportPlanPdf','calibrate','calculate','exportCsv','projectFile','edgeList','riserDialog','riserLength','riserSize','riserCheck','riserApply'])assert.ok(html.includes(`id="${control}"`),`UI: ${control}`);
+  for(const control of ['openPdf','exportPlanPdf','calibrate','calculate','exportCsv','projectFile','edgeList','riserDialog','riserSize','riserPreview'])assert.ok(html.includes(`id="${control}"`),`UI: ${control}`);
   for(const panel of ['panelTerminals','panelCalculation','panelResults'])assert.ok(html.includes(`id="${panel}"`),`sidebar tab panel: ${panel}`);
   assert.ok(html.includes('role="tablist"')&&html.includes('Kühlstellen</button>')&&html.includes('Berechnung</button>')&&html.includes('Ergebnis</button>'),'sidebar exposes the three workflow tabs');
   assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
