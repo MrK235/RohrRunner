@@ -2,9 +2,45 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
 
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
+
+test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten', async () => {
+  const app=read('src/app.js');
+  const stop=app.slice(app.indexOf('function stopPreviousCalculation('),app.indexOf('  function startEmpty(')).trim();
+  const open=app.slice(app.indexOf('async function activateProject('),app.indexOf('  async function restoreProjects(')).trim();
+  const block=()=>({innerHTML:'',dataset:{},classList:{add(){}},replaceChildren(){}});
+  const nodes={calculate:{disabled:true,innerHTML:''},projectName:{value:''},pageLabel:{textContent:''},projectsDialog:{close(){}},
+    results:block(),materials:block(),issues:block(),calculationError:block(),exportCsv:block(),exportMaterialsCsv:block()};
+  const ctx={clearInterval:()=>{},clearTimeout:()=>{},scheduleSave:{timer:0},pending:new Map([[3,{}]]),$:id=>nodes[id],
+    storedProjects:async()=>[{id:'new',settings:{},nodes:[],edges:[]}],persistProject:async()=>{},
+    pdfRenderTask:null,pdf:null,pdfPage:null,pdfBytes:null,renderViewport:null,canvas:{},pdfName:'',
+    migrateTerminalRisers:()=>{},defaults:{},document:{querySelector:()=>null},renderAll:()=>{},updateScale:()=>{},
+    invalidate:()=>{},localStorage:{setItem:()=>{}},ACTIVE:'active',toast:message=>{ctx.error=message},updateHistoryButtons:()=>{}};
+  const api=runInNewContext(`(()=>{let project={id:'old'},runId=3,calculationStatusTimer=1,history=['old'],future=['old'],selection={id:'old'},projectHasBeenSaved=true;${stop};${open};return {activateProject,state:()=>({project,runId,history,future,selection})}})()`,ctx);
+  await api.activateProject('new');
+  const state=api.state();assert.equal(state.project.id,'new',ctx.error);assert.equal(state.runId,4);
+  assert.equal(state.history.length,0);assert.equal(state.future.length,0);assert.equal(state.selection,null);
+  assert.equal(ctx.pending.size,0);assert.equal(nodes.calculate.disabled,false);
+  assert.equal(nodes.results.dataset.hasResult,'');assert.match(nodes.results.innerHTML,/Berechnung starten/);
+  assert.match(app,/const embeddedPdf=data\.pdfBase64;stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
+});
+
+test('Lokaler Server liefert nur öffentliche Anwendungsdateien aus', async t => {
+  const reservation=createServer();await new Promise(resolve=>reservation.listen(0,'127.0.0.1',resolve));
+  const port=reservation.address().port;await new Promise(resolve=>reservation.close(resolve));
+  const server=spawn(process.execPath,['scripts/serve.mjs'],{cwd:new URL('../',import.meta.url),env:{...process.env,ROHRRUNNER_PORT:String(port)},stdio:['ignore','pipe','pipe']});
+  t.after(()=>server.kill());
+  let timeout;try{await Promise.race([new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('exit',()=>reject(new Error('Server konnte nicht starten')))}),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Serverstart dauert zu lange')),3000)})])}finally{clearTimeout(timeout)}
+  const get=async path=>(await fetch(`http://127.0.0.1:${port}${path}`)).status;
+  assert.equal(await get('/'),200);assert.equal(await get('/src/app.js'),200);
+  assert.equal(await get('/.git/config'),403);assert.equal(await get('/package.json'),403);
+  assert.equal(await get('/node_modules/.package-lock.json'),403);
+  assert.equal(await get('/src%2f..%2f.git%2fconfig'),403);
+});
 
 test('SL prüfen erscheint nur bei betroffener oder bereits angepasster Steigleitung', () => {
   const app=read('src/app.js'),source=app.slice(app.indexOf('function showRiserButton('),app.indexOf('  function syncRiserButtons(')).trim();

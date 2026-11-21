@@ -7,6 +7,19 @@ const app = readFileSync(new URL('../src/app.js', import.meta.url), 'utf8');
 const setToolSource = app.split('\n').find(line => line.includes('function setTool('));
 const selectPointSource = app.split('\n').find(line => line.includes('function selectCalibrationPoint('));
 
+test('Aufteilen einer Rohrstrecke verteilt die Steigleitungslänge ohne Verdopplung', () => {
+  const split=app.slice(app.indexOf('function splitEdgeAt('),app.indexOf('  function orthogonal(')).trim();
+  const project={nodes:[{id:'a',x:0,y:0},{id:'b',x:10,y:0}],edges:[{id:'original',from:'a',to:'b',points:[{x:0,y:0},{x:10,y:0}],pipeRiser:true,pipeRiserLengthM:4,extraLengthM:2,thermal:{suction:{deltaZ:2}}}]};
+  let index=0;const context=createContext({project,Editor:{},clone:value=>structuredClone(value),uid:()=>`new-${++index}`,near:()=>false,toast:()=>{}});
+  runInContext(split,context);
+  context.splitEdgeAt(project.edges[0],{x:2.5,y:0});
+  assert.equal(project.edges.length,2);
+  assert.deepEqual(project.edges.map(edge=>edge.pipeRiserLengthM),[1,3]);
+  assert.equal(project.edges.reduce((sum,edge)=>sum+edge.pipeRiserLengthM,0),4);
+  assert.equal(project.edges.reduce((sum,edge)=>sum+edge.extraLengthM,0),2);
+  assert.equal(project.edges.reduce((sum,edge)=>sum+edge.thermal.suction.deltaZ,0),2);
+});
+
 test('switching away from calibration releases its click interception', () => {
   const buttons = ['calibrate', 'start', 'endpoint', 'pipe'].map(tool => ({ dataset: { tool }, classList: { toggle() {} } }));
   const stage = { dataset: {} }, emptyState = { classList: { add() {} } }, canvasHint = {};
