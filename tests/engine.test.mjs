@@ -92,7 +92,7 @@ test('markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ih
   plan.edges.find(edge=>edge.id==='main').riserLengthM=2;
   plan.edges.find(edge=>edge.id==='main').extraLengthM=2;
   const result=context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:30},context.RohrStoffdaten,catalog);
-  assert.equal(result.rows.find(row=>row.edgeId==='main'&&row.type==='suction').lengthM,6);
+  assert.equal(result.rows.find(row=>row.edgeId==='main'&&row.type==='suction').lengthM,8);
   const risers=result.issues.filter(issue=>issue.type==='oil-return'&&issue.edgeId==='main');
   assert.deepEqual(Array.from(risers,issue=>issue.targetId).sort(),['cold-a','cold-b']);
   const app=read('src/app.js'),fn=app.slice(app.indexOf('function resultStatusByEdge('),app.indexOf('  function endpointStates(')).trim();
@@ -109,7 +109,8 @@ test('eigener Steigleitungsdurchmesser wirkt nur auf die angegebene Teillänge',
   main.thermal={suction:{mode:'manual',sizeId:'22x1'}};
   const result=context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:7},context.RohrStoffdaten,catalog);
   const row=result.rows.find(item=>item.edgeId==='main'&&item.type==='suction');
-  assert.equal(row.lengthM,4);
+  assert.equal(row.lengthM,6);
+  assert.equal(result.rows.find(item=>item.edgeId==='main'&&item.type==='liquid').lengthM,4);
   assert.equal(row.sizeId,'22x1');
   assert.equal(row.riserLengthM,2);
   assert.equal(row.riserSizeId,'18x1');
@@ -119,9 +120,29 @@ test('eigener Steigleitungsdurchmesser wirkt nur auf die angegebene Teillänge',
   assert.ok(row.pressureDropPa>base.rows.find(item=>item.edgeId==='main'&&item.type==='suction').pressureDropPa);
   assert.ok(row.riserVelocityMinMS>base.rows.find(item=>item.edgeId==='main'&&item.type==='suction').velocityMS);
   main.riserLengthM=5;
+  assert.equal(context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:7},context.RohrStoffdaten,catalog).rows.find(item=>item.edgeId==='main'&&item.type==='suction').lengthM,9);
+  main.riserLengthM=-1;
   assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:7},context.RohrStoffdaten,catalog),/Steigleitungslänge/);
   main.riserLengthM=2;main.riserSizeId='28x1.5';
   assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:7},context.RohrStoffdaten,catalog),/darf nicht größer/);
+});
+
+test('2D-Steigleitung addiert Sauglänge, Druckverlust und Materialanteil ohne Flüssigkeitszuschlag', async () => {
+  await context.RohrStoffdaten.load();
+  const plan=network(),edge=plan.edges.find(item=>item.id==='branch-a');
+  edge.thermal={suction:{mode:'manual',sizeId:'22x1'},liquid:{mode:'manual',sizeId:'12x1'}};
+  const base=context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog);
+  edge.suctionRiser=true;edge.riserLengthM=3;edge.riserSizeId='18x1';
+  const result=context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog);
+  const suction=result.rows.find(row=>row.edgeId===edge.id&&row.type==='suction');
+  const liquid=result.rows.find(row=>row.edgeId===edge.id&&row.type==='liquid');
+  const baseSuction=base.rows.find(row=>row.edgeId===edge.id&&row.type==='suction');
+  assert.equal(suction.lengthM,baseSuction.lengthM+3);
+  assert.equal(suction.lengthM-suction.riserLengthM,baseSuction.lengthM);
+  assert.equal(suction.riserSizeId,'18x1');
+  assert.equal(liquid.lengthM,base.rows.find(row=>row.edgeId===edge.id&&row.type==='liquid').lengthM);
+  assert.ok(suction.pressureDropPa>baseSuction.pressureDropPa);
+  assert.ok(result.endpoints.find(end=>end.id==='cold-a').suctionK>base.endpoints.find(end=>end.id==='cold-a').suctionK);
 });
 
 test('nur explizite Steigleitungslänge wird geprüft, zusätzliche Rohrlängen bleiben normale Strecke', async () => {
@@ -139,11 +160,11 @@ test('nur explizite Steigleitungslänge wird geprüft, zusätzliche Rohrlängen 
   main.riserLengthM=1;
   result=context.RohrRunnerEngine.calculate(plan,1,{...settings,minVelocityMS:30},context.RohrStoffdaten,catalog);
   row=result.rows.find(item=>item.edgeId==='main'&&item.type==='suction');
-  assert.equal(row.lengthM-row.riserLengthM,6);
+  assert.equal(row.lengthM-row.riserLengthM,7);
   assert.equal(row.riserLengthM,1);
   assert.ok(result.issues.some(issue=>issue.type==='oil-return'&&issue.edgeId==='main'));
   main.riserLengthM=5;
-  assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog),/zusätzliche Rohrlängen sind keine Steigleitung/);
+  assert.equal(context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog).rows.find(item=>item.edgeId==='main'&&item.type==='suction').lengthM,12);
 });
 
 test('SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung', async () => {

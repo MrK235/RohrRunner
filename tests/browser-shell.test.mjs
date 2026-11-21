@@ -8,7 +8,8 @@ const read = path => readFileSync(new URL(path, root), 'utf8');
 
 test('Steigleitung wird in Ergebnis, CSV und Materialmengen nur mit expliziter Teillänge geführt', () => {
   const app=read('src/app.js');
-  assert.match(app, /length\.max=String\(drawnLength\)/);
+  assert.match(app, /length\.readOnly=true/);
+  assert.match(app, /node\.suctionRiser\?Math\.max\(0,Number\(node\.riserLengthM\)\|\|0\):0/);
   const source=app.slice(app.indexOf('function splitRiserMaterialRows('),app.indexOf('  function renderMaterialList(')).trim();
   const split=runInNewContext(`(${source})`);
   const rows=split([{type:'suction',lengthM:9,riserLengthM:2,sizeId:'22x1',riserSizeId:'22x1'},
@@ -20,6 +21,42 @@ test('Steigleitung wird in Ergebnis, CSV und Materialmengen nur mit expliziter T
   assert.match(app, /sl\.lengthM-sl\.riserLengthM/);
   assert.match(app, /'Strecke ohne Steigleitung','Steigleitungslänge'/);
   assert.doesNotMatch(app, /data-edge-field="suctionRiser"/);
+  assert.match(app, /if\(!riserEnabled\.checked\)\{node\.riserLengthM=0;.*delete edge\.suctionRiser/);
+  assert.match(app, /function migrateTerminalRisers\(/);
+});
+
+test('Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale Steigleitung einmal', () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function terminalRouteLength('),app.indexOf('  function renderTerminals(')).trim();
+  const node={id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3};
+  const project={calibration:1,nodes:[{id:'plant',type:'start'},node],edges:[{from:'plant',to:'cold',extraLengthM:1,suctionRiser:true,riserLengthM:3,points:[{x:0,y:0},{x:4,y:0}]}]};
+  const length=runInNewContext(`(${source})`,{project,edgePoints:edge=>edge.points});
+  assert.equal(length(node),10);
+  node.suctionRiser=false;node.riserLengthM=0;
+  delete project.edges[0].suctionRiser;
+  assert.equal(length(node),7);
+});
+
+test('Kühlstellen-Steigleitung bleibt nach Deaktivieren aus und wird nur einmal übernommen', () => {
+  const app=read('src/app.js');
+  const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function renderAll(')).trim();
+  const calculation=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
+  const project={nodes:[{id:'plant',type:'start'},{id:'cold',type:'endpoint'}],edges:[{id:'pipe',from:'plant',to:'cold',suctionRiser:true,riserLengthM:2,riserSizeId:'18x1'}]};
+  const context={project,clone:value=>JSON.parse(JSON.stringify(value))};
+  const migrate=runInNewContext(`(${migration})`,context),forCalculation=runInNewContext(`(${calculation})`,context);
+  migrate();
+  assert.equal(project.nodes[1].riserLengthM,2);
+  assert.equal(forCalculation().edges[0].riserLengthM,2);
+  project.nodes[1].suctionRiser=false;
+  migrate();
+  const disabled=forCalculation().edges[0];
+  assert.equal(project.nodes[1].suctionRiser,false);
+  assert.equal(disabled.suctionRiser,undefined);
+  assert.equal(disabled.riserLengthM,undefined);
+  assert.equal(disabled.riserSizeId,undefined);
+  project.nodes[1].suctionRiser=true;project.nodes[1].riserLengthM=3;
+  const enabled=forCalculation().edges[0];
+  assert.equal(enabled.riserLengthM,3);
+  assert.equal(enabled.riserSizeId,'18x1');
 });
 
 test('browser shell ships local calculation assets and workflow controls', () => {
