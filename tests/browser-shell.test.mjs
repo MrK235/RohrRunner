@@ -255,26 +255,32 @@ test('Steigleitungsdialog zeigt ausschließlich relevante Geschwindigkeiten und 
   assert.match(preview.className,/check/);
   assert.match(html,/id="riserCheck"/);
   assert.match(html,/id="riserLength"/);
+  assert.match(html,/id="riserApply"[^>]*disabled/);
+  assert.match(html,/id="riserCalcBadge"/);
   assert.match(app,/\$\('riserCheck'\)\.addEventListener\('click',\(\)=>checkRiserDialog\(\)\)/);
   assert.doesNotMatch(app,/\$\('riserSize'\)\.addEventListener\('change',\(\)=>checkRiserDialog\(\)\)/);
 });
 
-test('Steigleitung übernimmt Größe und Länge erst nach erfolgreicher Prüfung', async () => {
+test('Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Klick', async () => {
   const app=read('src/app.js'),source=app.slice(app.indexOf('async function checkRiserDialog('),app.indexOf('  function resultEdgeOrder(')).trim();
   const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},project={edges:[edge],lastResult:{rows:[]},resultStale:false,calibration:1};
-  const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},length={value:'3,5'},button={disabled:false},preview={},pending=[],candidates=[];
+  const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},length={value:'3,5'},button={disabled:false},applyButton={disabled:true},preview={},badge={},pending=[],candidates=[];
   const result={rows:[{edgeId:'e',type:'suction'}]};let saved=0,shown=0;
-  const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserLength:length,riserCheck:button,riserPreview:preview})[id],Editor:{parseDecimal:v=>Number(v.replace(',','.'))},
+  const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserLength:length,riserCheck:button,riserApply:applyButton,riserPreview:preview,riserCalcBadge:badge})[id],Editor:{parseDecimal:v=>Number(v.replace(',','.'))},
     projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>new Promise(resolve=>pending.push(resolve))},
-    RohrRunnerEngine:{calculate:candidate=>{candidates.push(candidate);return result}},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{}};
-  const check=runInNewContext(`(${source})`,ctx);
-  const first=check();assert.equal(edge.pipeRiserLengthM,2);assert.equal(saved,0);
-  size.value='15x1';length.value='4';const second=check();
+    RohrRunnerEngine:{calculate:candidate=>{candidates.push(candidate);return result}},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{},
+    performance:{now:()=>100},setInterval:()=>1,clearInterval:()=>{},requestAnimationFrame:callback=>callback(),setTimeout:callback=>callback()};
+  const {checkRiserDialog:check,applyRiserDialog:apply}=runInNewContext(`(()=>{${source};return {checkRiserDialog,applyRiserDialog}})()`,ctx);
+  const first=check();assert.match(badge.innerHTML,/BERECHNUNG LÄUFT/);assert.equal(edge.pipeRiserLengthM,2);assert.equal(applyButton.disabled,true);
+  dialog._runId++;size.value='15x1';length.value='4';const second=check();
   pending[0]();await first;assert.equal(shown,0);
   pending[1]();await second;
   assert.equal(candidates[0].edges[0].riserLengthM,4);
-  assert.equal(edge.riserSizeId,'15x1');assert.equal(edge.pipeRiserLengthM,4);
-  assert.equal(saved,1);assert.equal(shown,1);assert.equal(button.disabled,false);
+  assert.equal(edge.riserSizeId,undefined);assert.equal(edge.pipeRiserLengthM,2);assert.equal(saved,0);
+  assert.equal(applyButton.disabled,false);assert.match(badge.innerHTML,/PRÜFUNG ABGESCHLOSSEN/);
+  apply();assert.equal(edge.riserSizeId,'15x1');assert.equal(edge.pipeRiserLengthM,4);
+  assert.equal(saved,1);assert.equal(shown,1);assert.equal(applyButton.disabled,true);
+  apply();assert.equal(saved,1);
 });
 
 test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () => {

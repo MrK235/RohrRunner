@@ -186,7 +186,14 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
 .riser-dialog{width:min(450px,calc(100vw - 32px));padding:24px}
 .riser-dialog h2{margin:11px 0 4px}
-.riser-dialog #riserCurrent{margin:0 0 20px;color:#91a3a8;font:10px var(--mono)}
+.riser-dialog #riserCurrent{margin:0 0 12px;color:#91a3a8;font:10px var(--mono)}
+.riser-calc-badge{width:max-content;min-height:26px;margin:0 auto 18px;border:1px solid #40515a;justify-content:center;gap:8px}
+.riser-calc-badge span{font-size:10px;letter-spacing:.04em}
+.riser-calc-badge small{font:9px var(--mono);color:#9aadb1;padding-left:7px;border-left:1px solid #40515a}
+.riser-calc-badge.running{background:#18333b;color:#8ee4ed;border-color:#32616a}
+.riser-calc-badge.running i{background:#65c8dc;box-shadow:0 0 10px #65c8dc99;animation:status-pulse 1.1s ease-in-out infinite alternate}
+.riser-calc-badge.valid{border-color:#379c75}
+.riser-calc-badge.warning{border-color:#95662d}
 .riser-fields{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px}
 .riser-fields label{display:flex;flex-direction:column;gap:7px;color:#a7b9bc;font-size:10px;margin:0}
 .riser-fields select{width:100%;height:34px;padding:0 8px;border:1px solid #32434c;border-radius:5px;background:#111e26;color:#d5e0e2}
@@ -204,7 +211,7 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .riser-preview.limit{border-color:#944b43;background:#362522;color:#f17676}
 .riser-preview.pending{border-style:dashed;color:#a7b9bc}
 .riser-note{margin:12px 0 0!important;font-size:10px!important}
-.riser-dialog .dialog-actions{margin-top:20px}
+.riser-dialog .dialog-actions{margin-top:20px;flex-wrap:wrap}
 @media(max-width:480px){.riser-fields{grid-template-columns:1fr}}
 .topbar .project-title{flex:0 1 180px;max-width:180px;min-width:0;overflow:hidden}
 .topbar .project-title input{display:block;width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
