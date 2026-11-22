@@ -1,5 +1,13 @@
 # Änderungsprotokoll
 
+# 1.0.14 — Herstellerkälteträger, weitere Kältemittel und schnellere Gemischauslegung
+
+- Herstellerspezifische Kälteträger (NEUTRAGEL® NEO, FRIOGEL® NEO, Antifrogen® N/L, Glysofor N/L) mit Volumenprozent-Konzentration, Herstellertabellen bzw. -korrelationen und Quellenangabe ergänzt.
+- R134a, R404A, R407C, R449A und R452A über das lokal gebündelte CoolProp-Modell in die Auslegung aufgenommen; ihre Viskosität ist modellbasiert und nicht herstellervalidiert.
+- Interpolationspfad für Gemische mit Temperaturgleit korrigiert: Sättigungsabfragen fallen nicht mehr auf direkte CoolProp-Rechnungen zurück. Im synthetischen Benchmark sinkt die Rechenzeit für R448A mit 5 Kühlstellen von rund 51 s auf etwa 0,5 s, ohne abweichende Rohrgrößen gegenüber der Direktrechnung; Messwerte und Grenzen stehen in `PLAN.md`.
+- Separates Kältemittel-Benchmarkskript ergänzt, DEB-Paket zum Linux-Release hinzugefügt sowie Auswahlfelder, Fokuslinie und Materiallisten-Überschrift in der Oberfläche überarbeitet.
+
+
 # 1.0.13 — Desktop-Buildversion korrigiert
 
 - Tauri-Desktopversion mit der Anwendungs-, README- und Oberflächenversion synchronisiert, damit Linux- und Windows-Artefakte die korrekte Versionsnummer tragen.
