@@ -298,6 +298,7 @@ html[data-theme="light"] .welcome-drop-hint { background: #eff8f3; border-color:
 html[data-theme="light"] .welcome-action:hover i { color: #087c5b; }
 
 html[data-theme="light"] :focus-visible { outline: 2px solid #087c5b; outline-offset: 2px; }
+html[data-theme="light"] .field-unit input:focus-visible { outline: 0; }
 
 @media (max-width: 700px) {
   .project-row { flex-wrap: wrap; }

@@ -40,6 +40,7 @@ test('Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche', 
   assert.match(light,/html\[data-theme="light"\] input\[type="number"\]::-webkit-inner-spin-button,[\s\S]*?::-webkit-outer-spin-button \{ background-color: transparent; \}/);
   assert.match(light,/input\[type="number"\]:hover::-webkit-outer-spin-button \{ background-color: #e8edef; \}/);
   assert.match(light,/\.field-unit:focus-within input\[type="number"\]::-webkit-outer-spin-button \{ background-color: #f8fafb; \}/);
+  assert.match(light,/html\[data-theme="light"\] \.field-unit input:focus-visible \{ outline: 0; \}/);
 });
 
 test('Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover', () => {
