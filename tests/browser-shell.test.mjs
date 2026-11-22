@@ -8,6 +8,13 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Netz berechnen und Rohrdimensionen erhalten passende Hover-Zustände', () => {
+  const dark=read('src/style.css'),light=read('src/theme.css');
+  assert.match(dark,/html\[data-theme="dark"\] #calculate:not\(:disabled\):hover\{background:#7aefcb/);
+  assert.match(dark,/\.result-size-select:hover,\.result-size-select\.liquid:hover\{background:#2b3942;border-color:#70818b\}/);
+  assert.match(light,/html\[data-theme="light"\] \.result-size-select\.liquid:hover,[\s\S]*?background: #e0e6e9; border-color: #9cafb5/);
+});
+
 test('Berechnungseingaben erhalten nur im dunklen Design grauen Hover samt passenden Pfeilen', () => {
   const style=read('src/style.css');
   assert.match(style,/html\[data-theme="dark"\] #panelCalculation \.field-unit:hover,html\[data-theme="dark"\] #panelCalculation \.form-grid select:hover\{background:#2b3942/);
@@ -41,7 +48,7 @@ test('Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover', () 
 
 test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
-  assert.match(dark,/\.result-size-select:hover,\.result-size-select\.liquid:hover\{[^}]*background:/);
+  assert.match(dark,/\.result-size-select:hover,\.result-size-select\.liquid:hover\{[^}]*background:#2b3942/);
   assert.match(dark,/\.edge-card select:hover\{[^}]*background:/);
   assert.match(dark,/\.terminal-card \.field-unit:hover\{[^}]*background:/);
   assert.match(light,/html\[data-theme="light"\] \.edge-card select:hover/);
