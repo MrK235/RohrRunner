@@ -36,11 +36,17 @@
     const fluid = settings.fluid, evaporationK = settings.evaporationC + 273.15;
     const condensationK = settings.condensationC + 273.15;
     const liquidK = condensationK - settings.subcoolingK;
-    const gasCurve = curve(data, fluid, evaporationK - 6, evaporationK + Math.max(18, settings.suctionLimitK * 3 + 6), 8);
-    const liquidCurve = curve(data, fluid, liquidK - 6, condensationK + 4, 4);
+    // Gemische mit Temperaturgleit: Blasen- und Taudruckkurve sind gegeneinander verschoben.
+    // Beide Kurven müssen denselben Druckbereich abdecken, sonst fällt jede Abfrage auf CoolProp.
+    const glideAt = t => { const s = data.saturationAtTemperature(fluid, t);
+      const r = data.saturationAtPressure(fluid, s.dewPressurePa); return Math.max(0, r.dewK - r.bubbleK); };
+    const gasGlide = glideAt(evaporationK), liquidGlide = glideAt(condensationK);
+    const gasCurve = curve(data, fluid, evaporationK - 6 - Math.ceil(gasGlide), evaporationK + Math.max(18, settings.suctionLimitK * 3 + 6), 8 + Math.ceil(gasGlide / 3));
+    const liquidCurve = curve(data, fluid, liquidK - 6, condensationK + 4 + Math.ceil(liquidGlide), 4 + Math.ceil(liquidGlide / 3));
     const startP = data.saturationAtTemperature(fluid, evaporationK).dewPressurePa;
     const upperP = Math.min(gasCurve.dew.at(-1), startP * 1.8);
-    const gasPressures = Array.from({ length: 7 }, (_, i) => startP * 0.95 + (upperP - startP * 0.95) * i / 6);
+    const lowerP = Math.max(gasCurve.dew[0], startP * 0.75);
+    const gasPressures = Array.from({ length: 9 }, (_, i) => lowerP + (upperP - lowerP) * i / 8);
     const superheats = [Math.max(0.5, settings.superheatK - 3), settings.superheatK,
       settings.superheatK + 5];
     const dewAt = p => inverse(gasCurve.dew, gasCurve.temperatures, p);
@@ -57,8 +63,10 @@
       if (code === fluid) {
         const selected = inside(gasCurve.temperatures, t) ? gasCurve
           : inside(liquidCurve.temperatures, t) ? liquidCurve : null;
-        if (selected) return { bubblePressurePa: linear(selected.temperatures, selected.bubble, t),
-          dewPressurePa: linear(selected.temperatures, selected.dew, t) };
+        // Kubisch wie die Umkehrung T(p): lineare P(T)-Interpolation verschiebt sonst
+        // den Startdruck, sobald die Verdampfungstemperatur nicht auf einem Stützpunkt liegt.
+        if (selected) return { bubblePressurePa: inverse(selected.temperatures, selected.bubble, t),
+          dewPressurePa: inverse(selected.temperatures, selected.dew, t) };
       }
       return data.saturationAtTemperature(code, t);
     };

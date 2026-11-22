@@ -27,7 +27,7 @@
     "source": "CoolProp 8.0.0 HEOS, locally bundled WebAssembly; names R134a, R404A.mix, R407C.mix, R449A.mix, R452A.mix; see CoolProp_PureFluids and CoolProp_Mixtures.",
     "fluidCodes": ["R134A", "R404A", "R407C", "R449A", "R452A"],
     "properties": ["bubblePressurePa", "dewPressurePa", "densityKgM3", "enthalpyJKg", "entropyJKgK", "viscosityPaS"],
-    "validity": "CoolProp model results, not product-specific manufacturer-validated transport data. Liquid and vapor states are evaluated as single phase; two-phase friction is not computed. No new fast-data interpolation for these fluids."
+    "validity": "CoolProp model results, not product-specific manufacturer-validated transport data. Liquid and vapor states are evaluated as single phase; two-phase friction is not computed. Optional fast-data interpolation within the documented PLAN.md limits uses CoolProp-generated support points for these fluids; it is not an independent data source."
   },
   "secondaryWorkingFluids": {
     "source": "CoolProp 8.0.0 incompressible working-fluid correlations based on Melinder reference data.",

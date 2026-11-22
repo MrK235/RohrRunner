@@ -325,6 +325,32 @@ test('Fast-Path der zusätzlichen Kältemittel bleibt beim synthetischen Netz na
   }
 });
 
+test('Fast-Path deckt Sättigung von Gemischen mit Temperaturgleit ohne CoolProp-Rückfall ab', async () => {
+  await context.RohrStoffdaten.load();
+  const data = context.RohrStoffdaten;
+  const config = { ...settings, superheatK: 25, subcoolingK: 2, suctionLimitK: 2 };
+  for (const fluid of ['R448A', 'R407C', 'R449A', 'R452A']) {
+    let fallbacks = 0;
+    const counted = Object.freeze({ ...data, saturationAtPressure: (code, p) => { fallbacks++; return data.saturationAtPressure(code, p); } });
+    const fast = context.RohrnetzFastData.create(counted, { ...config, fluid });
+    assert.notEqual(fast, counted, fluid);
+    const evaporation = data.saturationAtTemperature(fluid, 263.15), liquid = data.saturationAtTemperature(fluid, 316.15);
+    fallbacks = 0;
+    // Saugdrücke unterhalb des Verdampfungsdrucks und Flüssigkeitsdrücke bis zur Phasengrenze.
+    for (let i = 0; i <= 20; i++) {
+      const gasP = evaporation.dewPressurePa * (0.8 + 0.01 * i), liquidP = liquid.bubblePressurePa * (1.001 + 0.0025 * i);
+      for (const p of [gasP, liquidP]) {
+        const expected = data.saturationAtPressure(fluid, p), actual = fast.saturationAtPressure(fluid, p);
+        assert.ok(Math.abs(actual.dewK - expected.dewK) < 2e-3 && Math.abs(actual.bubbleK - expected.bubbleK) < 2e-3, `${fluid} ${p} Pa`);
+      }
+    }
+    assert.equal(fallbacks, 0, `${fluid}: Sättigungsabfragen fallen auf CoolProp zurück`);
+    // Startdruck außerhalb eines Stützpunkts: kubisch statt linear interpoliert.
+    const start = fast.saturationAtTemperature(fluid, 263.15).dewPressurePa;
+    assert.ok(Math.abs(start / evaporation.dewPressurePa - 1) < 1e-5, `${fluid} Startdruck ${start}`);
+  }
+});
+
 test('R744 transcritical and a missing terminal load are refused explicitly', async () => {
   await context.RohrStoffdaten.load();
   assert.throws(() => context.RohrRunnerEngine.calculate(network(), 1, { ...settings, fluid: 'R744', condensationC: 35,
