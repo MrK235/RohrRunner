@@ -4,13 +4,14 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   build-linux:
-    name: Linux AppImage
+    name: Linux AppImage und DEB
     runs-on: ubuntu-24.04
     steps:
       - name: Repository auschecken
@@ -42,14 +43,20 @@ jobs:
       - name: npm-Abhängigkeiten installieren
         run: npm ci
 
-      - name: AppImage bauen
+      - name: Linux-Pakete bauen
         run: npm run tauri:build:linux
 
-      - name: AppImage veröffentlichungsfähig ablegen
+      - name: Linux-Pakete veröffentlichungsfähig ablegen
+        run: |
+          mkdir -p release-assets
+          cp src-tauri/target/release/bundle/appimage/*.AppImage release-assets/
+          cp src-tauri/target/release/bundle/deb/*.deb release-assets/
+
+      - name: Linux-Artefakte hochladen
         uses: actions/upload-artifact@v4
         with:
-          name: rohrrunner-linux-appimage
-          path: src-tauri/target/release/bundle/appimage/*.AppImage
+          name: rohrrunner-linux
+          path: release-assets/*
           if-no-files-found: error
 
   build-windows:
@@ -101,7 +108,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="$(node -p "require('./package.json').version")"
-          test "v${version}" = "${GITHUB_REF_NAME}"
-          gh release create "${GITHUB_REF_NAME}" release-assets/* \
-            --title "RohrRunner ${GITHUB_REF_NAME}" \
-            --generate-notes
+          tag="v${version}"
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            test "${tag}" = "${GITHUB_REF_NAME}"
+          fi
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            gh release upload "${tag}" release-assets/* --clobber
+          else
+            gh release create "${tag}" release-assets/* \
+              --title "RohrRunner ${tag}" \
+              --generate-notes
+          fi

@@ -8,6 +8,17 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Linux-Release erstellt AppImage und DEB und kann bestehende Releases ergänzen', () => {
+  const tauri=JSON.parse(read('src-tauri/tauri.conf.json'));
+  const packageJson=JSON.parse(read('package.json'));
+  const workflow=read('.github/workflows/release.yml');
+  assert.ok(tauri.bundle.targets.includes('deb'));
+  assert.match(packageJson.scripts['tauri:build:linux'],/--bundles appimage,deb/);
+  assert.match(workflow,/workflow_dispatch:/);
+  assert.match(workflow,/bundle\/deb\/\*\.deb/);
+  assert.match(workflow,/gh release upload "\$\{tag\}" release-assets\/\* --clobber/);
+});
+
 test('Netz berechnen und Rohrdimensionen erhalten passende Hover-Zustände', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
   assert.match(dark,/html\[data-theme="dark"\] #calculate:not\(:disabled\):hover\{background:#7aefcb/);

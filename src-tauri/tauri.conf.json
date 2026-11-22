@@ -25,7 +25,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["appimage", "nsis"],
+    "targets": ["appimage", "deb", "nsis"],
     "category": "Utility",
     "shortDescription": "Lokale Rohrnetzplanung und technische Vorbemessung",
     "longDescription": "RohrRunner ist eine lokale Anwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen.",

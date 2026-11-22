@@ -11,7 +11,7 @@
     "tauri:prepare": "node scripts/prepare-desktop.mjs",
     "tauri:dev": "npm run tauri:prepare && tauri dev",
     "tauri:build": "npm run tauri:prepare && tauri build",
-    "tauri:build:linux": "npm run tauri:prepare && tauri build --bundles appimage",
+    "tauri:build:linux": "npm run tauri:prepare && tauri build --bundles appimage,deb",
     "tauri:build:windows": "npm run tauri:prepare && tauri build --bundles nsis"
   },
   "devDependencies": {
