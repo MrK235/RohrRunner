@@ -225,7 +225,7 @@ test('UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente
   assert.match(app, /function updateNetworkAppearance\(\)/);
   assert.doesNotMatch(html, /id="startBlank"|class="empty-state"/);
   assert.doesNotMatch(app, /\$\('startBlank'\)/);
-  assert.match(app, /function createStart\(point\).*name:'Verbund'.*setTool\('endpoint'\)/);
+  assert.match(app, /function createStart\(point\).*name:'Start'.*setTool\('endpoint'\)/);
   assert.doesNotMatch(app, /showSaveFilePicker|prepareProjectDownload/);
   assert.match(app, /async function exportProject\(\)\{try\{project\.name=.*?files=\[\{name:`\$\{base\}\.rohrrunner`,data:await projectFile\(\)\}/);
   assert.match(app, /document\.body\.append\(a\);a\.click\(\)/);

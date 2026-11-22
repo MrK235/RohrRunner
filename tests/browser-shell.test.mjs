@@ -208,7 +208,7 @@ test('Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übr
 
 test('alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrecke', () => {
   const app=read('src/app.js');
-  const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function renderAll(')).trim();
+  const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function migrateStartName(')).trim();
   const calculation=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
   const project={nodes:[{id:'plant',type:'start'},{id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3}],edges:[{id:'pipe',from:'plant',to:'cold',extraLengthM:1,pipeRiser:true,pipeRiserLengthM:4,riserSizeId:'18x1',suctionRiser:true,riserLengthM:3}]};
   const context={project,clone:value=>JSON.parse(JSON.stringify(value))};
@@ -228,7 +228,7 @@ test('alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrec
   const disabled=forCalculation().edges[0];
   assert.equal(disabled.suctionRiser,false);
   assert.equal(disabled.riserSizeId,undefined);
-  assert.match(app, /function renderAll\(\)\{migrateTerminalRisers\(\)/);
+  assert.match(app, /function renderAll\(\)\{migrateStartName\(\);migrateTerminalRisers\(\)/);
   const pending={nodes:[{id:'cold',type:'endpoint',extraLengthM:2,suctionRiser:true,riserLengthM:3}],edges:[]};
   const migratePending=runInNewContext(`(${migration})`,{project:pending});
   migratePending();
@@ -242,7 +242,7 @@ test('alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrec
 
 test('ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung überführt', () => {
   const app=read('src/app.js');
-  const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function renderAll(')).trim();
+  const migration=app.slice(app.indexOf('function migrateTerminalRisers('),app.indexOf('  function migrateStartName(')).trim();
   const calculation=app.slice(app.indexOf('function projectForCalculation('),app.indexOf('  function resultStatusByEdge(')).trim();
   const project={nodes:[{id:'start',type:'start'},{id:'branch',type:'junction'}],edges:[{id:'main',from:'start',to:'branch',suctionRiser:true,riserLengthM:5,riserSizeId:'18x1'}]};
   const context={project,clone:value=>JSON.parse(JSON.stringify(value))};
@@ -253,9 +253,20 @@ test('ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung übe
   assert.equal(edge.riserSizeId,'18x1');
 });
 
-test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Verbund', () => {
+test('Ältere Startknoten mit Standardname Verbund werden für Plan und Listen zu Start', () => {
+  const app=read('src/app.js'),html=read('index.html');
+  const source=app.slice(app.indexOf('function migrateStartName('),app.indexOf('  function renderAll(')).trim();
+  const project={nodes:[{type:'start',name:'Verbund'},{type:'start',name:'Eigener Name'},{type:'endpoint',name:'Verbund'}]};
+  runInNewContext(`(${source})`,{project})();
+  assert.deepEqual(project.nodes.map(node=>node.name),['Start','Eigener Name','Verbund']);
+  assert.match(app,/function renderAll\(\)\{migrateStartName\(\)/);
+  assert.match(html,/data-tool="start" title="Start setzen"><span>⌂<\/span><small>Start<\/small>/);
+  assert.doesNotMatch(read('README.md'),/\bVerbund\b/);
+});
+
+test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Start', () => {
   const app=read('src/app.js'),source=app.slice(app.indexOf('function resultEdgeOrder('),app.indexOf('  function projectForCalculation(')).trim();
-  const project={nodes:[{id:'start',type:'start',name:'Verbund'},{id:'tee',type:'junction',name:'T1'},{id:'cold-a',type:'endpoint',name:'Kühlstelle A'},{id:'cold-b',type:'endpoint',name:'Kühlstelle B'}],edges:[{id:'main',from:'start',to:'tee'},{id:'b',from:'tee',to:'cold-b'},{id:'a',from:'cold-a',to:'tee'}]};
+  const project={nodes:[{id:'start',type:'start',name:'Start'},{id:'tee',type:'junction',name:'T1'},{id:'cold-a',type:'endpoint',name:'Kühlstelle A'},{id:'cold-b',type:'endpoint',name:'Kühlstelle B'}],edges:[{id:'main',from:'start',to:'tee'},{id:'b',from:'tee',to:'cold-b'},{id:'a',from:'cold-a',to:'tee'}]};
   const ordered=runInNewContext(`(${source})`,{project})();
   assert.deepEqual(Array.from(ordered.orderedEdges,edge=>edge.id),['b','a','main']);
   assert.equal(ordered.edgeNodes.get('a').child,'cold-a');

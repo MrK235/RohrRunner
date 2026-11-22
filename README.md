@@ -2,7 +2,7 @@
 
 **Rohrnetze zeichnen. Betriebspunkte prüfen. Ergebnisse nachvollziehen.**
 
-RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Verbund, Kühlstellen, Lasten und Betriebspunkten.
+RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Start, Kühlstellen, Lasten und Betriebspunkten.
 
 **Version 1.0.11** · PWA · Tauri Desktop · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
@@ -15,7 +15,7 @@ RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technis
 
 1. Unter Windows `RohrRunner.bat`, unter Linux `./RohrRunner.sh` starten; beide Skripte starten den lokalen Server und öffnen RohrRunner im Browser. Alternativ kann `index.html` direkt geöffnet werden.
 2. Optional einen PDF-Grundriss laden und den Maßstab mit zwei Punkten oder über `m / px` kalibrieren.
-3. Einen Verbund und Kühlstellen setzen, Leistungen in kW eintragen und die Leitungen rechtwinklig verbinden. Beim Leitungszeichnen nimmt Rechtsklick den letzten Richtungswechsel zurück; Doppelklick beendet die Leitung mit einem T-Stück an der angeklickten Position.
+3. Einen Start und Kühlstellen setzen, Leistungen in kW eintragen und die Leitungen rechtwinklig verbinden. Beim Leitungszeichnen nimmt Rechtsklick den letzten Richtungswechsel zurück; Doppelklick beendet die Leitung mit einem T-Stück an der angeklickten Position.
 4. Im Reiter **Berechnung** Kältemittel, Temperaturen und Grenzwerte prüfen.
 5. **Netz berechnen** wählen und die Ergebnisse im Reiter **Ergebnis** prüfen.
 
@@ -41,7 +41,7 @@ npm run serve
 - Glykolkonzentration in Masse-%, Vor-/Rücklauftemperatur, kritischer Kreisdruckverlust und automatische Rohrwahl
 - Rohrserien Viega Temponox Edelstahl und schwarzes Stahlrohr S195T nach EN 10255 M
 - Druckverluste, Geschwindigkeiten, Temperaturverluste und Warnungen
-- Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Verbund sortiert
+- Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Start sortiert
 - Lokale Projektverwaltung, `.rohrrunner`-Import, Ergebnis-CSV und Plan-PDF
 - Projektpaket als ZIP mit vollständiger `.rohrrunner`, verfügbaren Berechnungs-/Material-CSV und Plan-PDF; der Plan mit PDF-Grundriss wird nur bei geladenem PDF ergänzt
 
