@@ -26,6 +26,7 @@ function changedFiles() {
 }
 
 function groupsFor(file) {
+  if (file === 'scripts/benchmark-refrigerants.mjs') return [];
   if (file.startsWith('tests/')) {
     const match = Object.entries(testByGroup).find(([, testFile]) => testFile === file);
     return match ? [match[0]] : ['all'];

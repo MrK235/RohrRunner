@@ -42,7 +42,7 @@
     const upperP = Math.min(gasCurve.dew.at(-1), startP * 1.8);
     const gasPressures = Array.from({ length: 7 }, (_, i) => startP * 0.95 + (upperP - startP * 0.95) * i / 6);
     const superheats = [Math.max(0.5, settings.superheatK - 3), settings.superheatK,
-      settings.superheatK + 5, settings.superheatK + 13, settings.superheatK + 30];
+      settings.superheatK + 5];
     const dewAt = p => inverse(gasCurve.dew, gasCurve.temperatures, p);
     const bubbleAt = p => inverse(liquidCurve.bubble, liquidCurve.temperatures, p);
     const gasValues = gasPressures.map(p => superheats.map(sh => data.hydraulicPt(fluid, p, dewAt(p) + sh)));
@@ -97,7 +97,7 @@
     return Object.freeze({ ...data, saturationAtTemperature, saturationAtPressure, hydraulicPt, state });
   }
   function create(data, settings) {
-    if (!['R448A', 'R513A'].includes(settings.fluid)) return data;
+    if (!['R448A', 'R513A', 'R134A', 'R404A', 'R407C', 'R449A', 'R452A'].includes(settings.fluid)) return data;
     if (settings.evaporationC < -35 || settings.evaporationC > 10 ||
         settings.condensationC < 25 || settings.condensationC > 55 ||
         settings.superheatK < 3 || settings.superheatK > 40 ||

@@ -301,6 +301,30 @@ test('Fast-Path bleibt außerhalb geprüfter Bereiche und beim R448A-Viskosität
   ]) assert.equal(context.RohrnetzFastData.create(data, { ...settings, ...overrides }), data);
 });
 
+test('Fast-Path der zusätzlichen Kältemittel bleibt beim synthetischen Netz nahe am direkten Solver', async () => {
+  await context.RohrStoffdaten.load();
+  const fast = context.RohrnetzFastData;
+  const net={nodes:[{id:'start',type:'start',x:0,y:0},{id:'cold',type:'endpoint',name:'Kühlstelle',x:4,y:0,coolingKW:2}],
+    edges:[{id:'pipe',from:'start',to:'cold',points:[{x:0,y:0},{x:4,y:0}]}]};
+  const input={...settings,superheatK:25,subcoolingK:2,suctionLimitK:2,liquidLimitK:1,designPressureBar:24,maxVelocityMS:30};
+  for(const fluid of ['R134A','R404A','R407C','R449A','R452A']){
+    const config={...input,fluid};
+    assert.notEqual(fast.create(context.RohrStoffdaten,config),context.RohrStoffdaten,fluid);
+    let direct;
+    try{
+      context.RohrnetzFastData=null;
+      direct=context.RohrRunnerEngine.calculate(net,1,config,context.RohrStoffdaten,catalog);
+    }finally{context.RohrnetzFastData=fast}
+    const interpolated=context.RohrRunnerEngine.calculate(net,1,config,context.RohrStoffdaten,catalog);
+    assert.equal(interpolated.valid,direct.valid,fluid);
+    assert.deepEqual(Array.from(interpolated.rows,row=>row.sizeId),Array.from(direct.rows,row=>row.sizeId),fluid);
+    for(let i=0;i<direct.endpoints.length;i++)for(const field of ['suctionK','liquidK','remainingSubcoolingK']){
+      const expected=direct.endpoints[i][field],actual=interpolated.endpoints[i][field];
+      assert.ok(Math.abs(actual-expected)<0.05,`${fluid} ${field}: ${actual} statt ${expected}`);
+    }
+  }
+});
+
 test('R744 transcritical and a missing terminal load are refused explicitly', async () => {
   await context.RohrStoffdaten.load();
   assert.throws(() => context.RohrRunnerEngine.calculate(network(), 1, { ...settings, fluid: 'R744', condensationC: 35,
