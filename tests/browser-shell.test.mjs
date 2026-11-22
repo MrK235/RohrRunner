@@ -16,7 +16,10 @@ test('Linux-Release erstellt AppImage und DEB und kann bestehende Releases ergä
   assert.match(packageJson.scripts['tauri:build:linux'],/--bundles appimage,deb/);
   assert.match(workflow,/workflow_dispatch:/);
   assert.match(workflow,/bundle\/deb\/\*\.deb/);
-  assert.match(workflow,/gh release upload "\$\{tag\}" release-assets\/\* --clobber/);
+  assert.match(workflow,/gh release view "\$\{tag\}" --json assets/);
+  assert.match(workflow,/grep -Fxq "\$\(basename "\$\{asset\}"\)"/);
+  assert.match(workflow,/gh release upload "\$\{tag\}" "\$\{asset\}"/);
+  assert.doesNotMatch(workflow,/--clobber/);
 });
 
 test('Netz berechnen und Rohrdimensionen erhalten passende Hover-Zustände', () => {
