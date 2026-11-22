@@ -136,20 +136,20 @@ Die Dimensionierungstests enthalten synthetische Baumstrukturen mit 2, 5 und 10 
 
 Separat ausführbar mit `node scripts/benchmark-refrigerants.mjs` (kein Teil von `npm test` oder `npm run test:all`). `--spots 1|3|5`, `--fluid R448A` und `--method both|direct|fast` schränken lange Messungen ein; `--json` liefert maschinenlesbare Einzelwerte. Der Benchmark verwendet einen synthetischen, verzweigten Baum mit 2 bis 4 kW je Kühlstelle, Gleichzeitigkeit 0,5, −10/45 °C (R744: −10/5 °C), 25 K Überhitzung und 2 K Unterkühlung. Gemessen werden Tabellenaufbau, Direktlauf mit CoolProp und Interpolationslauf ohne Warmlauf; die CoolProp-Caches bleiben zwischen den Fällen eines Prozesses warm. Der Vergleich prüft Rohrgrößen/Status und Maximalabweichungen der ausgewiesenen Rohr- und Endpunktwerte. Das ist eine Laufzeit- und Konsistenzprobe für **diese** Betriebspunkte, keine fachliche Validierung des Interpolationsverfahrens über den gesamten Eingabebereich.
 
-Messung auf der lokalen Entwicklungsumgebung (Einzellauf, gerundet, ms; `–` = nicht ausgeführt/kein Interpolationspfad):
+Messung auf der lokalen Entwicklungsumgebung (Einzellauf, gerundet, **Sekunden**; Format jeweils **direkt / interpoliert**, `–` = nicht ausgeführt bzw. bei R744 kein Interpolationspfad):
 
-| Stoff | 3 Kühlstellen direkt / interpoliert | 5 Kühlstellen direkt / interpoliert | größte relative Abweichung bei 3 Kühlstellen |
-| --- | ---: | ---: | ---: |
-| R513A | 91 990 / 311 | 631 124 / 988 | 1,11 % |
-| R448A | 227 823 / 24 681 | – / 50 720 | 1,13 % |
-| R744 | 608 / – | 7 141 / – | – |
-| R134a | 16 712 / 120 | – / 504 | 1,69 % |
-| R404A | 116 404 / 324 | – / 1 565 | 1,61 % |
-| R407C | 97 691 / 18 026 | – / 37 086 | 1,17 % |
-| R449A | 179 510 / 4 022 | – / 14 796 | 1,20 % |
-| R452A | 143 827 / 715 | – / 1 396 | 1,49 % |
+| Stoff | 1 Kühlstelle | 3 Kühlstellen | 5 Kühlstellen | größte relative Abweichung bei 3 Kühlstellen |
+| --- | ---: | ---: | ---: | ---: |
+| R513A | 1,06 / 0,078 | 91,99 / 0,311 | 631,12 / 0,988 | 1,11 % |
+| R448A | 3,44 / 0,478 | 227,82 / 24,681 | – / 50,720 | 1,13 % |
+| R744 | 0,037 / – | 0,608 / – | 7,141 / – | – |
+| R134a | 0,202 / 0,010 | 16,712 / 0,120 | – / 0,504 | 1,69 % |
+| R404A | 1,563 / 0,021 | 116,404 / 0,324 | – / 1,565 | 1,61 % |
+| R407C | 1,507 / 0,324 | 97,691 / 18,026 | – / 37,086 | 1,17 % |
+| R449A | 2,685 / 0,187 | 179,510 / 4,022 | – / 14,796 | 1,20 % |
+| R452A | 1,656 / 0,040 | 143,827 / 0,715 | – / 1,396 | 1,49 % |
 
-Alle acht Stoffe wurden auch mit einer Kühlstelle gemessen; bei den sieben interpolierten Stoffen betrug die größte relative Abweichung 1,50 %, bei 3 Kühlstellen 1,69 %. In den verglichenen Fällen (1/3 Kühlstellen und R513A auch 5) blieben Rohrgrößen, Gültigkeit und Anzahl der Warnungen gleich. Die absolute Abweichung war überwiegend beim Flüssigkeits-Druckverlust am größten (bei 3 Kühlstellen bis 45 Pa); die größte **relative** Abweichung betraf meist die verbleibende Unterkühlung. Unterschiedliche Größen oder Grenzstatus an anderen Betriebspunkten sind nicht ausgeschlossen. Der Tabellenaufbau benötigte für R513A etwa 1,5 s, für die weiteren Gemische 6–143 ms. Für R744 ist kein Tabellenpfad aktiviert. Besonders R448A und R407C benötigen selbst mit Interpolation bei 5 Kühlstellen noch rund 51 s bzw. 37 s; hier bleiben CoolProp-Fallbacks und Solver-Iterationen ein offener Performance-Engpass. Ein direkter 5-Kühlstellen-Vergleich für die übrigen Stoffe wurde wegen der bereits gemessenen Laufzeiten bis über zehn Minuten nicht abgeschlossen; keine Aussage zu deren 5-Kühlstellen-Abweichungen.
+Bei einer Kühlstelle betrug die größte relative Abweichung 1,50 %, bei 3 Kühlstellen 1,69 %. In den verglichenen Fällen (1/3 Kühlstellen und R513A auch 5) blieben Rohrgrößen, Gültigkeit und Anzahl der Warnungen gleich. Die absolute Abweichung war überwiegend beim Flüssigkeits-Druckverlust am größten (bei 3 Kühlstellen bis 45 Pa); die größte **relative** Abweichung betraf meist die verbleibende Unterkühlung. Unterschiedliche Größen oder Grenzstatus an anderen Betriebspunkten sind nicht ausgeschlossen. Der Tabellenaufbau benötigte für R513A etwa 1,5 s, für die weiteren Gemische 6–143 ms. Für R744 ist kein Tabellenpfad aktiviert. Besonders R448A und R407C benötigen selbst mit Interpolation bei 5 Kühlstellen noch rund 51 s bzw. 37 s; hier bleiben CoolProp-Fallbacks und Solver-Iterationen ein offener Performance-Engpass. Ein direkter 5-Kühlstellen-Vergleich für die übrigen Stoffe wurde wegen der bereits gemessenen Laufzeiten bis über zehn Minuten nicht abgeschlossen; keine Aussage zu deren 5-Kühlstellen-Abweichungen.
 
 Die bisherige R513A-/R448A-Optimierung bleibt erhalten: betriebspunktbezogene CoolProp-Stützpunkte, eingeschränkter Gültigkeitsbereich, Rückfall auf CoolProp und das Vermeiden einer zusätzlichen vollständigen Endpunktrechnung nach konvergierter Rohrwahl. Neu wird derselbe tabellierte Pfad für fünf weitere Stoffe genutzt. Das Überhitzungsraster endet nun bei Soll-Überhitzung plus 5 K statt plus 30 K; sonst konnten Stützpunkte der neuen Gemische oberhalb ihres gültigen Sättigungsbereichs liegen. Der Solver fragt hier nur Soll-Überhitzung (plus Interpolationsfehler) ab; außerhalb des Rasters wird CoolProp direkt aufgerufen. Die gemessene Beschleunigung ist keine Zusage für andere Netze/Hardware und keine globale Optimierung der Rohrwahl.
 

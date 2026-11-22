@@ -153,7 +153,7 @@ async function main() {
         maxRelativeDifference: delta?.rel ?? null, maxRelativeField: delta?.relField ?? null,
         sizeOrStatusMismatches: delta?.mismatches ?? null };
       output.results.push(item);
-      if (json) console.error(`Fertig ${fluid}, ${count}: direkt ${item.directMsPerRun.toFixed(1)} ms${eligible ? `, fast ${item.fastMsPerRun.toFixed(1)} ms` : ''}`);
+      if (json) console.error(`Fertig ${fluid}, ${count}: direkt ${item.directMsPerRun?.toFixed(1) ?? '–'} ms, fast ${item.fastMsPerRun?.toFixed(1) ?? '–'} ms`);
       if (!json) console.log(`${fluid.padEnd(6)} ${count}  ${(item.fastDataCreationMs?.toFixed(1) ?? '—').padStart(16)}  ${(item.directMsPerRun?.toFixed(1) ?? '—').padStart(14)}  ${(item.fastMsPerRun?.toFixed(1) ?? '—').padStart(12)}  ${delta ? `${delta.abs.toExponential(2)} (${delta.absField})  ${(delta.rel * 100).toFixed(3)}% (${delta.relField})  ${delta.mismatches}` : '—  —  —'}`);
     }
   }
