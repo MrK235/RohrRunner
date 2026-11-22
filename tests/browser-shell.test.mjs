@@ -249,10 +249,10 @@ test('Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Verbund',
 test('Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile', () => {
   const app=read('src/app.js'),style=read('src/style.css');
   const terminals=app.slice(app.indexOf('function renderTerminals('),app.indexOf('  function renderEdges('));
-  assert.match(terminals, /nameField\.textContent='Name';nameField\.append\(name\);row\.append\(nameField,load,lengthBox\)/);
-  assert.match(style, /\.terminal-name\{[^}]*gap:0/);
+  assert.match(terminals, /nameTitle\.textContent='Name';nameField\.append\(nameTitle,name\);row\.append\(nameField,load,lengthBox\)/);
+  assert.match(terminals, /title\.textContent=caption;label\.append\(title\)/);
   assert.match(style, /\.terminal-name input\{[^}]*height:25px/);
-  assert.match(style, /\.terminal-card:not\(\.edge-card\)>\.terminal-card-length\{[^}]*gap:0/);
+  assert.match(style, /\.terminal-card:not\(\.edge-card\)>\.terminal-name,\.terminal-card:not\(\.edge-card\)>\.terminal-load,\.terminal-card:not\(\.edge-card\)>\.terminal-card-length\{display:grid;grid-template-rows:11px 25px;gap:0/);
   assert.match(style, /\.terminal-card:not\(\.edge-card\)>\.terminal-card-length strong\{height:25px/);
   assert.doesNotMatch(terminals, /extraLengthM|suctionRiser|riserLengthM|terminal-delete/);
   assert.match(style, /\.terminal-card:not\(\.edge-card\)\{display:grid;grid-template-columns:/);
