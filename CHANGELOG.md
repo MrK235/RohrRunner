@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.0.12 — Oberfläche und Bedienkomfort
+
+- Designmodi mit automatischer Systemerkennung und klaren Sonne-/Mond-/Systemsymbolen ergänzt; Bedienelemente und Hover-Zustände in beiden Designs vereinheitlicht.
+- Steigleitungsprüfung mit sichtbarem Laufstatus und separater Übernahme verbessert; „Verbund“ in Oberfläche und bestehenden Projekten als „Start“ bezeichnet.
+
+
 # 1.0.11 — Steigleitungen und Projektintegrität
 
 - Steigleitungen und Zusatzlängen auf Rohrstrecken konfigurierbar; getrennte Steigleitungsrohrgröße, stationäre Prüfung, Gesamtlänge und Materialmengen ergänzt. Warnungen werden nur betroffenen Kühlstellen-Lastfällen zugeordnet.
