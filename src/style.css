@@ -150,13 +150,13 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .terminal-card{position:relative;padding:5px 8px 7px;border:1px solid #34434b;border-radius:6px;background:#1a272f;cursor:pointer}
 .terminal-card.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
 .terminal-card:not(.edge-card){display:grid;grid-template-columns:minmax(0,1fr) minmax(75px,.7fr) minmax(94px,auto);align-items:start;gap:8px}
-.terminal-name{min-width:0;display:flex;flex-direction:column;gap:3px;color:#91a3a8;font-size:8px;cursor:text}
+.terminal-name{min-width:0;display:flex;flex-direction:column;gap:0;color:#91a3a8;font-size:8px;cursor:text}
 .terminal-name input{width:100%;min-width:0;height:25px;border:0;border-bottom:1px solid transparent;background:transparent;color:#d9e4e5;font:600 10px var(--sans);padding:0;outline:none}
 .terminal-name input:focus{border-bottom-color:#819399}
 .terminal-load{min-width:0;display:flex;flex-direction:column;gap:3px;color:#91a3a8;font-size:8px}
 .terminal-load .field-unit{width:100%;height:25px}
 .terminal-load input{font-size:10px}
-.terminal-card:not(.edge-card)>.terminal-card-length{flex-direction:column;align-items:flex-start;gap:3px}
+.terminal-card:not(.edge-card)>.terminal-card-length{flex-direction:column;align-items:flex-start;gap:0}
 .terminal-card:not(.edge-card)>.terminal-card-length strong{height:25px;display:flex;align-items:center}
 .terminal-card-length{display:flex;align-items:center;gap:5px;white-space:nowrap;color:#91a3a8;font-size:8px}
 .terminal-card-length strong{color:#d7e2e4;font:500 9px var(--mono)}
