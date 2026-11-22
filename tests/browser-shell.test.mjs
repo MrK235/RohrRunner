@@ -20,7 +20,11 @@ test('Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche', 
 test('Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
   assert.match(dark,/\.terminal-card:not\(\.edge-card\):hover\{[^}]*background:/);
+  assert.match(dark,/\.edge-card:hover\{[^}]*background:/);
+  assert.match(dark,/\.edge-card.check:hover\{[^}]*background:/);
+  assert.match(dark,/\.edge-card.limit:hover\{[^}]*background:/);
   assert.match(light,/html\[data-theme="light"\] \.terminal-card:hover,/);
+  assert.match(light,/html\[data-theme="light"\] \.edge-card.check:hover/);
   assert.match(dark,/\.result-section:hover,\.endpoint-result:hover\{[^}]*background:/);
   assert.match(dark,/\.result-section.check:hover,\.endpoint-result.check:hover\{[^}]*background:/);
   assert.match(dark,/\.result-section.limit:hover,\.endpoint-result.limit:hover\{[^}]*background:/);
@@ -30,7 +34,10 @@ test('Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover', () 
 
 test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
-  assert.match(dark,/\.result-size-select\.liquid:hover\{[^}]*background:/);
+  assert.match(dark,/\.result-size-select:hover,\.result-size-select\.liquid:hover\{[^}]*background:/);
+  assert.match(dark,/\.edge-card select:hover\{[^}]*background:/);
+  assert.match(dark,/\.terminal-card \.field-unit:hover\{[^}]*background:/);
+  assert.match(light,/html\[data-theme="light"\] \.edge-card select:hover/);
   assert.ok(light.indexOf('.result-size-select.liquid:hover')>light.indexOf('.result-size-select option'));
   assert.ok(light.indexOf('.result-section.check:hover')>light.indexOf('.result-section.check,'));
   assert.match(dark,/\.material-section-heading:hover\{[^}]*background:/);

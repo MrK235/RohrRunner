@@ -124,8 +124,7 @@ body{min-width:0}
 .result-section.check:hover,.endpoint-result.check:hover{background:#393024}
 .result-section.limit:hover,.endpoint-result.limit:hover{background:#3b2b29}
 .result-section-title:hover b{color:var(--text)}
-.result-size-select:hover{background:#223a42;border-color:#65c8dc}
-.result-size-select.liquid:hover{background:#223a42;border-color:#65c8dc}
+.result-size-select:hover,.result-size-select.liquid:hover{background:#2c4953;border-color:#7ce2d2}
 
 .endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
 
@@ -191,6 +190,12 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .edge-card-details .edge-note{margin:8px 0 1px;font-size:8px;color:#81939a}
 .edge-card.check{border-color:#95662d;background:#2c281e}
 .edge-card.limit{border-color:#944b43;background:#302321}
+.edge-card:hover{background:#253640;border-color:#59707b}
+.edge-card.check:hover{background:#393024;border-color:#a97839}
+.edge-card.limit:hover{background:#3b2b29;border-color:#b75c51}
+.edge-card select:hover{background:#2c4953;border-color:#7ce2d2}
+.terminal-card .field-unit:hover{background:#263b46;border-color:#5a7983}
+.terminal-card .field-unit:focus-within{border-color:#54cfa9}
 .result-title-row{display:flex;align-items:center;gap:4px;padding-right:7px}
 .result-title-row .result-section-title{flex:1;width:auto}
 .riser-open{flex:none;margin:6px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
