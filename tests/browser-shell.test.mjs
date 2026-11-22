@@ -8,6 +8,17 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () => {
+  const dark=read('src/style.css'),light=read('src/theme.css');
+  assert.match(dark,/\.result-size-select\.liquid:hover\{[^}]*background:/);
+  assert.ok(light.indexOf('.result-size-select.liquid:hover')>light.indexOf('.result-size-select option'));
+  assert.ok(light.indexOf('.result-section.check:hover')>light.indexOf('.result-section.check,'));
+  assert.match(dark,/\.material-section-heading:hover\{[^}]*background:/);
+  assert.match(light,/\.material-section-heading:hover\s*\{[^}]*background:/);
+  assert.doesNotMatch(dark,/\.material-row:hover/);
+  assert.doesNotMatch(light,/\.material-row:hover/);
+});
+
 test('Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung', () => {
   const html=read('index.html'),app=read('src/app.js');
   const toggle=html.slice(html.indexOf('<button id="themeToggle"'),html.indexOf('</button>',html.indexOf('<button id="themeToggle"'))+9);

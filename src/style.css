@@ -29,6 +29,7 @@ body{min-width:0}
 .material-section-heading::after{content:"⌄";margin-left:auto;color:#7f939a;font:12px var(--mono)}
 .material-section[open]>.material-section-heading{border-bottom:1px solid #2b3b44}
 .material-section[open]>.material-section-heading::after{content:"⌃"}
+.material-section-heading:hover{background:#283a44}
 .material-section-heading b{color:#dce7e8;font:650 10px var(--sans)}
 .material-section-heading .material-unit{color:#7f939a;font:8px var(--mono)}
 .material-table{padding:2px 9px}
@@ -120,6 +121,8 @@ body{min-width:0}
 .endpoint-result.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}.network-node.selected .node-halo{stroke:#f4a340;filter:drop-shadow(0 0 8px #f4a34099)}
 
 .result-section:hover{filter:brightness(1.1);cursor:pointer}.result-section-title:hover b{color:var(--text)}
+.result-size-select:hover{background:#223a42;border-color:#65c8dc}
+.result-size-select.liquid:hover{background:#223a42;border-color:#65c8dc}
 
 .endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
 
