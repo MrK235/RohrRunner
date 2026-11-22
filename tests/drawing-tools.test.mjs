@@ -62,3 +62,21 @@ test('pointer capture loss and window blur clear unfinished drags', () => {
   assert.match(app, /stage\.addEventListener\('lostpointercapture',\(\)=>\{finishNetworkDrag\(true\);dragPan=null\}\)/);
   assert.match(app, /window\.addEventListener\('blur',\(\)=>\{finishNetworkDrag\(true\);dragPan=null\}\)/);
 });
+
+test('Pointer blendet Tastaturcursor aus und fokussiert ohne Scrollen oder Neuzeichnen', () => {
+  const source=app.slice(app.indexOf('  let keyboardPoint='),app.indexOf('  let keyboardPoint=')+app.slice(app.indexOf('  let keyboardPoint=')).indexOf('\n  function '));
+  const listeners={};let removed=0,prevented=0,options;
+  const stage={addEventListener:(name,fn)=>listeners[name]=fn,focus:value=>{options=value}};
+  const context=createContext({stage,document:{addEventListener(){}},net:{querySelector:()=>({remove:()=>removed++})}});
+  runInContext(source,context);
+  listeners.pointerdown({button:0,preventDefault:()=>prevented++});
+  assert.equal(removed,1);assert.equal(prevented,1);assert.equal(options.preventScroll,true);
+  assert.equal(runInContext('keyboardNavigation',context),false);
+  assert.match(app,/if\(keyboardNavigation&&document.activeElement===stage\)/);
+  assert.match(app,/if\(e.target!==stage\|\|!keyboardNavigation\)return/);
+});
+
+test('Kühlstellen setzen verschiebt den Fokus nicht in die Seitenleiste', () => {
+  const source=app.split('\n').find(line=>line.includes('function createEndpoint('));
+  assert.doesNotMatch(source,/\.focus\(|requestAnimationFrame/);
+});
