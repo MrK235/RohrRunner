@@ -191,6 +191,7 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
 .riser-open.success{border-color:#378b6c;background:#1b3b31;color:#87eac2}
 .riser-open.success:hover{border-color:#68d8aa;background:#255042}
+.theme-toggle{width:34px;min-width:34px;padding:0;display:grid;place-items:center;font-size:19px;line-height:1}
 .riser-dialog{width:min(530px,calc(100vw - 32px));padding:24px}
 .riser-dialog h2{margin:11px 0 4px}
 .riser-dialog #riserCurrent{margin:0 0 12px;color:#91a3a8;font:10px var(--mono)}

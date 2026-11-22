@@ -8,6 +8,28 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung', () => {
+  const html=read('index.html'),app=read('src/app.js');
+  assert.match(html, /id="themeToggle"[^>]*>◐<\/button>/);
+  assert.doesNotMatch(html, /id="themeToggle"[^>]*>[^<]*<span>Hell|id="themeToggle"[^>]*aria-pressed/);
+  assert.match(html, /prefers-color-scheme: light/);
+  const source=app.slice(app.indexOf("const THEME_STORAGE="),app.indexOf('  if(window.pdfjsLib)'));
+  const button={dataset:{},setAttribute(key,value){this[key]=value},addEventListener:(key,handler)=>listeners[key]=handler},meta={setAttribute(key,value){this[key]=value}},listeners={},stored=[];
+  const system={matches:true,addEventListener:(key,handler)=>listeners[key]=handler};
+  const document={documentElement:{dataset:{}},querySelector:()=>meta};
+  const {mode}=runInNewContext(`(()=>{const $=()=>button;${source};return {mode:()=>themeMode}})()`,{
+    window:{matchMedia:()=>system},document,button,localStorage:{getItem:()=>null,setItem:(key,value)=>stored.push(value)}
+  });
+  assert.equal(mode(),'auto');assert.equal(document.documentElement.dataset.theme,'light');assert.equal(button.textContent,'◐');
+  system.matches=false;listeners.change();assert.equal(document.documentElement.dataset.theme,'dark');assert.deepEqual(stored,[]);
+  buttonClick();assert.equal(mode(),'light');assert.equal(button.textContent,'☼');assert.equal(document.documentElement.dataset.theme,'light');
+  listeners.change();assert.equal(document.documentElement.dataset.theme,'light');
+  buttonClick();assert.equal(mode(),'dark');assert.equal(button.textContent,'☾');assert.equal(document.documentElement.dataset.theme,'dark');
+  system.matches=true;listeners.change();assert.equal(document.documentElement.dataset.theme,'dark');system.matches=false;
+  buttonClick();assert.equal(mode(),'auto');assert.equal(button.textContent,'◐');assert.deepEqual(stored,['light','dark','auto']);
+  function buttonClick(){listeners.click()}
+});
+
 test('Veraltete Ergebnisse werden nicht exportiert und CSV-Namen sind keine Formeln', () => {
   const app=read('src/app.js');
   const helper=app.slice(app.indexOf('const csvSafeLabel='),app.indexOf('  function calculationCsv(')).trim();
