@@ -465,6 +465,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(html.includes('role="tablist"')&&html.includes('Kühlstellen</button>')&&html.includes('Berechnung</button>')&&html.includes('Ergebnis</button>'),'sidebar exposes the three workflow tabs');
   assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
   assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
+  assert.ok(app.includes("groupRows('Rohrleitungen','m',pipes"),'secondary-fluid material list uses a concise pipe heading');
   assert.ok(app.includes('RohrRunnerEngine.sizeLabel(size)')&&app.includes("new Option(`${size.label} (auto)`,'auto')")&&app.includes('autoSizeIdFor(edge,type,row)')&&app.includes("directLimit?'limit':'check'"),'catalog labels, calculated sizes and manual selections remain available');
   assert.ok(style.includes('.result-section.check')&&style.includes('.result-section.limit')&&!style.includes('.result-section.valid'),'normal pipe sections have no green status highlight');
   assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
