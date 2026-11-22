@@ -265,17 +265,19 @@ test('Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Kl
   const app=read('src/app.js'),source=app.slice(app.indexOf('async function checkRiserDialog('),app.indexOf('  function resultEdgeOrder(')).trim();
   const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},project={edges:[edge],lastResult:{rows:[]},resultStale:false,calibration:1};
   const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},length={value:'3,5'},button={disabled:false},applyButton={disabled:true},preview={},badge={},pending=[],candidates=[];
-  const result={rows:[{edgeId:'e',type:'suction'}]};let saved=0,shown=0;
+  const result={rows:[{edgeId:'e',type:'suction'}]},jobs=new Map();let saved=0,shown=0,now=100,tick;
   const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserLength:length,riserCheck:button,riserApply:applyButton,riserPreview:preview,riserCalcBadge:badge})[id],Editor:{parseDecimal:v=>Number(v.replace(',','.'))},
-    projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>new Promise(resolve=>pending.push(resolve))},
-    RohrRunnerEngine:{calculate:candidate=>{candidates.push(candidate);return result}},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{},
-    performance:{now:()=>100},setInterval:()=>1,clearInterval:()=>{},requestAnimationFrame:callback=>callback(),setTimeout:callback=>callback()};
-  const {checkRiserDialog:check,applyRiserDialog:apply}=runInNewContext(`(()=>{${source};return {checkRiserDialog,applyRiserDialog}})()`,ctx);
+    projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>{throw Error('Worker erwartet')}},
+    RohrRunnerEngine:{},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{},
+    ensureWorker:async()=>({postMessage:payload=>candidates.push(payload)}),pending:jobs,
+    performance:{now:()=>now},setInterval:callback=>{tick=callback;return 1},clearInterval:()=>{}};
+  const {checkRiserDialog:check,applyRiserDialog:apply}=runInNewContext(`(()=>{let runId=0;${source};return {checkRiserDialog,applyRiserDialog}})()`,ctx);
   const first=check();assert.match(badge.innerHTML,/BERECHNUNG LÄUFT/);assert.equal(edge.pipeRiserLengthM,2);assert.equal(applyButton.disabled,true);
+  await new Promise(resolve=>setImmediate(resolve));now=1350;tick();assert.match(badge.innerHTML,/1\.3 s/);
   dialog._runId++;size.value='15x1';length.value='4';const second=check();
-  pending[0]();await first;assert.equal(shown,0);
-  pending[1]();await second;
-  assert.equal(candidates[0].edges[0].riserLengthM,4);
+  await new Promise(resolve=>setImmediate(resolve));jobs.get(candidates[0].id).callback(result);await first;assert.equal(shown,0);
+  jobs.get(candidates[1].id).callback(result);await second;
+  assert.equal(candidates[1].project.edges[0].riserLengthM,4);
   assert.equal(edge.riserSizeId,undefined);assert.equal(edge.pipeRiserLengthM,2);assert.equal(saved,0);
   assert.equal(applyButton.disabled,false);assert.match(badge.innerHTML,/PRÜFUNG ABGESCHLOSSEN/);
   apply();assert.equal(edge.riserSizeId,'15x1');assert.equal(edge.pipeRiserLengthM,4);

@@ -256,10 +256,15 @@
     const started=performance.now(),updateStatus=()=>{badge.className='badge riser-calc-badge running';badge.innerHTML=`<i></i><span>BERECHNUNG LÄUFT</span><small>${((performance.now()-started)/1000).toFixed(1)} s</small>`};
     updateStatus();clearInterval(dialog._statusTimer);dialog._statusTimer=setInterval(updateStatus,250);
     try{
-      await RohrStoffdaten.load();if(token!==dialog._runId||!dialog.open)return null;
-      await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));
+      const activeWorker=await ensureWorker();if(token!==dialog._runId||!dialog.open)return null;
+      let result=null;
+      if(activeWorker){
+        const id=++runId,payload={id,project:candidate,calibration:project.calibration,settings};dialog._jobId=id;
+        result=await new Promise((resolve,reject)=>{pending.set(id,{payload,callback:(value,error)=>error?reject(new Error(error)):resolve(value)});try{activeWorker.postMessage(payload)}catch{pending.delete(id);resolve(null)}});
+        if(dialog._jobId===id)dialog._jobId=null;
+      }
       if(token!==dialog._runId||!dialog.open)return null;
-      const result=RohrRunnerEngine.calculate(candidate,project.calibration,settings,RohrStoffdaten,RohrKatalog);
+      if(!result){await RohrStoffdaten.load();if(token!==dialog._runId||!dialog.open)return null;await new Promise(resolve=>requestAnimationFrame(()=>setTimeout(resolve,0)));if(token!==dialog._runId||!dialog.open)return null;result=RohrRunnerEngine.calculate(candidate,project.calibration,settings,RohrStoffdaten,RohrKatalog)}
       for(const item of result.rows){const original=project.edges.find(e=>e.id===item.edgeId);item.manual=original?.thermal?.[item.type]?.mode==='manual'}
       if(token!==dialog._runId||!dialog.open)return null;
       dialog._checked={edgeId:edge.id,sizeId,length,result,settings};renderRiserPreview(result,edge.id);$('riserApply').disabled=false;
@@ -336,9 +341,10 @@
   $('welcomeNew').onclick=()=>{resetProject(true);fitSurface()};$('welcomePdf').onclick=()=>$('pdfFile').click();$('welcomeProjects').onclick=()=>$('projectsButton').click();$('projectList').addEventListener('click',e=>{if(e.target.closest('[data-project-action="open"]'))$('welcomeScreen').classList.add('welcome-hidden')},true);
   const welcome=$('welcomeScreen');welcome.addEventListener('dragenter',e=>{if([...e.dataTransfer.types].includes('Files')){e.preventDefault();welcome.classList.add('is-file-over')}});welcome.addEventListener('dragover',e=>{if([...e.dataTransfer.types].includes('Files')){e.preventDefault();e.dataTransfer.dropEffect='copy';welcome.classList.add('is-file-over')}});welcome.addEventListener('dragleave',e=>{if(!welcome.contains(e.relatedTarget))welcome.classList.remove('is-file-over')});welcome.addEventListener('drop',async e=>{if(![...e.dataTransfer.types].includes('Files'))return;e.preventDefault();e.stopPropagation();welcome.classList.remove('is-file-over');const file=[...e.dataTransfer.files].find(item=>item.type==='application/pdf'||item.name.toLowerCase().endsWith('.pdf'));if(!file){toast('Bitte eine PDF-Datei ablegen.');return}try{await importPdfFile(file);welcome.classList.add('welcome-hidden');fitSurface()}catch(error){toast('PDF konnte nicht geöffnet werden: '+error.message)}});
   document.querySelectorAll('.inspector-tab').forEach((button,index,buttons)=>{button.onclick=()=>setInspectorTab(button.dataset.panel);button.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?buttons.length-1:(index+(e.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;buttons[next].focus();setInspectorTab(buttons[next].dataset.panel)}});
-  for(const id of ['riserSize','riserLength'])$(id).addEventListener(id==='riserSize'?'change':'input',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1;clearInterval(dialog._statusTimer);dialog._checked=null;$('riserCheck').disabled=false;$('riserApply').disabled=true;$('riserCalcBadge').className='badge riser-calc-badge draft hidden';const preview=$('riserPreview');preview.className='riser-preview pending';preview.textContent='Eingaben geändert – bitte erneut prüfen.'});
+  function cancelRiserJob(){const dialog=$('riserDialog'),request=pending.get(dialog._jobId);if(request){pending.delete(dialog._jobId);request.callback(null)}dialog._jobId=null}
+  for(const id of ['riserSize','riserLength'])$(id).addEventListener(id==='riserSize'?'change':'input',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1;cancelRiserJob();clearInterval(dialog._statusTimer);dialog._checked=null;$('riserCheck').disabled=false;$('riserApply').disabled=true;$('riserCalcBadge').className='badge riser-calc-badge draft hidden';const preview=$('riserPreview');preview.className='riser-preview pending';preview.textContent='Eingaben geändert – bitte erneut prüfen.'});
   $('riserCheck').addEventListener('click',()=>checkRiserDialog());$('riserApply').addEventListener('click',applyRiserDialog);
-  $('riserDialog').addEventListener('close',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1;clearInterval(dialog._statusTimer);dialog._checked=null});
+  $('riserDialog').addEventListener('close',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1;cancelRiserJob();clearInterval(dialog._statusTimer);dialog._checked=null});
 
   for(const button of document.querySelectorAll('[data-tool]'))button.onclick=()=>setTool(button.dataset.tool);
   document.querySelectorAll('[data-setting]').forEach(el=>el.addEventListener('change',()=>{if(el.dataset.setting==='fluid'){const values=defaultsForFluid(el.value);for(const key of ['condensationC','superheatK','subcoolingK','liquidLimitK','designPressureBar'])document.querySelector(`[data-setting="${key}"]`).value=values[key]}if(el.dataset.setting==='secondaryPipeSeries'){const series=RohrKatalog.series.find(item=>item.id===el.value);if(series?.roughnessMicroM)document.querySelector('[data-setting="secondaryRoughnessMicroM"]').value=series.roughnessMicroM}if(['mode','secondaryFluid','secondaryPipeSeries'].includes(el.dataset.setting))syncCalculationMode();else if(['glycolConcentrationMassPercent','supplyTemperatureC','returnTemperatureC'].includes(el.dataset.setting))updateFreezeTemperature();invalidate();renderEdges()}));
