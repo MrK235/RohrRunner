@@ -10,8 +10,11 @@ const read = path => readFileSync(new URL(path, root), 'utf8');
 
 test('Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung', () => {
   const html=read('index.html'),app=read('src/app.js');
-  assert.match(html, /id="themeToggle"[^>]*>◐<\/button>/);
-  assert.doesNotMatch(html, /id="themeToggle"[^>]*>[^<]*<span>Hell|id="themeToggle"[^>]*aria-pressed/);
+  const toggle=html.slice(html.indexOf('<button id="themeToggle"'),html.indexOf('</button>',html.indexOf('<button id="themeToggle"'))+9);
+  for(const mode of ['auto','light','dark'])assert.match(toggle,new RegExp(`class="theme-icon theme-icon-${mode}"`));
+  assert.match(toggle, /theme-icon-auto[^>]*>[\s\S]*?<rect[^>]*>[\s\S]*?<\/svg>/);
+  assert.doesNotMatch(toggle, /<span>|aria-pressed|>◐/);
+  assert.match(read('src/style.css'),/\.theme-toggle\[data-mode="auto"\] \.theme-icon-auto/);
   assert.match(html, /prefers-color-scheme: light/);
   const source=app.slice(app.indexOf("const THEME_STORAGE="),app.indexOf('  if(window.pdfjsLib)'));
   const button={dataset:{},setAttribute(key,value){this[key]=value},addEventListener:(key,handler)=>listeners[key]=handler},meta={setAttribute(key,value){this[key]=value}},listeners={},stored=[];
@@ -20,13 +23,13 @@ test('Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemein
   const {mode}=runInNewContext(`(()=>{const $=()=>button;${source};return {mode:()=>themeMode}})()`,{
     window:{matchMedia:()=>system},document,button,localStorage:{getItem:()=>null,setItem:(key,value)=>stored.push(value)}
   });
-  assert.equal(mode(),'auto');assert.equal(document.documentElement.dataset.theme,'light');assert.equal(button.textContent,'◐');
+  assert.equal(mode(),'auto');assert.equal(document.documentElement.dataset.theme,'light');assert.equal(button.dataset.mode,'auto');
   system.matches=false;listeners.change();assert.equal(document.documentElement.dataset.theme,'dark');assert.deepEqual(stored,[]);
-  buttonClick();assert.equal(mode(),'light');assert.equal(button.textContent,'☼');assert.equal(document.documentElement.dataset.theme,'light');
+  buttonClick();assert.equal(mode(),'light');assert.equal(button.dataset.mode,'light');assert.equal(document.documentElement.dataset.theme,'light');
   listeners.change();assert.equal(document.documentElement.dataset.theme,'light');
-  buttonClick();assert.equal(mode(),'dark');assert.equal(button.textContent,'☾');assert.equal(document.documentElement.dataset.theme,'dark');
+  buttonClick();assert.equal(mode(),'dark');assert.equal(button.dataset.mode,'dark');assert.equal(document.documentElement.dataset.theme,'dark');
   system.matches=true;listeners.change();assert.equal(document.documentElement.dataset.theme,'dark');system.matches=false;
-  buttonClick();assert.equal(mode(),'auto');assert.equal(button.textContent,'◐');assert.deepEqual(stored,['light','dark','auto']);
+  buttonClick();assert.equal(mode(),'auto');assert.equal(button.dataset.mode,'auto');assert.deepEqual(stored,['light','dark','auto']);
   function buttonClick(){listeners.click()}
 });
 
