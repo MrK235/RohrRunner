@@ -80,3 +80,14 @@ test('Kühlstellen setzen verschiebt den Fokus nicht in die Seitenleiste', () =>
   const source=app.split('\n').find(line=>line.includes('function createEndpoint('));
   assert.doesNotMatch(source,/\.focus\(|requestAnimationFrame/);
 });
+
+test('Zoom platziert Beschriftungen erst am Animationsende erneut', () => {
+  const source=app.split('\n').find(line=>line.includes('function animateZoom('));
+  let layouts=0,views=0,frames=0;
+  const context=createContext({zoomTime:0,zoom:1,zoomTarget:2,pan:{x:0,y:0},panTarget:{x:20,y:10},zoomFrame:1,pdf:null,Math,applyView:()=>views++,drawNetwork:()=>layouts++,updateLabelPositions:()=>{throw new Error('Layout im Animationsframe')},requestAnimationFrame:()=>++frames});
+  runInContext(source,context);
+  for(let time=16;time<=160;time+=16)context.animateZoom(time);
+  assert.equal(layouts,0);assert.equal(views,10);assert.equal(frames,10);
+  context.zoom=2;context.pan={x:20,y:10};context.animateZoom(176);
+  assert.equal(layouts,1);assert.equal(context.zoomFrame,0);
+});

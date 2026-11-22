@@ -119,6 +119,8 @@ npm run tauri:build:linux
 npm run tauri:build:windows
 ```
 
+Der Desktop-Build erzeugt das eigenständige Worker-Bundle vor dem Kopieren der Laufzeitdateien neu. Unter Ubuntu/TUXEDO müssen die Entwicklungsbibliotheken für WebKitGTK 4.1, GTK 3 und libsoup 3 sowie die weiteren Tauri-Buildvoraussetzungen installiert sein (siehe `.github/workflows/release.yml`). Rust und die Tauri-CLI allein reichen nicht aus.
+
 Das Linux-AppImage liegt nach dem Build unter `src-tauri/target/release/bundle/appimage/`. Die Tauri-Anwendung lädt dieselben statischen Dateien wie die Browser- und PWA-Variante; Projekte und Berechnungen bleiben lokal. Für Windows ist das NSIS-Bundle einschließlich Anwendungssymbol und WebView2-Bootstrapper in `src-tauri/tauri.conf.json` vorbereitet.
 
 Der Browser-/Solver-Testlauf benötigt Node.js, aber keine zusätzlichen npm-Laufzeitpakete; die Tauri-CLI wird nur für Desktop-Entwicklung und -Builds benötigt. Ein manueller Browser-Test wurde vom Projektverantwortlichen bestätigt; eine systematische Prüfung aller Browser- und Betriebssystemkombinationen liegt nicht vor. Die Berechnungsergebnisse sind noch nicht unabhängig anhand von Referenzfällen verifiziert. Die Tests und der Browser-Test ersetzen keine fachliche Anlagenprüfung.
