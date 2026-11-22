@@ -8,6 +8,13 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche', () => {
+  const dark=read('src/style.css'),light=read('src/theme.css');
+  assert.match(dark,/input\[type="number"\]\{color-scheme:dark\}/);
+  assert.match(light,/html\[data-theme="light"\] input\[type="number"\] \{ color-scheme: light; \}/);
+  assert.match(light,/html\[data-theme="light"\] input\[type="number"\]::-webkit-inner-spin-button,[\s\S]*?::-webkit-outer-spin-button \{ background-color: transparent; \}/);
+});
+
 test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
   assert.match(dark,/\.result-size-select\.liquid:hover\{[^}]*background:/);

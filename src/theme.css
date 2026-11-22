@@ -122,6 +122,9 @@ html[data-theme="light"] .project-rename {
 html[data-theme="light"] .field-unit input,
 html[data-theme="light"] .terminal-name input,
 html[data-theme="light"] .project-rename { color: #26373d; }
+html[data-theme="light"] input[type="number"] { color-scheme: light; }
+html[data-theme="light"] input[type="number"]::-webkit-inner-spin-button,
+html[data-theme="light"] input[type="number"]::-webkit-outer-spin-button { background-color: transparent; }
 html[data-theme="light"] .field-unit em,
 html[data-theme="light"] .terminal-card-length strong { color: #53676d; }
 html[data-theme="light"] .field-unit:focus-within,
