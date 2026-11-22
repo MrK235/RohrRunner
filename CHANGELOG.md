@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+# 1.0.13 — Desktop-Buildversion korrigiert
+
+- Tauri-Desktopversion mit der Anwendungs-, README- und Oberflächenversion synchronisiert, damit Linux- und Windows-Artefakte die korrekte Versionsnummer tragen.
+
+
 # 1.0.12 — Oberfläche und Bedienkomfort
 
 - Designmodi mit automatischer Systemerkennung und klaren Sonne-/Mond-/Systemsymbolen ergänzt; Bedienelemente und Hover-Zustände in beiden Designs vereinheitlicht.
