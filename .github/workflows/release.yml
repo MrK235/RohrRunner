@@ -113,7 +113,14 @@ jobs:
             test "${tag}" = "${GITHUB_REF_NAME}"
           fi
           if gh release view "${tag}" >/dev/null 2>&1; then
-            gh release upload "${tag}" release-assets/* --clobber
+            existing_assets="$(gh release view "${tag}" --json assets --jq '.assets[].name')"
+            for asset in release-assets/*; do
+              if printf '%s\n' "${existing_assets}" | grep -Fxq "$(basename "${asset}")"; then
+                echo "Bereits veröffentlichtes Paket bleibt erhalten: $(basename "${asset}")"
+              else
+                gh release upload "${tag}" "${asset}"
+              fi
+            done
           else
             gh release create "${tag}" release-assets/* \
               --title "RohrRunner ${tag}" \

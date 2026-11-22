@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.1.0 — Flüssigeres Zoomen und korrigierte Zeichenbedienung
+
+- Aufwendige Beschriftungsplatzierung beim Zoomen auf das Animationsende verlagert, statt sie in jedem Animationsbild neu auszuführen. Eine quantitative Linux-Performanceverbesserung ist noch nicht vermessen.
+- Tastaturcursor bei Pointer-Bedienung ausgeblendet und ungewollte Fokuswechsel bzw. Scrollsprünge beim Zeichnen verhindert.
+- Eigenständiges Worker-Bundle wird vor jedem Desktop-Build aus den aktuellen Quellen erzeugt; Linux-Buildvoraussetzungen dokumentiert.
+- Anwendungs-, Desktop- und angezeigte Versionen auf 1.1.0 synchronisiert; PWA-Cache aktualisiert.
+
 # 1.0.14 — Herstellerkälteträger, weitere Kältemittel und schnellere Gemischauslegung
 
 - Herstellerspezifische Kälteträger (NEUTRAGEL® NEO, FRIOGEL® NEO, Antifrogen® N/L, Glysofor N/L) mit Volumenprozent-Konzentration, Herstellertabellen bzw. -korrelationen und Quellenangabe ergänzt.
