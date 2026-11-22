@@ -11,6 +11,7 @@ Berechnet werden stationäre, einphasige Saug- und Flüssigkeitsleitungen für:
 | R513A | metrische Wieland-cupromed/cuprofrio-Serie |
 | R448A | metrische Wieland-cupromed/cuprofrio-Serie |
 | R744 (CO₂) | zöllige Wieland-K65-120-bar-Serie; nur unterkritischer Betrieb |
+| R134a, R404A, R407C, R449A, R452A | metrische Wieland-cupromed/cuprofrio-Serie |
 
 Nicht Teil des Modells sind Druckgasleitungen, transkritisches CO₂, Ventil- oder Verdichterauslegung, gekoppelte Kältekreise, zeitabhängige Lastgänge und Teillast-Ölrückführung.
 
@@ -32,6 +33,8 @@ Die hydraulische Länge eines Abschnitts ist die Summe der orthogonalen Planstre
 ## 3. Stoffzustände und Kältemittel
 
 CoolProp 8.0.0 wird lokal als WebAssembly geladen. Die Anwendung fordert Sättigungszustände sowie thermodynamische und hydraulische Stoffwerte an. `src/fast-data.js` kann bei R448A und R513A für −35 bis 10 °C Verdampfung, 25 bis 55 °C Verflüssigung, 3 bis 40 K Überhitzung, 1 bis 10 K Unterkühlung und Saugverlustgrenzen bis 5 K vorberechnete Interpolationen bereitstellen. Für R448A darf die Flüssigkeitstemperatur dabei höchstens 50 °C betragen (begrenzter Viskositätsmodellbereich). Außerhalb der zulässigen Eingaben oder der tabellierten Druckbereiche verwendet der Solver CoolProp direkt; auch wenn der Aufbau der Stützpunkte fehlschlägt, fällt er auf CoolProp zurück. Die Stützpunkte werden für den jeweiligen Betriebspunkt mit CoolProp erzeugt; die Interpolation ersetzt keine zusätzliche technische Validierung.
+
+Die zusätzlichen Kältemittel R134a, R404A, R407C, R449A und R452A werden über das bereits lokal gebündelte CoolProp-8.0.0-HEOS-Modell berechnet (R134a als reiner Stoff, die Gemische mit den lokal verfügbaren `.mix`-Definitionen). Es wird kein Netz- oder Downloadzugang benötigt. Druck-/Sättigungs-, Dichte-, Enthalpie- und Viskositätswerte stammen für diese Stoffe ausschließlich aus CoolProp; insbesondere die Viskosität ist für diese Produkte nicht gegen unabhängige Hersteller-/Messwerte abgeglichen. Der Fast-Data-Interpolationspfad gilt unverändert nur für R448A/R513A; die neuen Kältemittel verwenden die direkten CoolProp-Abfragen. Für Gemische werden Blasen- und Taupunkt getrennt ausgewertet und Zweiphasenzustände im hydraulischen Einphasenpfad abgewiesen. Werkstoff-, Öl- und Druckfreigaben sind nicht Teil der Berechnung.
 
 Für die Saugleitung gilt die Taupunkttemperatur plus eingestellte Überhitzung. Für die Flüssigkeitsleitung wird eine konstante Flüssigkeitstemperatur `T_liquid = T_condensation − subcooling` angesetzt. Bei zeotropen Gemischen werden Blasen- und Taupunkt getrennt behandelt.
 

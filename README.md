@@ -35,7 +35,7 @@ npm run serve
 - PDF-Grundriss als Zeichenunterlage, Kalibrierung, Zoom und Verschieben
 - Orthogonale Leitungen, automatische T-Stücke sowie Undo/Redo
 - Mehrere Kühlstellen mit frei definierbaren Leistungen
-- Saug- und Flüssigkeitsleitungen mit automatischer oder manueller Rohrwahl
+- Saug- und Flüssigkeitsleitungen mit automatischer oder manueller Rohrwahl; lokal berechnete Kältemittel R513A, R448A, R744, R134a, R404A, R407C, R449A und R452A
 - Betriebspunkte, Höhendifferenzen, Zusatzlängen und Einzelwiderstände je Abschnitt
 - Getrennte Berechnungsarten für Kältemittelkreise und Kälteträgerkreise mit Wasser, Ethylen- oder Propylenglykol
 - Glykolkonzentration in Masse-%, Vor-/Rücklauftemperatur, kritischer Kreisdruckverlust und automatische Rohrwahl
@@ -63,9 +63,9 @@ Zahlen werden mit zwei Nachkommastellen und der Einheit direkt hinter dem Wert a
 
 ## Medien und Startwerte
 
-Unterstützt werden **R513A**, **R448A** und **R744 / CO₂**. R744 wird nur im unterkritischen Bereich ausgelegt; transkritische Druckgasleitungen sind nicht enthalten.
+Unterstützt werden **R513A**, **R448A**, **R744 / CO₂**, **R134a**, **R404A**, **R407C**, **R449A** und **R452A**. Die fünf ergänzten Stoffe nutzen lokal mitgelieferte CoolProp-8.0.0-Modelldaten; ihre Viskosität ist nicht unabhängig produktspezifisch validiert. R744 wird nur im unterkritischen Bereich ausgelegt; transkritische Druckgasleitungen sind nicht enthalten.
 
-| Vorgabe | Startwert R513A / R448A |
+| Vorgabe | Startwert (außer R744) |
 | --- | ---: |
 | Gleichzeitigkeit | 1,00 |
 | Verdampfung / Verflüssigung | −10 °C / 45 °C |

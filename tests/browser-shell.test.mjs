@@ -474,7 +474,8 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.match(style,/\.form-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\.form-grid label\{min-width:0\}\.form-grid select\{width:100%;min-width:0;max-width:100%/);
   assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
   assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
-  assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
+  for(const fluid of ['R513A','R448A','R744','R134A','R404A','R407C','R449A','R452A']) assert.ok(html.includes(fluid),`Kältemittel-Auswahl: ${fluid}`);
+  assert.ok(html.includes('id="refrigerantModelNote"')&&app.includes("$('refrigerantModelNote').classList.toggle"),'new model fluids show the local-data limitation');
   assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
   assert.ok(app.includes('window.__TAURI__?.core?.invoke')&&app.includes("invoke('save_export_file'")&&app.includes('Array.from(bytes)'),'desktop exports use the native save dialog');
   assert.match(tauriConfig, /"withGlobalTauri": true/);
@@ -484,6 +485,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(linuxLauncher.includes('#!/usr/bin/env bash')&&linuxLauncher.includes('scripts/serve.mjs')&&linuxLauncher.includes('xdg-open'),'Linux launcher starts the server and opens the browser');
   assert.ok(read('scripts/build-worker-bundle.mjs').includes('src/worker-bundle.js'),'worker bundle can be regenerated from local sources');
   assert.ok(read('src/worker-bundle.js').includes('window.RohrRunnerWorkerBundle = '),'generated standalone worker bundle exists');
+  for(const fluid of ['R134A','R404A','R407C','R449A','R452A']) assert.ok(read('src/worker-bundle.js').includes(fluid),`offline worker: ${fluid}`);
   assert.match(manifest, /"display": "standalone"/);
   assert.match(manifest, /rohrRunner-192\.png/);
   assert.match(manifest, /rohrRunner-512\.png/);

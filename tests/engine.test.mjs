@@ -309,6 +309,34 @@ test('R744 transcritical and a missing terminal load are refused explicitly', as
   assert.throws(() => context.RohrRunnerEngine.calculate(broken, 1, settings, context.RohrStoffdaten, catalog), /Leistung/);
 });
 
+test('zusätzliche lokale Kältemittel liefern Sättigungs- und Einphasenwerte für den Solver', async () => {
+  await context.RohrStoffdaten.load();
+  for (const fluid of ['R134A','R404A','R407C','R449A','R452A']) {
+    assert.ok(context.RohrStoffdaten.fluids.includes(fluid));
+    const evaporating=context.RohrStoffdaten.saturationAtTemperature(fluid,263.15);
+    const condensing=context.RohrStoffdaten.saturationAtTemperature(fluid,318.15);
+    assert.ok(evaporating.dewPressurePa>0 && condensing.bubblePressurePa>evaporating.dewPressurePa);
+    const vapor=context.RohrStoffdaten.hydraulicPt(fluid,evaporating.dewPressurePa,context.RohrStoffdaten.saturationAtPressure(fluid,evaporating.dewPressurePa).dewK+25);
+    const liquid=context.RohrStoffdaten.hydraulicPt(fluid,condensing.bubblePressurePa,316.15);
+    for (const state of [vapor,liquid]) assert.ok(state.densityKgM3>0 && state.viscosityPaS>0,fluid);
+    assert.equal(liquid.viscosityBasis,'model');
+    if(condensing.bubblePressurePa>condensing.dewPressurePa*1.000001)
+      assert.throws(()=>context.RohrStoffdaten.hydraulicPt(fluid,(condensing.bubblePressurePa+condensing.dewPressurePa)/2,318.15),/Zweiphasenzustand/);
+  }
+});
+
+test('zusätzliche Kältemittel dimensionieren synthetische Netze vollständig lokal', async () => {
+  await context.RohrStoffdaten.load();
+  const net={nodes:[{id:'start',type:'start',x:0,y:0},{id:'cold',type:'endpoint',x:2,y:0,coolingKW:2}],
+    edges:[{id:'pipe',from:'start',to:'cold',points:[{x:0,y:0},{x:2,y:0}]}]};
+  for (const fluid of ['R134A','R404A','R407C','R449A','R452A']) {
+    const result=context.RohrRunnerEngine.calculate(net,1,{...settings,fluid,designPressureBar:24},context.RohrStoffdaten,catalog);
+    assert.equal(result.fluid,fluid);
+    assert.equal(result.rows.length,2);
+    assert.ok(result.rows.every(row=>row.diameterMm>0 && Number.isFinite(row.pressureDropPa)),fluid);
+  }
+});
+
 test('Kälteträger-Stoffdaten liefern Wasser- und Glykolwerte im Modellbereich', async () => {
   await context.RohrStoffdaten.load();
   const water=context.RohrStoffdaten.secondaryPt('WATER',10,0),meg=context.RohrStoffdaten.secondaryPt('MEG',10,30),mpg=context.RohrStoffdaten.secondaryPt('MPG',10,30);

@@ -11,6 +11,8 @@
     "Climalife_Blue_Handbook": "https://climalife.com/wp-content/uploads/2022/09/uploadsassetsPractical20informationBLUE20HANDBOOKCarnet20Bleu202018_EN_BD.pdf",
     "R513A_liquid_viscosity_experiment": "https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819",
     "CoolProp_Incompressibles": "https://coolprop.org/fluid_properties/Incompressibles.html",
+    "CoolProp_PureFluids": "https://coolprop.org/fluid_properties/PurePseudoPure.html",
+    "CoolProp_Mixtures": "https://coolprop.org/fluid_properties/Mixtures.html",
     "CoolProp_MEG_fit": "https://coolprop.org/_downloads/4e6bd34ef1888b4daa1662944ee0ea7e/MEG_fitreport.pdf",
     "CoolProp_MPG_fit": "https://coolprop.org/_downloads/b359aee6a82a4ab771fe34de39a6302d/all_incompressibles.pdf",
     "NEUTRAGEL_NEO": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentneutragel-neo-fp-de-1.pdf",
@@ -20,6 +22,12 @@
     "Antifrogen_calculator": "https://www.clariant.com/en/Business-Units/Care-Chemicals/Heat-Transfer-Fluids/Calculator",
     "Glysofor_N": "https://www.glysofor.de/wp-content/uploads/pdf/en/Glysofor-N-Specification-EN.pdf",
     "Glysofor_L": "https://www.glysofor.de/wp-content/uploads/pdf/en/Glysofor-L-Specification-EN.pdf"
+  },
+  "additionalRefrigerants": {
+    "source": "CoolProp 8.0.0 HEOS, locally bundled WebAssembly; names R134a, R404A.mix, R407C.mix, R449A.mix, R452A.mix; see CoolProp_PureFluids and CoolProp_Mixtures.",
+    "fluidCodes": ["R134A", "R404A", "R407C", "R449A", "R452A"],
+    "properties": ["bubblePressurePa", "dewPressurePa", "densityKgM3", "enthalpyJKg", "entropyJKgK", "viscosityPaS"],
+    "validity": "CoolProp model results, not product-specific manufacturer-validated transport data. Liquid and vapor states are evaluated as single phase; two-phase friction is not computed. No new fast-data interpolation for these fluids."
   },
   "secondaryWorkingFluids": {
     "source": "CoolProp 8.0.0 incompressible working-fluid correlations based on Melinder reference data.",

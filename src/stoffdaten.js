@@ -1,7 +1,7 @@
 /* Lokaler Stoffdaten-Zugang für die spätere Rohrberechnung. Alle Werte in SI. */
 (function (global) {
   'use strict';
-  const names = Object.freeze({ R513A: 'R513A.mix', R448A: 'R448A.mix', R744: 'R744' });
+  const names = Object.freeze({ R513A: 'R513A.mix', R448A: 'R448A.mix', R744: 'R744', R134A: 'R134a', R404A: 'R404A.mix', R407C: 'R407C.mix', R449A: 'R449A.mix', R452A: 'R452A.mix' });
   // Chen et al., CIESC Journal 72 (2021), Tabelle 3: gemessene gesättigte R513A-Flüssigkeit,
   // https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819 (T in K, μ in μPa·s).
   const r513aLiquidMu = Object.freeze([[253.15,287.59],[258.20,268.76],[263.09,252.23],[268.16,237.94],[273.19,224.13],[278.16,211.22],[283.13,198.83],[288.21,186.76],[293.18,175.40],[298.15,165.09],[303.13,154.84],[308.18,145.72],[313.17,136.84],[318.14,128.38],[323.12,119.87],[328.19,111.72],[333.16,103.81]]);
@@ -177,7 +177,13 @@
         viscositySource: 'Honeywell Solstice N40: 138,1 µPa·s bei 25 °C; relativer T-/p-Verlauf CoolProp 8.0.0',
         viscosityBasis: 'manufacturer-anchor-plus-model-shape', viscosityModelFactor: raw.viscosityPaS / rawAt25C });
     }
-    if (code !== 'R513A') return Object.freeze({ ...raw, viscositySource: 'CoolProp 8.0.0; R744 gegen NIST-Stützpunkte geprüft', viscosityBasis: 'model' });
+    if (code !== 'R513A') {
+      if (code !== 'R744') {
+        const sat = saturationAtTemperature(code, temperatureK);
+        if (pressurePa > sat.dewPressurePa && pressurePa < sat.bubblePressurePa) throw new Error(`${code}-Zweiphasenzustand: keine Einphasen-Reibungsrechnung.`);
+      }
+      return Object.freeze({ ...raw, viscositySource: code === 'R744' ? 'CoolProp 8.0.0; R744 gegen NIST-Stützpunkte geprüft' : `CoolProp 8.0.0; ${code}-Viskosität modellbasiert, nicht herstellervalidiert`, viscosityBasis: 'model' });
+    }
     const sat = saturationAtTemperature(code, temperatureK);
     if (pressurePa < sat.bubblePressurePa && pressurePa > sat.dewPressurePa) {
       throw new Error('R513A-Zweiphasenzustand: keine Einphasen-Reibungsrechnung.');
@@ -210,7 +216,7 @@
     if (cached) return cached;
     // withDesignViscosity needs these same limits. Resolve them first so the PT
     // lookup can reuse the verified phase, including during table construction.
-    if (code === 'R448A' || code === 'R513A') saturationAtTemperature(code, temperatureK);
+    if (code !== 'R744') saturationAtTemperature(code, temperatureK);
     const raw = {
       fluid: code, pressurePa, temperatureK,
       densityKgM3: lookup('D', 'P', pressurePa, 'T', temperatureK, code),
