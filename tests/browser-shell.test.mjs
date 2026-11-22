@@ -13,6 +13,8 @@ test('Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche', 
   assert.match(dark,/input\[type="number"\]\{color-scheme:dark\}/);
   assert.match(light,/html\[data-theme="light"\] input\[type="number"\] \{ color-scheme: light; \}/);
   assert.match(light,/html\[data-theme="light"\] input\[type="number"\]::-webkit-inner-spin-button,[\s\S]*?::-webkit-outer-spin-button \{ background-color: transparent; \}/);
+  assert.match(light,/input\[type="number"\]:hover::-webkit-outer-spin-button \{ background-color: #e8edef; \}/);
+  assert.match(light,/\.field-unit:focus-within input\[type="number"\]::-webkit-outer-spin-button \{ background-color: #f8fafb; \}/);
 });
 
 test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () => {
