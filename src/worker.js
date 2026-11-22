@@ -3,7 +3,7 @@ self.window = self;
 self.document = { currentScript: { src: new URL('../vendor/coolprop/coolprop-local.js', self.location.href).href }, baseURI: self.location.href };
 importScripts('../vendor/coolprop/coolprop-local.js');
 self.document.currentScript.src = new URL('./stoffdaten.js', self.location.href).href;
-importScripts('../data/pipe-catalog.js', './stoffdaten.js', './fast-data.js', './engine.js');
+importScripts('../data/pipe-catalog.js', '../data/secondary-fluids.js', './stoffdaten.js', './fast-data.js', './engine.js');
 self.onmessage = async event => {
   const { id, project, calibration, settings } = event.data || {};
   try {

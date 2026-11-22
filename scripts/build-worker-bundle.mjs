@@ -6,6 +6,7 @@ const read = path => readFileSync(resolve(root, path), 'utf8');
 const dependencies = [
   'vendor/coolprop/coolprop-local.js',
   'data/pipe-catalog.js',
+  'data/secondary-fluids.js',
   'src/stoffdaten.js',
   'src/fast-data.js',
   'src/engine.js'

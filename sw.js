@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rohrrunner-pwa-v28';
+const CACHE_NAME = 'rohrrunner-pwa-v29';
 const APP_SHELL = [
   './',
   './index.html',
@@ -20,6 +20,7 @@ const APP_SHELL = [
   './src/worker-bundle.js',
   './src/zip.js',
   './data/pipe-catalog.js',
+  './data/secondary-fluids.js',
   './data/pipe-catalog.json',
   './data/fluid-references.json',
   './vendor/pdfjs/pdf.min.js',

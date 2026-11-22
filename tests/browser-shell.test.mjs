@@ -457,8 +457,8 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.match(html, /src="vendor\/pdf-lib\/pdf-lib\.min\.js"/);
   assert.match(app, /vendor\/pdfjs\/pdf\.worker\.min\.js/);
   assert.doesNotMatch(html, /https:\/\/(?:cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net)\/.*(?:pdf|pdf-lib)/);
-  for(const path of ['data/pipe-catalog.js','src/stoffdaten.js','src/fast-data.js','src/engine.js','src/editor-core.js','src/app.js'])assert.ok(html.includes(path),`index.html: ${path}`);
-  for(const path of ['../vendor/coolprop/coolprop-local.js','../data/pipe-catalog.js','./stoffdaten.js','./fast-data.js','./engine.js'])assert.ok(worker.includes(path),`worker: ${path}`);
+  for(const path of ['data/pipe-catalog.js','data/secondary-fluids.js','src/stoffdaten.js','src/fast-data.js','src/engine.js','src/editor-core.js','src/app.js'])assert.ok(html.includes(path),`index.html: ${path}`);
+  for(const path of ['../vendor/coolprop/coolprop-local.js','../data/pipe-catalog.js','../data/secondary-fluids.js','./stoffdaten.js','./fast-data.js','./engine.js'])assert.ok(worker.includes(path),`worker: ${path}`);
   assert.ok(worker.includes('self.document =')&&worker.includes('document.currentScript.src'),'worker supplies the Emscripten script URL without a browser document');
   for(const control of ['openPdf','exportPlanPdf','calibrate','calculate','exportCsv','projectFile','edgeList','riserDialog','riserSize','riserPreview'])assert.ok(html.includes(`id="${control}"`),`UI: ${control}`);
   for(const panel of ['panelTerminals','panelCalculation','panelResults'])assert.ok(html.includes(`id="${panel}"`),`sidebar tab panel: ${panel}`);
@@ -484,6 +484,6 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.match(manifest, /"display": "standalone"/);
   assert.match(manifest, /rohrRunner-192\.png/);
   assert.match(manifest, /rohrRunner-512\.png/);
-  for(const asset of ['./index.html','./src/app.js','./vendor/coolprop/coolprop.wasm'])assert.ok(serviceWorker.includes(asset),`PWA cache: ${asset}`);
+  for(const asset of ['./index.html','./src/app.js','./data/secondary-fluids.js','./vendor/coolprop/coolprop.wasm'])assert.ok(serviceWorker.includes(asset),`PWA cache: ${asset}`);
   assert.match(pwa, /serviceWorker\.register\('\.\/sw\.js'/);
 });

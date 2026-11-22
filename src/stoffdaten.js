@@ -218,32 +218,76 @@
     };
     return cacheSet(hydraulicStateCache, key, withDesignViscosity(code, pressurePa, temperatureK, raw));
   }
-  function secondaryPt(fluid, temperatureC, concentrationMassPercent = 0) {
-    if (!module) throw new Error('Stoffdaten zuerst mit load() initialisieren.');
-    finite(temperatureC, 'Temperatur'); finite(concentrationMassPercent, 'Glykolkonzentration');
-    const code = String(fluid).toUpperCase();
-    if (!['WATER', 'MEG', 'MPG'].includes(code)) throw new Error('Kälteträger nicht unterstützt: ' + fluid);
-    if (concentrationMassPercent < 0 || concentrationMassPercent > 60) throw new Error('Glykolkonzentration muss zwischen 0 und 60 Masse-% liegen.');
-    if (code === 'WATER' && concentrationMassPercent !== 0) throw new Error('Reines Wasser hat keine Glykolkonzentration.');
-    const temperatureK = temperatureC + 273.15;
-    const fluidName = code === 'WATER' || concentrationMassPercent === 0 ? 'Water' : `INCOMP::${code}-${concentrationMassPercent}%`;
-    const key = `${fluidName}|${numberKey(temperatureK)}`;
-    const cached = cacheGet(secondaryStateCache, key);
-    if (cached) return cached;
-    const freezeTemperatureK = code === 'WATER' || concentrationMassPercent === 0 ? 273.15
-      : module.PropsSI('T_freeze', 'T', 273.15, 'P', 101325, fluidName);
-    if (temperatureK <= freezeTemperatureK) throw new Error(`Betriebstemperatur erreicht den Stoffdaten-Gefrierpunkt (${(freezeTemperatureK - 273.15).toFixed(1)} °C).`);
-    const property = output => {
-      const value = module.PropsSI(output, 'T', temperatureK, 'P', 101325, fluidName);
-      if (!Number.isFinite(value) || value <= 0 || value >= 1e99) throw new Error(`Kein gültiger Kälteträger-Stoffwert (${output}) bei ${temperatureC} °C.`);
-      return value;
-    };
-    return cacheSet(secondaryStateCache, key, Object.freeze({
-      fluid: code, concentrationMassPercent, temperatureC, temperatureK,
-      densityKgM3: property('D'), specificHeatJKgK: property('C'), viscosityPaS: property('V'),
-      freezeTemperatureC: freezeTemperatureK - 273.15,
-      source: 'CoolProp 8.0.0 incompressible-fluid model'
-    }));
+  const manufacturerSecondaryFluids = global.RohrSecondaryFluids;
+  function secondaryInfo(fluid) {
+    const code=String(fluid||'WATER').toUpperCase(),product=manufacturerSecondaryFluids?.products?.[code];
+    if(product)return Object.freeze({code,name:product.name,basis:product.basis,min:product.min,max:product.max,recommendedMin:product.recommendedMin,type:product.type,source:product.source,concentrateDensityKgM3:product.concentrateDensityKgM3,manufacturer:true});
+    if(['WATER','MEG','MPG'].includes(code))return Object.freeze({code,name:code==='WATER'?'Wasser':code==='MEG'?'Ethylenglykol-Wasser':'Propylenglykol-Wasser',basis:'Masse-%',min:0,max:60,type:code,source:'CoolProp 8.0.0 incompressible-fluid model',manufacturer:false});
+    throw new Error('Kälteträger nicht unterstützt: '+fluid);
+  }
+  function interpolatePairs(points,x,label){
+    if(!Array.isArray(points)||!points.length||x<points[0][0]-1e-9||x>points.at(-1)[0]+1e-9)throw new Error(`${label} liegt außerhalb des hinterlegten Herstellerbereichs.`);
+    for(let i=1;i<points.length;i++)if(x<=points[i][0]){const [x0,y0]=points[i-1],[x1,y1]=points[i];return y0+(y1-y0)*(x-x0)/(x1-x0)}
+    return points.at(-1)[1];
+  }
+  function tableCurveAt(curve,temperatureC,productName){
+    const index=curve.t.findIndex((value,i)=>i>0&&temperatureC<=value);
+    if(temperatureC<curve.t[0]-1e-9||temperatureC>curve.t.at(-1)+1e-9)throw new Error(`${productName}: ${temperatureC} °C liegt außerhalb der tabellierten Temperaturdaten.`);
+    const i=index<0?curve.t.length-1:index,j=Math.max(0,i-1),fraction=i===j?0:(temperatureC-curve.t[j])/(curve.t[i]-curve.t[j]);
+    const values=[];
+    for(const key of ['d','c','n']){const low=curve[key][j],high=curve[key][i];if(!Number.isFinite(low)||!Number.isFinite(high))throw new Error(`${productName}: Stoffwerte bei ${temperatureC} °C sind nicht tabelliert.`);values.push(low+(high-low)*fraction)}
+    return values;
+  }
+  function antifrogenValues(product,temperatureC,concentration){
+    const [x,y]=[temperatureC,concentration],p=product.model;
+    let nu,rho,cp;
+    if(product.type==='MEG'){
+      let a=p.viscosity;nu=(a[0]+a[1]*x+a[2]*x*x+a[3]*y+a[4]*y*y)/(1+a[5]*x+a[6]*x*x+a[7]*x*x*x+a[8]*y);
+      a=p.density;rho=(a[0]+a[1]*x+a[2]*x*x+a[3]*y)/(1+a[4]*x+a[5]*x*x+a[6]*x*x*x+a[7]*y);
+      a=p.cp;cp=a[0]+a[1]*x+a[2]*y+a[3]*x*x+a[4]*y*y+a[5]*x*y;
+    }else{
+      let a=p.viscosity;nu=(a[0]+a[1]*x+a[2]*x*x+a[3]*x*x*x+a[4]*y)/(1+a[5]*x+a[6]*x*x+a[7]*y+a[8]*y*y);
+      a=p.density;rho=(a[0]+a[1]*x+a[2]*x*x+a[3]*y+a[4]*y*y)/(1+a[5]*x+a[6]*x*x+a[7]*y);
+      a=p.cp;cp=(a[0]+a[1]*x+a[2]*x*x+a[3]*y)/(1+a[4]*x+a[5]*x*x+a[6]*y);
+    }
+    return [rho*1000,cp*1000,nu];
+  }
+  function manufacturerSecondaryPt(product,temperatureC,concentrationVolPercent){
+    if(concentrationVolPercent<product.min||concentrationVolPercent>product.max)throw new Error(`${product.name}: Konzentration muss zwischen ${product.min} und ${product.max} Vol.-% liegen.`);
+    if(product.modelRangeC&&(temperatureC<product.modelRangeC[0]||temperatureC>product.modelRangeC[1]))throw new Error(`${product.name}: Temperatur außerhalb des Hersteller-Modellbereichs (${product.modelRangeC[0]} bis ${product.modelRangeC[1]} °C).`);
+    const freezeTemperatureC=product.model?.freeze
+      ? (()=>{const a=product.model.freeze,y=concentrationVolPercent;return product.type==='MEG'?a[0]*y*y*y+a[1]*y*y+a[2]*y+a[3]:a[0]*y*y*y*y+a[1]*y*y*y+a[2]*y*y+a[3]*y+a[4]})()
+      : interpolatePairs(product.freeze,concentrationVolPercent,product.name+' Gefrierpunkt');
+    if(temperatureC<=freezeTemperatureC)throw new Error(`${product.name}: Betriebstemperatur erreicht den Hersteller-Gefrierpunkt (${freezeTemperatureC.toFixed(1)} °C).`);
+    let densityKgM3,specificHeatJKgK,kinematicViscosityMm2S;
+    if(product.model){[densityKgM3,specificHeatJKgK,kinematicViscosityMm2S]=antifrogenValues(product,temperatureC,concentrationVolPercent)}
+    else{
+      const curves=product.curves,upperIndex=curves.findIndex(curve=>curve.v>=concentrationVolPercent),upper=upperIndex<0?curves.length-1:upperIndex,lower=Math.max(0,upper-1),a=curves[lower],b=curves[upper];
+      const va=tableCurveAt(a,temperatureC,product.name),vb=upper===lower?va:tableCurveAt(b,temperatureC,product.name),f=upper===lower?0:(concentrationVolPercent-a.v)/(b.v-a.v);
+      densityKgM3=va[0]+(vb[0]-va[0])*f;specificHeatJKgK=(va[1]+(vb[1]-va[1])*f)*1000;kinematicViscosityMm2S=va[2]+(vb[2]-va[2])*f;
+    }
+    if(![densityKgM3,specificHeatJKgK,kinematicViscosityMm2S].every(value=>Number.isFinite(value)&&value>0))throw new Error(`${product.name}: Herstellerkorrelation liefert keinen gültigen Stoffwert bei ${temperatureC} °C.`);
+    return Object.freeze({fluid:Object.keys(manufacturerSecondaryFluids.products).find(code=>manufacturerSecondaryFluids.products[code]===product),concentrationVolPercent,concentrationBasis:'Vol.-%',temperatureC,temperatureK:temperatureC+273.15,densityKgM3,specificHeatJKgK,viscosityPaS:kinematicViscosityMm2S*1e-6*densityKgM3,kinematicViscosityMm2S,freezeTemperatureC,source:product.source,productName:product.name});
+  }
+  function secondaryFreezeTemperature(fluid,concentration){
+    const info=secondaryInfo(fluid);
+    if(info.manufacturer)return manufacturerSecondaryPt(manufacturerSecondaryFluids.products[info.code],25,concentration).freezeTemperatureC;
+    if(info.code==='WATER'||concentration===0)return 0;
+    return secondaryPt(info.code,25,concentration).freezeTemperatureC;
+  }
+  function secondaryPt(fluid, temperatureC, concentrationPercent = 0) {
+    finite(temperatureC,'Temperatur');finite(concentrationPercent,'Glykolkonzentration');
+    const info=secondaryInfo(fluid),code=info.code;
+    if(info.manufacturer)return manufacturerSecondaryPt(manufacturerSecondaryFluids.products[code],temperatureC,concentrationPercent);
+    if(!module)throw new Error('Stoffdaten zuerst mit load() initialisieren.');
+    if(concentrationPercent<0||concentrationPercent>60)throw new Error('Glykolkonzentration muss zwischen 0 und 60 Masse-% liegen.');
+    if(code==='WATER'&&concentrationPercent!==0)throw new Error('Reines Wasser hat keine Glykolkonzentration.');
+    const temperatureK=temperatureC+273.15,fluidName=code==='WATER'||concentrationPercent===0?'Water':`INCOMP::${code}-${concentrationPercent}%`,key=`${fluidName}|${numberKey(temperatureK)}`,cached=cacheGet(secondaryStateCache,key);
+    if(cached)return cached;
+    const freezeTemperatureK=code==='WATER'||concentrationPercent===0?273.15:module.PropsSI('T_freeze','T',273.15,'P',101325,fluidName);
+    if(temperatureK<=freezeTemperatureK)throw new Error(`Betriebstemperatur erreicht den Stoffdaten-Gefrierpunkt (${(freezeTemperatureK-273.15).toFixed(1)} °C).`);
+    const property=output=>{const value=module.PropsSI(output,'T',temperatureK,'P',101325,fluidName);if(!Number.isFinite(value)||value<=0||value>=1e99)throw new Error(`Kein gültiger Kälteträger-Stoffwert (${output}) bei ${temperatureC} °C.`);return value};
+    return cacheSet(secondaryStateCache,key,Object.freeze({fluid:code,concentrationMassPercent:concentrationPercent,concentrationBasis:'Masse-%',temperatureC,temperatureK,densityKgM3:property('D'),specificHeatJKgK:property('C'),viscosityPaS:property('V'),freezeTemperatureC:freezeTemperatureK-273.15,source:info.source,productName:info.name}));
   }
   function saturationTemperature(fluid, pressurePa, quality, guessK) {
     const key = `${String(fluid).toUpperCase()}|${numberKey(pressurePa)}|${quality}`;
@@ -319,6 +363,6 @@
     if (cached !== undefined) return cached;
     return cacheSet(scalarStateCache, key, lookup(output, key1, value1, key2, value2, fluid));
   }
-  const api = Object.freeze({ version: 'CoolProp 8.0.0', fluids: Object.keys(names), load, pt, designPt, hydraulicPt, secondaryPt, measuredR513aLiquidViscosity, saturationAtPressure, saturationAtTemperature, state });
+  const api = Object.freeze({ version: 'CoolProp 8.0.0', fluids: Object.keys(names), load, pt, designPt, hydraulicPt, secondaryPt, secondaryInfo, secondaryFreezeTemperature, measuredR513aLiquidViscosity, saturationAtPressure, saturationAtTemperature, state });
   global.RohrStoffdaten = api;
 })(window);

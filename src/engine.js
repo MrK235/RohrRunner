@@ -59,14 +59,14 @@
   }
   function calculateSecondary(project, calibration, settings, data, catalog) {
     const graph=analyze(project,calibration),n=(key,label,min,max=Infinity)=>{const value=Number(settings[key]);if(!Number.isFinite(value)||value<min||value>max)fail(`${label} ist außerhalb des zulässigen Bereichs.`);return value;};
-    const fluid=String(settings.secondaryFluid||'WATER').toUpperCase();if(!['WATER','MEG','MPG'].includes(fluid))fail('Kälteträger nicht unterstützt.');
-    const concentration=fluid==='WATER'?0:n('glycolConcentrationMassPercent','Glykolkonzentration',0,60),supplyC=n('supplyTemperatureC','Vorlauftemperatur',-40,100),returnC=n('returnTemperatureC','Rücklauftemperatur',-40,100);
+    const fluid=String(settings.secondaryFluid||'WATER').toUpperCase(),fluidInfo=data.secondaryInfo(fluid);
+    const concentration=fluid==='WATER'?0:n('glycolConcentrationMassPercent',`Konzentration (${fluidInfo.basis})`,fluidInfo.min,fluidInfo.max),supplyC=n('supplyTemperatureC','Vorlauftemperatur',-60,100),returnC=n('returnTemperatureC','Rücklauftemperatur',-60,100);
     if(!(returnC>supplyC))fail('Die Rücklauftemperatur muss bei Kühlbetrieb über der Vorlauftemperatur liegen.');
     const deltaT=returnC-supplyC,simultaneity=n('simultaneity','Gleichzeitigkeit',0,1),maxVelocity=n('secondaryMaxVelocityMS','Maximalgeschwindigkeit',0.1,10),pressureLimit=n('secondaryPressureLimitKPa','Druckverlustgrenze Kältekreis',0.1,10000)*1000;
     const series=catalog.series.find(item=>item.id===settings.secondaryPipeSeries);if(!series||!series.sizes?.length)fail('Für dieses Rohrsystem fehlt ein gültiger Rohrkatalog.');
     const sizes=series.sizes.filter(size=>diOf(size)>0).sort((a,b)=>diOf(a)-diOf(b));if(!sizes.length)fail('Das gewählte Rohrsystem enthält keine gültigen Rohrgrößen.');
-    const sourceFluid=fluid==='WATER'?'WATER':fluid,concentrationForData=fluid==='WATER'?0:concentration;
-    const supplyProps=data.secondaryPt(sourceFluid,supplyC,concentrationForData),returnProps=data.secondaryPt(sourceFluid,returnC,concentrationForData),freezeC=Math.max(supplyProps.freezeTemperatureC,returnProps.freezeTemperatureC);
+    const concentrationForData=fluid==='WATER'?0:concentration;
+    const supplyProps=data.secondaryPt(fluid,supplyC,concentrationForData),returnProps=data.secondaryPt(fluid,returnC,concentrationForData),freezeC=Math.max(supplyProps.freezeTemperatureC,returnProps.freezeTemperatureC);
     if(supplyC<=freezeC||returnC<=freezeC)fail(`Betriebstemperatur erreicht den Stoffdaten-Gefrierpunkt (${freezeC.toFixed(1)} °C).`);
     const meanCp=(supplyProps.specificHeatJKgK+returnProps.specificHeatJKgK)/2,parentEdge=new Map(),children=new Map(graph.nodes.map(node=>[node.id,[]]));
     for(let i=1;i<graph.order.length;i++){const id=graph.order[i],parent=graph.parent.get(id);parentEdge.set(id,parent.edge);children.get(parent.id).push(id)}
@@ -84,7 +84,9 @@
     const worst=endpoints.reduce((a,b)=>b.pressureDropKPa>a.pressureDropKPa?b:a,endpoints[0]);if(worst&&worst.pressureDropKPa>pressureLimit/1000*(1+1e-9))issues.push({type:'secondary-pressure',severity:'critical',targetId:worst.id,edgeIds:worst.edgeIds,message:`Ungünstigster Kreis ${worst.name}: ${worst.pressureDropKPa.toFixed(1)} kPa überschreiten die Druckverlustgrenze von ${(pressureLimit/1000).toFixed(1)} kPa.`});
     const totalPipeVolumeM3=rows.reduce((sum,row)=>{const size=sizes.find(item=>idOf(item)===row.sizeId),diameter=diOf(size);return sum+Math.PI*diameter*diameter/4*row.lengthM},0);
     const meanDensity=(supplyProps.densityKgM3+returnProps.densityKgM3)/2;
-    return {valid:issues.length===0,issues,rows,endpoints,fluid:fluid==='WATER'?'Wasser':fluid==='MEG'?'Ethylenglykol-Wasser':'Propylenglykol-Wasser',mode:'secondary',totalCoolingKW,settings:{...settings},secondary:{fluid,concentrationMassPercent:concentration,deltaT,supplyC,returnC,meanCpJKgK:meanCp,designCoolingKW,totalMassFlowKgS:designCoolingKW*1000/(meanCp*deltaT),totalVolumeFlowM3H:designCoolingKW*1000/(meanCp*deltaT)/supplyProps.densityKgM3*3600,totalPipeVolumeL:totalPipeVolumeM3*1000,glycolMassInPipesKg:totalPipeVolumeM3*meanDensity*concentration/100,freezeTemperatureC:freezeC,pressureDropLimitKPa:pressureLimit/1000,worstCircuitPressureDropKPa:worst?.pressureDropKPa||0,pipeSeries:series.label,fluidSource:supplyProps.source}};
+    const productMassInPipesKg=fluidInfo.manufacturer?totalPipeVolumeM3*concentration/100*fluidInfo.concentrateDensityKgM3:0;
+    const glycolMassInPipesKg=fluidInfo.manufacturer?0:totalPipeVolumeM3*meanDensity*concentration/100;
+    return {valid:issues.length===0,issues,rows,endpoints,fluid:fluidInfo.name,mode:'secondary',totalCoolingKW,settings:{...settings},secondary:{fluid,productName:fluidInfo.name,concentrationPercent:concentration,concentrationBasis:fluidInfo.basis,concentrationMassPercent:fluidInfo.manufacturer?null:concentration,deltaT,supplyC,returnC,meanCpJKgK:meanCp,designCoolingKW,totalMassFlowKgS:designCoolingKW*1000/(meanCp*deltaT),totalVolumeFlowM3H:designCoolingKW*1000/(meanCp*deltaT)/supplyProps.densityKgM3*3600,totalPipeVolumeL:totalPipeVolumeM3*1000,glycolMassInPipesKg,productMassInPipesKg,freezeTemperatureC:freezeC,pressureDropLimitKPa:pressureLimit/1000,worstCircuitPressureDropKPa:worst?.pressureDropKPa||0,pipeSeries:series.label,fluidSource:supplyProps.source}};
   }
   function calculate(project, calibration, settings, data, catalog) {
     if(settings?.mode==='secondary')return calculateSecondary(project,calibration,settings,data,catalog);

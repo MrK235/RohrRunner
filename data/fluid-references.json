@@ -12,7 +12,14 @@
     "R513A_liquid_viscosity_experiment": "https://hgxb.cip.com.cn/CN/10.11949/0438-1157.20210819",
     "CoolProp_Incompressibles": "https://coolprop.org/fluid_properties/Incompressibles.html",
     "CoolProp_MEG_fit": "https://coolprop.org/_downloads/4e6bd34ef1888b4daa1662944ee0ea7e/MEG_fitreport.pdf",
-    "CoolProp_MPG_fit": "https://coolprop.org/_downloads/b359aee6a82a4ab771fe34de39a6302d/all_incompressibles.pdf"
+    "CoolProp_MPG_fit": "https://coolprop.org/_downloads/b359aee6a82a4ab771fe34de39a6302d/all_incompressibles.pdf",
+    "NEUTRAGEL_NEO": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentneutragel-neo-fp-de-1.pdf",
+    "FRIOGEL_NEO": "https://climalife.com/wp-content/uploads/2022/09/uploadsproductmediadocumentfriogel-neo-fp-de-2.pdf",
+    "Antifrogen_N": "https://www.ghc.de/media/en/downloads/info/productinfo_Antifrogen_N.pdf",
+    "Antifrogen_L": "https://www.ghc.de/media/en/downloads/info/productinfo_Antifrogen_L.pdf",
+    "Antifrogen_calculator": "https://www.clariant.com/en/Business-Units/Care-Chemicals/Heat-Transfer-Fluids/Calculator",
+    "Glysofor_N": "https://www.glysofor.de/wp-content/uploads/pdf/en/Glysofor-N-Specification-EN.pdf",
+    "Glysofor_L": "https://www.glysofor.de/wp-content/uploads/pdf/en/Glysofor-L-Specification-EN.pdf"
   },
   "secondaryWorkingFluids": {
     "source": "CoolProp 8.0.0 incompressible working-fluid correlations based on Melinder reference data.",
@@ -20,6 +27,13 @@
     "range": "0 to 60 mass-%; model temperature range is wider, but RohrRunner rejects states at/below the model freezing temperature.",
     "properties": ["densityKgM3", "specificHeatJKgK", "viscosityPaS", "freezeTemperatureC"],
     "limits": "Generic aqueous glycol data; commercial corrosion inhibitor packages and product-specific material compatibility are not represented."
+  },
+  "manufacturerSecondaryFluids": {
+    "dataFile": "data/secondary-fluids.js",
+    "concentrationBasis": "volume percent (Vol.-%) as stated by product sources; not equivalent to the generic CoolProp model's mass percent.",
+    "properties": ["densityKgM3", "specificHeatJKgK", "viscosityPaS", "freezeTemperatureC"],
+    "interpolation": "Linear interpolation between published tabular concentrations/temperatures for Climalife and Glysofor products; Antifrogen uses Clariant calculator correlations. No extrapolation outside product ranges.",
+    "limits": "Product formulations and additive packages only where manufacturer-specific source data is published; source references, rounded table precision, concentration ranges, and model validity limits are stored with each product. Compatibility approvals are not evaluated."
   },
   "saturation": {
     "R513A": {

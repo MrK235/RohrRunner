@@ -12,6 +12,7 @@ context.window = context;
 context.document = { currentScript: { src: new URL('src/stoffdaten.js', root).href }, baseURI: new URL('index.html', root).href };
 const vm = createContext(context);
 runInContext(read('vendor/coolprop/coolprop-local.js'), vm, { filename: 'coolprop-local.js' });
+runInContext(read('data/secondary-fluids.js'), vm, { filename: 'secondary-fluids.js' });
 runInContext(read('src/stoffdaten.js'), vm, { filename: 'stoffdaten.js' });
 runInContext(read('src/fast-data.js'), vm, { filename: 'fast-data.js' });
 runInContext(read('src/engine.js'), vm, { filename: 'engine.js' });
@@ -316,6 +317,20 @@ test('Kälteträger-Stoffdaten liefern Wasser- und Glykolwerte im Modellbereich'
   assert.throws(()=>context.RohrStoffdaten.secondaryPt('MEG',10,61),/0 und 60 Masse-%/);
 });
 
+test('Hersteller-Kälteträger liefern Offline-Stoffwerte mit Volumenbasis und begrenzten Bereichen', () => {
+  for(const [fluid,concentration] of [['NEUTRAGEL_NEO',33],['FRIOGEL_NEO',35],['ANTIFROGEN_N',30],['ANTIFROGEN_L',35],['GLYSOFOR_N',30],['GLYSOFOR_L',25]]){
+    const state=context.RohrStoffdaten.secondaryPt(fluid,20,concentration);
+    assert.equal(state.concentrationBasis,'Vol.-%');
+    assert.ok(state.densityKgM3>900&&state.specificHeatJKgK>1000&&state.viscosityPaS>0);
+    assert.ok(state.freezeTemperatureC<0);
+    assert.match(state.source,/Climalife|Clariant|Wittig/);
+  }
+  assert.equal(context.RohrStoffdaten.secondaryPt('GLYSOFOR_L',20,25).specificHeatJKgK,3940);
+  assert.throws(()=>context.RohrStoffdaten.secondaryPt('NEUTRAGEL_NEO',20,24),/zwischen 25 und 50 Vol.-%/);
+  assert.throws(()=>context.RohrStoffdaten.secondaryPt('GLYSOFOR_L',120,25),/außerhalb der tabellierten Temperaturdaten/);
+  assert.throws(()=>context.RohrStoffdaten.secondaryPt('ANTIFROGEN_N',-60,30),/Modellbereich/);
+});
+
 test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in den gewählten Rohrserien', async () => {
   await context.RohrStoffdaten.load();
   const base={...settings,mode:'secondary',secondaryFluid:'WATER',glycolConcentrationMassPercent:0,supplyTemperatureC:6,returnTemperatureC:12,secondaryPipeSeries:'viega-temponox',secondaryPressureLimitKPa:50,secondaryMaxVelocityMS:1.5,roughnessMicroM:1.5};
@@ -336,6 +351,13 @@ test('Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in
     assert.ok(result.secondary.concentrationMassPercent===30);
     assert.ok(result.secondary.glycolMassInPipesKg>0);
     assert.ok(Math.abs(result.secondary.glycolMassInPipesKg-result.secondary.totalPipeVolumeL/1000*((result.rows[0].densityKgM3+result.rows[1].densityKgM3)/2)*0.3)<1e-9);
+  }
+  for(const [fluid,concentration] of [['NEUTRAGEL_NEO',33],['FRIOGEL_NEO',35],['ANTIFROGEN_N',30],['ANTIFROGEN_L',35],['GLYSOFOR_N',30],['GLYSOFOR_L',25]]){
+    const result=context.RohrRunnerEngine.calculate(network(),1,{...base,secondaryFluid:fluid,glycolConcentrationMassPercent:concentration,secondaryPipeSeries:'black-steel-en10255-medium',roughnessMicroM:45},context.RohrStoffdaten,catalog);
+    assert.equal(result.secondary.concentrationBasis,'Vol.-%');
+    assert.equal(result.secondary.concentrationMassPercent,null);
+    assert.ok(result.secondary.productMassInPipesKg>0);
+    assert.equal(result.secondary.glycolMassInPipesKg,0);
   }
 });
 
