@@ -469,6 +469,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(style.includes('.result-section.check')&&style.includes('.result-section.limit')&&!style.includes('.result-section.valid'),'normal pipe sections have no green status highlight');
   assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));
+  assert.match(style,/\.form-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\.form-grid label\{min-width:0\}\.form-grid select\{width:100%;min-width:0;max-width:100%/);
   assert.ok(style.includes('.inspector-tabs{')&&style.includes('background:#101920'),'sidebar tabs match the PDF toolbar background');
   assert.ok(style.includes('.canvas-toolbar{grid-column:1/3;grid-row:1}')&&style.includes('.rail{grid-column:1;grid-row:2/4}'),'PDF toolbar spans above the tool rail');
   assert.ok(html.includes('R513A')&&html.includes('R448A')&&html.includes('R744'));
