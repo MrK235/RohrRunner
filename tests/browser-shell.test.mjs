@@ -86,7 +86,7 @@ test('Lokaler Server liefert nur öffentliche Anwendungsdateien aus', async t =>
 });
 
 test('SL prüfen erscheint nur bei betroffener oder bereits angepasster Steigleitung', () => {
-  const app=read('src/app.js'),source=app.slice(app.indexOf('function showRiserButton('),app.indexOf('  function syncRiserButtons(')).trim();
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function showRiserButton('),app.indexOf('  function riserSuccess(')).trim();
   const visible=runInNewContext(`(${source})`,{riserLengthFor:edge=>edge.pipeRiser?edge.pipeRiserLengthM:0});
   const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},result={issues:[]};
   assert.equal(visible(edge,result),false);
@@ -98,6 +98,21 @@ test('SL prüfen erscheint nur bei betroffener oder bereits angepasster Steiglei
   assert.match(app,/riserButton\.hidden=!showRiserButton\(edge,result\)/);
   assert.match(app,/showRiserButton\(edge,project\.lastResult\)/);
   assert.match(read('src/style.css'),/\.riser-open\[hidden\]\{display:none\}/);
+});
+
+test('SL prüfen wird nur für übernommene, aktuell erfolgreiche Steigleitung grün', () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('function riserSuccess('),app.indexOf('  function syncRiserButtons(')).trim();
+  const project={resultStale:false},success=runInNewContext(`(${source})`,{project,riserLengthFor:edge=>edge.pipeRiser?edge.pipeRiserLengthM:0});
+  const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2,riserSizeId:'18x1'};
+  const result={rows:[{edgeId:'e',type:'suction',riserSizeId:'18x1',riserLengthM:2}],issues:[]};
+  assert.equal(success(edge,result),true);
+  result.issues=[{type:'oil-return',edgeId:'e'}];assert.equal(success(edge,result),false);
+  result.issues=[];project.resultStale=true;assert.equal(success(edge,result),false);
+  project.resultStale=false;edge.pipeRiserLengthM=3;assert.equal(success(edge,result),false);
+  edge.pipeRiserLengthM=2;delete edge.riserSizeId;assert.equal(success(edge,result),false);
+  assert.match(app,/riserButton\.classList\.toggle\('success',riserSuccess\(edge,result\)\)/);
+  assert.match(app,/syncRiserButtons\(\);drawNetwork\(\);scheduleSave\(\)/);
+  assert.match(read('src/style.css'),/\.riser-open\.success\{/);
 });
 
 test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button', () => {
@@ -265,7 +280,7 @@ test('Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Kl
   const app=read('src/app.js'),source=app.slice(app.indexOf('async function checkRiserDialog('),app.indexOf('  function resultEdgeOrder(')).trim();
   const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},project={edges:[edge],lastResult:{rows:[]},resultStale:false,calibration:1};
   const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},length={value:'3,5'},button={disabled:false},applyButton={disabled:true},preview={},badge={},pending=[],candidates=[];
-  const result={rows:[{edgeId:'e',type:'suction'}]},jobs=new Map();let saved=0,shown=0,now=100,tick;
+  const result={valid:true,rows:[{edgeId:'e',type:'suction'}]},jobs=new Map();let saved=0,shown=0,now=100,tick;
   const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserLength:length,riserCheck:button,riserApply:applyButton,riserPreview:preview,riserCalcBadge:badge})[id],Editor:{parseDecimal:v=>Number(v.replace(',','.'))},
     projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>{throw Error('Worker erwartet')}},
     RohrRunnerEngine:{},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{},
@@ -283,6 +298,10 @@ test('Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Kl
   apply();assert.equal(edge.riserSizeId,'15x1');assert.equal(edge.pipeRiserLengthM,4);
   assert.equal(saved,1);assert.equal(shown,1);assert.equal(applyButton.disabled,true);
   apply();assert.equal(saved,1);
+  const repeat=check();await new Promise(resolve=>setImmediate(resolve));
+  jobs.get(candidates[2].id).callback({...result,valid:false});await repeat;
+  assert.match(badge.className,/warning/);assert.match(badge.innerHTML,/PRÜFUNG ABGESCHLOSSEN/);
+  assert.equal(saved,1);
 });
 
 test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () => {

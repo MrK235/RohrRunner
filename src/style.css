@@ -187,6 +187,8 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .riser-open{flex:none;margin:6px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
 .riser-open[hidden]{display:none}
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
+.riser-open.success{border-color:#378b6c;background:#1b3b31;color:#87eac2}
+.riser-open.success:hover{border-color:#68d8aa;background:#255042}
 .riser-dialog{width:min(530px,calc(100vw - 32px));padding:24px}
 .riser-dialog h2{margin:11px 0 4px}
 .riser-dialog #riserCurrent{margin:0 0 12px;color:#91a3a8;font:10px var(--mono)}
