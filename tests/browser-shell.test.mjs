@@ -60,6 +60,13 @@ test('Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich', () 
   assert.doesNotMatch(light,/\.material-row:hover/);
 });
 
+test('Designschalter sitzt zwischen Sichern und Fensterrand mit ausgeglichenen Abständen', () => {
+  const style=read('src/style.css'),html=read('index.html');
+  assert.match(html,/id="exportProject"[\s\S]*id="themeToggle"/);
+  assert.match(style,/\.theme-toggle\{[^}]*margin-left:8px;margin-right:-8px/);
+  assert.match(style,/@media\(max-width:1050px\)\{\.theme-toggle\{margin-left:3px;margin-right:-3px\}\}/);
+});
+
 test('Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung', () => {
   const html=read('index.html'),app=read('src/app.js');
   const toggle=html.slice(html.indexOf('<button id="themeToggle"'),html.indexOf('</button>',html.indexOf('<button id="themeToggle"'))+9);

@@ -207,7 +207,8 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
 .riser-open.success{border-color:#378b6c;background:#1b3b31;color:#87eac2}
 .riser-open.success:hover{border-color:#68d8aa;background:#255042}
-.theme-toggle{width:34px;min-width:34px;padding:0;display:grid;place-items:center}
+.theme-toggle{width:34px;min-width:34px;padding:0;margin-left:8px;margin-right:-8px;display:grid;place-items:center}
+@media(max-width:1050px){.theme-toggle{margin-left:3px;margin-right:-3px}}
 .theme-toggle .theme-icon{display:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .theme-toggle[data-mode="auto"] .theme-icon-auto,.theme-toggle[data-mode="light"] .theme-icon-light,.theme-toggle[data-mode="dark"] .theme-icon-dark{display:block}
 .theme-toggle .theme-half{fill:currentColor;stroke:none}
