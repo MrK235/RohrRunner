@@ -241,38 +241,40 @@ test('Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile'
   assert.ok(app.includes("$('deleteSelection').onclick=onDelete"));
 });
 
-test('Steigleitungsdialog zeigt vorhandene Werte und berechnet bei Rohrwahl neu', () => {
+test('Steigleitungsdialog zeigt ausschließlich relevante Geschwindigkeiten und Status', () => {
   const app=read('src/app.js'),html=read('index.html');
   const source=app.slice(app.indexOf('function renderRiserPreview('),app.indexOf('  function openRiserDialog(')).trim();
-  const preview={className:'',innerHTML:''},render=runInNewContext(`(${source})`,{$:()=>preview,displaySizeLabel:()=> '22 × 1 mm',format:(v,d)=>Number.isFinite(v)?v.toFixed(d):'—'});
-  const result={settings:{minVelocityMS:7},rows:[{edgeId:'e',type:'suction',riserLengthM:3,riserVelocityMinMS:8.4,temperatureDropK:0.42}],issues:[]};
+  const preview={className:'',innerHTML:''},current={textContent:''},render=runInNewContext(`(${source})`,{$:id=>id==='riserPreview'?preview:current,displaySizeLabel:()=> '22 × 1 mm',format:(v,d)=>Number.isFinite(v)?v.toFixed(d):'—'});
+  const result={settings:{minVelocityMS:7},rows:[{edgeId:'e',type:'suction',lengthM:9,riserLengthM:3,riserVelocityMinMS:8.4,temperatureDropK:0.42}],issues:[]};
   render(result,'e');
-  assert.match(preview.innerHTML,/8\.4 m\/s/);
-  assert.match(preview.innerHTML,/7\.0 m\/s/);
-  assert.match(preview.innerHTML,/0\.42 K/);
+  assert.match(preview.className,/ok/);
+  assert.match(preview.innerHTML,/8\.4/);
+  assert.match(preview.innerHTML,/7\.0/);
+  assert.doesNotMatch(preview.innerHTML,/0\.42|Steigleitung.*m<\/strong>/);
   result.issues=[{type:'oil-return',edgeId:'e',severity:'check'}];render(result,'e');
   assert.match(preview.className,/check/);
-  assert.match(app, /renderRiserPreview\(project\.lastResult,edge\.id,project\.resultStale\)/);
-  assert.ok(app.includes("$('riserSize').addEventListener('change',()=>checkRiserDialog())"));
-  assert.doesNotMatch(html,/id="riserCheck"|id="riserLength"|id="riserApply"/);
-  assert.ok(!app.includes("$('riserCheck')")&&!app.includes("$('riserLength')")&&!app.includes("$('riserApply')"));
-  assert.match(app,/token!==dialog\._runId/);
-  assert.match(app,/edge\.riserSizeId=sizeId;project\.settings=settingsFromUI\(\);showResult\(result,0\)/);
+  assert.match(html,/id="riserCheck"/);
+  assert.match(html,/id="riserLength"/);
+  assert.match(app,/\$\('riserCheck'\)\.addEventListener\('click',\(\)=>checkRiserDialog\(\)\)/);
+  assert.doesNotMatch(app,/\$\('riserSize'\)\.addEventListener\('change',\(\)=>checkRiserDialog\(\)\)/);
 });
 
-test('Rohrwahl übernimmt nur die letzte erfolgreiche Nachrechnung', async () => {
+test('Steigleitung übernimmt Größe und Länge erst nach erfolgreicher Prüfung', async () => {
   const app=read('src/app.js'),source=app.slice(app.indexOf('async function checkRiserDialog('),app.indexOf('  function resultEdgeOrder(')).trim();
   const edge={id:'e',pipeRiser:true,pipeRiserLengthM:2},project={edges:[edge],lastResult:{rows:[]},resultStale:false,calibration:1};
-  const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},preview={},pending=[];
+  const dialog={_runId:0,dataset:{edgeId:'e'},open:true},size={value:'18x1'},length={value:'3,5'},button={disabled:false},preview={},pending=[],candidates=[];
   const result={rows:[{edgeId:'e',type:'suction'}]};let saved=0,shown=0;
-  const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserPreview:preview})[id],riserLengthFor:()=>2,
+  const ctx={project,$:id=>({riserDialog:dialog,riserSize:size,riserLength:length,riserCheck:button,riserPreview:preview})[id],Editor:{parseDecimal:v=>Number(v.replace(',','.'))},
     projectForCalculation:()=>({edges:[{id:'e'}]}),settingsFromUI:()=>({}),RohrStoffdaten:{load:()=>new Promise(resolve=>pending.push(resolve))},
-    RohrRunnerEngine:{calculate:()=>result},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,renderRiserPreview:()=>{}};
+    RohrRunnerEngine:{calculate:candidate=>{candidates.push(candidate);return result}},RohrKatalog:{},remember:()=>saved++,showResult:()=>shown++,updateLengthDisplays:()=>{},renderRiserPreview:()=>{}};
   const check=runInNewContext(`(${source})`,ctx);
-  const first=check();size.value='15x1';const second=check();
+  const first=check();assert.equal(edge.pipeRiserLengthM,2);assert.equal(saved,0);
+  size.value='15x1';length.value='4';const second=check();
   pending[0]();await first;assert.equal(shown,0);
   pending[1]();await second;
-  assert.equal(edge.riserSizeId,'15x1',preview.textContent);assert.equal(saved,1);assert.equal(shown,1);
+  assert.equal(candidates[0].edges[0].riserLengthM,4);
+  assert.equal(edge.riserSizeId,'15x1');assert.equal(edge.pipeRiserLengthM,4);
+  assert.equal(saved,1);assert.equal(shown,1);assert.equal(button.disabled,false);
 });
 
 test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () => {

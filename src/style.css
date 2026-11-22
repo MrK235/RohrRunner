@@ -184,19 +184,28 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .riser-open{flex:none;margin:6px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}
 .riser-open[hidden]{display:none}
 .riser-open:hover{border-color:#efbd70;background:#4a3b28}
-.riser-dialog{width:min(380px,94vw)}
-.riser-dialog h2{margin-bottom:5px}
-.riser-dialog #riserCurrent{margin:0 0 14px;color:#91a3a8;font:10px var(--mono)}
-.riser-dialog>label{display:flex;flex-direction:column;gap:5px;color:#91a3a8;font-size:10px}
-.riser-dialog>label select{height:34px;padding:0 8px;border:1px solid #32434c;border-radius:5px;background:#111e26;color:#d5e0e2}
-.riser-preview{min-height:40px;margin-top:14px;padding:10px;border:1px solid #465a5f;border-radius:6px;color:#c6d8d7;font-size:10px;line-height:1.5}
-.riser-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.riser-metrics>div{display:flex;flex-direction:column;gap:2px;min-width:0}
-.riser-metrics span{color:#91a3a8;font-size:9px}
-.riser-metrics strong{font:600 15px var(--mono)}
-.riser-preview small{display:block;margin-top:10px;font-size:10px}
-.riser-preview.check{border-color:#95662d;color:#efbd70}
-.riser-preview.limit{border-color:#944b43;color:#f17676}
+.riser-dialog{width:min(450px,calc(100vw - 32px));padding:24px}
+.riser-dialog h2{margin:11px 0 4px}
+.riser-dialog #riserCurrent{margin:0 0 20px;color:#91a3a8;font:10px var(--mono)}
+.riser-fields{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px}
+.riser-fields label{display:flex;flex-direction:column;gap:7px;color:#a7b9bc;font-size:10px;margin:0}
+.riser-fields select{width:100%;height:34px;padding:0 8px;border:1px solid #32434c;border-radius:5px;background:#111e26;color:#d5e0e2}
+.riser-fields select:focus-visible,.riser-fields .field-unit:focus-within{outline:2px solid var(--mint);outline-offset:1px}
+.riser-fields .field-unit{height:34px}
+.riser-preview{min-height:60px;margin-top:20px;padding:15px;border:1px solid #465a5f;border-radius:9px;background:#15232b;color:#c6d8d7;font-size:11px;line-height:1.5}
+.riser-status{font-weight:700;margin-bottom:13px}
+.riser-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.riser-metrics>div{display:flex;flex-direction:column;gap:4px;min-width:0;padding:10px;border:1px solid #ffffff18;border-radius:6px}
+.riser-metrics span{color:#a7b9bc;font-size:10px}
+.riser-metrics strong{font:600 19px var(--mono)}
+.riser-metrics strong small{font-size:10px;color:#a7b9bc}
+.riser-preview.ok{border-color:#379c75;background:#17372f;color:#7dedc2}
+.riser-preview.check{border-color:#95662d;background:#352c20;color:#efbd70}
+.riser-preview.limit{border-color:#944b43;background:#362522;color:#f17676}
+.riser-preview.pending{border-style:dashed;color:#a7b9bc}
+.riser-note{margin:12px 0 0!important;font-size:10px!important}
+.riser-dialog .dialog-actions{margin-top:20px}
+@media(max-width:480px){.riser-fields{grid-template-columns:1fr}}
 .topbar .project-title{flex:0 1 180px;max-width:180px;min-width:0;overflow:hidden}
 .topbar .project-title input{display:block;width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .topbar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:16px}

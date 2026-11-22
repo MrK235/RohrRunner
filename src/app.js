@@ -231,12 +231,11 @@
     const preview=$('riserPreview'),row=result.rows.find(item=>item.edgeId===edgeId&&item.type==='suction');
     if(!row){preview.className='riser-preview limit';preview.textContent='Kein Ergebnis für diese Rohrstrecke.';return}
     $('riserCurrent').textContent=`SL ${displaySizeLabel(row)} · ${format(row.lengthM-row.riserLengthM,1)} m + ↑ ${format(row.riserLengthM,1)} m`;
-    const issues=result.issues.filter(issue=>issue.edgeId===edgeId&&['oil-return','velocity'].includes(issue.type));
-    const low=issues.some(issue=>issue.type==='oil-return'),high=issues.some(issue=>issue.type==='velocity'),critical=issues.some(issue=>issue.type==='oil-return'&&issue.severity==='critical');
-    preview.className=`riser-preview ${high||critical?'limit':low||stale?'check':''}`;
-    const metric=(label,value,unit,digits=1)=>`<div><span>${label}</span><strong>${format(value,digits)} ${unit}</strong></div>`;
-    const status=stale?'Ergebnis veraltet':[(critical?'Ölrückführung kritisch':low?'Mindestgeschwindigkeit unterschritten':'Mindestgeschwindigkeit eingehalten'),...(high?['Maximalgeschwindigkeit überschritten']:[])].join(' · ');
-    preview.innerHTML=`<div class="riser-metrics">${metric('Steigleitung',row.riserLengthM,'m')}${metric('Geschwindigkeit min.',row.riserVelocityMinMS,'m/s')}${metric('Soll min.',Number(result.settings.minVelocityMS),'m/s')}${metric('ΔT SL',row.temperatureDropK,'K',2)}</div><small>${status}</small>`;
+    const oilIssues=result.issues.filter(issue=>issue.edgeId===edgeId&&issue.type==='oil-return');
+    const critical=oilIssues.some(issue=>issue.severity==='critical'),low=oilIssues.length>0;
+    preview.className=`riser-preview ${stale?'check':critical?'limit':low?'check':'ok'}`;
+    const status=stale?'Ergebnis veraltet – bitte prüfen':critical?'Ölrückführung: Geschwindigkeit kritisch':low?'Ölrückführung: Mindestgeschwindigkeit unterschritten':'Ölrückführung: Mindestgeschwindigkeit eingehalten';
+    preview.innerHTML=`<div class="riser-status">${stale?'◇':critical?'!':low?'!':'✓'} ${status}</div><div class="riser-metrics"><div><span>Erforderlich mindestens</span><strong>${format(Number(result.settings.minVelocityMS),1)} <small>m/s</small></strong></div><div><span>Aktuell mindestens</span><strong>${format(row.riserVelocityMinMS,1)} <small>m/s</small></strong></div></div>`;
   }
   function openRiserDialog(edge,from,to,row){
     const dialog=$('riserDialog'),size=$('riserSize'),options=sizeOptions();
@@ -245,21 +244,22 @@
     dialog._runId=(dialog._runId||0)+1;dialog.dataset.edgeId=edge.id;
     $('riserTitle').textContent=`${from?.name||edge.from} ↔ ${to?.name||edge.to}`;
     size.replaceChildren();for(const option of available)size.append(new Option(option.label,option.id));size.value=available.some(item=>item.id===edge.riserSizeId)?edge.riserSizeId:row.riserSizeId||row.sizeId;
+    $('riserLength').value=String(riserLengthFor(edge));$('riserCheck').disabled=false;
     renderRiserPreview(project.lastResult,edge.id,project.resultStale);dialog.showModal();
   }
   async function checkRiserDialog(){
-    const dialog=$('riserDialog'),token=dialog._runId+1,edge=project.edges.find(item=>item.id===dialog.dataset.edgeId),length=edge&&riserLengthFor(edge),sizeId=$('riserSize').value,preview=$('riserPreview');
+    const dialog=$('riserDialog'),token=dialog._runId+1,edge=project.edges.find(item=>item.id===dialog.dataset.edgeId),length=Editor.parseDecimal($('riserLength').value),sizeId=$('riserSize').value,preview=$('riserPreview'),button=$('riserCheck');
     dialog._runId=token;
-    if(!edge||!(length>0)||!sizeId){preview.className='riser-preview limit';preview.textContent='Rohrgröße nicht verfügbar.';return null}
+    if(!edge||!Number.isFinite(length)||length<=0||!sizeId){preview.className='riser-preview limit';preview.textContent='Bitte eine Steigleitungslänge größer 0 m und eine Rohrgröße eingeben.';return null}
     const candidate=projectForCalculation(project.resultStale?null:{rows:project.lastResult.rows,changedKey:'riser'}),candidateEdge=candidate.edges.find(item=>item.id===edge.id);
-    candidateEdge.riserSizeId=sizeId;preview.className='riser-preview';preview.textContent='Berechnung läuft …';
+    candidateEdge.pipeRiser=true;candidateEdge.pipeRiserLengthM=length;candidateEdge.riserLengthM=length;candidateEdge.suctionRiser=true;candidateEdge.riserSizeId=sizeId;preview.className='riser-preview';preview.textContent='Berechnung läuft …';button.disabled=true;
     try{
       await RohrStoffdaten.load();if(token!==dialog._runId||!dialog.open)return null;
       const result=RohrRunnerEngine.calculate(candidate,project.calibration,settingsFromUI(),RohrStoffdaten,RohrKatalog);
       for(const item of result.rows){const original=project.edges.find(e=>e.id===item.edgeId);item.manual=original?.thermal?.[item.type]?.mode==='manual'}
       if(token!==dialog._runId||!dialog.open)return null;
-      remember();edge.riserSizeId=sizeId;project.settings=settingsFromUI();showResult(result,0);renderRiserPreview(result,edge.id);return result;
-    }catch(error){if(token===dialog._runId&&dialog.open){preview.className='riser-preview limit';preview.textContent=error.message||'Berechnung fehlgeschlagen.'}return null}
+      remember();edge.riserSizeId=sizeId;edge.pipeRiserLengthM=length;project.settings=settingsFromUI();showResult(result,0);updateLengthDisplays();renderRiserPreview(result,edge.id);return result;
+    }catch(error){if(token===dialog._runId&&dialog.open){preview.className='riser-preview limit';preview.textContent=error.message||'Berechnung fehlgeschlagen.'}return null}finally{if(token===dialog._runId)button.disabled=false}
   }
   function resultEdgeOrder(){const start=project.nodes.find(node=>node.type==='start'),adjacency=new Map(project.nodes.map(node=>[node.id,[]])),parent=new Map(),edgeNodes=new Map(),edgeDistance=new Map();for(const edge of project.edges){adjacency.get(edge.from)?.push(edge);adjacency.get(edge.to)?.push(edge)}if(start){const queue=[start.id],seen=new Set(queue);for(let i=0;i<queue.length;i++)for(const edge of adjacency.get(queue[i])||[]){const child=edge.from===queue[i]?edge.to:edge.from;if(seen.has(child))continue;seen.add(child);parent.set(child,{id:queue[i],edge});edgeNodes.set(edge.id,{parent:queue[i],child});queue.push(child)}for(const endpoint of project.nodes.filter(node=>node.type==='endpoint')){let current=endpoint.id,distance=0;while(current!==start.id){const relation=parent.get(current);if(!relation)break;edgeDistance.set(relation.edge.id,Math.max(edgeDistance.get(relation.edge.id)??0,distance));current=relation.id;distance++}}}const nodes=new Map(project.nodes.map(node=>[node.id,node])),rank=edge=>edgeDistance.get(edge.id)??(nodes.get(edge.from)?.type==='endpoint'||nodes.get(edge.to)?.type==='endpoint'?1e9:nodes.get(edge.from)?.type==='start'||nodes.get(edge.to)?.type==='start'?1e11:1e10);return {edgeNodes,orderedEdges:[...project.edges].sort((a,b)=>rank(a)-rank(b))}}
   function projectForCalculation(locked){const calculation={nodes:clone(project.nodes),edges:clone(project.edges)};for(const edge of calculation.edges){const pipeLength=edge.pipeRiser?Number(edge.pipeRiserLengthM)||0:0;edge.riserLengthM=pipeLength;edge.suctionRiser=edge.riserLengthM>0;if(!edge.suctionRiser)delete edge.riserSizeId}if(!locked?.rows)return calculation;const byId=new Map(calculation.edges.map(edge=>[edge.id,edge]));for(const row of locked.rows){if(`${row.edgeId}:${row.type}`===locked.changedKey)continue;const edge=byId.get(row.edgeId);if(!edge||edge.thermal?.[row.type]?.mode==='manual')continue;edge.thermal={...edge.thermal,[row.type]:{...edge.thermal?.[row.type],mode:'manual',sizeId:row.sizeId}}}return calculation}
@@ -324,7 +324,8 @@
   $('welcomeNew').onclick=()=>{resetProject(true);fitSurface()};$('welcomePdf').onclick=()=>$('pdfFile').click();$('welcomeProjects').onclick=()=>$('projectsButton').click();$('projectList').addEventListener('click',e=>{if(e.target.closest('[data-project-action="open"]'))$('welcomeScreen').classList.add('welcome-hidden')},true);
   const welcome=$('welcomeScreen');welcome.addEventListener('dragenter',e=>{if([...e.dataTransfer.types].includes('Files')){e.preventDefault();welcome.classList.add('is-file-over')}});welcome.addEventListener('dragover',e=>{if([...e.dataTransfer.types].includes('Files')){e.preventDefault();e.dataTransfer.dropEffect='copy';welcome.classList.add('is-file-over')}});welcome.addEventListener('dragleave',e=>{if(!welcome.contains(e.relatedTarget))welcome.classList.remove('is-file-over')});welcome.addEventListener('drop',async e=>{if(![...e.dataTransfer.types].includes('Files'))return;e.preventDefault();e.stopPropagation();welcome.classList.remove('is-file-over');const file=[...e.dataTransfer.files].find(item=>item.type==='application/pdf'||item.name.toLowerCase().endsWith('.pdf'));if(!file){toast('Bitte eine PDF-Datei ablegen.');return}try{await importPdfFile(file);welcome.classList.add('welcome-hidden');fitSurface()}catch(error){toast('PDF konnte nicht geöffnet werden: '+error.message)}});
   document.querySelectorAll('.inspector-tab').forEach((button,index,buttons)=>{button.onclick=()=>setInspectorTab(button.dataset.panel);button.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const next=e.key==='Home'?0:e.key==='End'?buttons.length-1:(index+(e.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;buttons[next].focus();setInspectorTab(buttons[next].dataset.panel)}});
-  $('riserSize').addEventListener('change',()=>checkRiserDialog());
+  for(const id of ['riserSize','riserLength'])$(id).addEventListener(id==='riserSize'?'change':'input',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1;$('riserCheck').disabled=false;const preview=$('riserPreview');preview.className='riser-preview pending';preview.textContent='Eingaben geändert – mit „Prüfen & übernehmen“ neu berechnen.'});
+  $('riserCheck').addEventListener('click',()=>checkRiserDialog());
   $('riserDialog').addEventListener('close',()=>{const dialog=$('riserDialog');dialog._runId=(dialog._runId||0)+1});
 
   for(const button of document.querySelectorAll('[data-tool]'))button.onclick=()=>setTool(button.dataset.tool);
