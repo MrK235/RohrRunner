@@ -196,6 +196,9 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .edge-card select:hover{background:#2c4953;border-color:#7ce2d2}
 .terminal-card .field-unit:hover{background:#263b46;border-color:#5a7983}
 .terminal-card .field-unit:focus-within{border-color:#54cfa9}
+html[data-theme="dark"] #panelCalculation .field-unit:hover,html[data-theme="dark"] #panelCalculation .form-grid select:hover{background:#2b3942;border-color:#70818b}
+html[data-theme="dark"] #panelCalculation .field-unit:focus-within,html[data-theme="dark"] #panelCalculation .form-grid select:focus{border-color:#54cfa9}
+html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]::-webkit-inner-spin-button,html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]::-webkit-outer-spin-button{background-color:#2b3942}
 .result-title-row{display:flex;align-items:center;gap:4px;padding-right:7px}
 .result-title-row .result-section-title{flex:1;width:auto}
 .riser-open{flex:none;margin:6px 2px 0 0;border:1px solid #6b694d;border-radius:4px;background:#363224;color:#efbd70;padding:3px 6px;font-size:8px;white-space:nowrap}

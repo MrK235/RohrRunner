@@ -8,6 +8,13 @@ import { createServer } from 'node:net';
 const root = new URL('../', import.meta.url);
 const read = path => readFileSync(new URL(path, root), 'utf8');
 
+test('Berechnungseingaben erhalten nur im dunklen Design grauen Hover samt passenden Pfeilen', () => {
+  const style=read('src/style.css');
+  assert.match(style,/html\[data-theme="dark"\] #panelCalculation \.field-unit:hover,html\[data-theme="dark"\] #panelCalculation \.form-grid select:hover\{background:#2b3942/);
+  assert.match(style,/#panelCalculation \.field-unit:focus-within,html\[data-theme="dark"\] #panelCalculation \.form-grid select:focus\{border-color:#54cfa9/);
+  assert.match(style,/#panelCalculation \.field-unit:hover input\[type="number"\]::-webkit-outer-spin-button\{background-color:#2b3942/);
+});
+
 test('Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche', () => {
   const dark=read('src/style.css'),light=read('src/theme.css');
   assert.match(dark,/input\[type="number"\]\{color-scheme:dark\}/);
