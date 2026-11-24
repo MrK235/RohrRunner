@@ -333,3 +333,4 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 @media(max-width:1180px){.topbar{gap:16px}.top-actions{gap:6px}.top-actions .icon-button{padding:0 9px}}
 .project-label-row{gap:6px}.field-unit em{color:#7f9399}.result-table-header small,.endpoint-table-header small{color:#869aa0}.scope-note{color:#86999f}.material-section-heading .material-unit{color:#8a9da3}.canvas-hint{color:#83959b}
 .form-grid{align-items:end}
+#results[data-has-result="1"][data-stale="1"] .endpoint-result,#results[data-has-result="1"][data-stale="1"] .result-section,#results[data-has-result="1"][data-stale="1"] .secondary-summary{opacity:.5}.issue.result-stale{font-weight:600}
