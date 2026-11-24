@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rohrrunner-pwa-v32';
+const CACHE_NAME = 'rohrrunner-pwa-v33';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,7 +27,13 @@ const APP_SHELL = [
   './vendor/pdfjs/pdf.worker.min.js',
   './vendor/pdf-lib/pdf-lib.min.js',
   './vendor/coolprop/coolprop-local.js',
-  './vendor/coolprop/coolprop.wasm'
+  './vendor/coolprop/coolprop.wasm',
+  './vendor/fonts/NotoSans-Regular.woff2',
+  './vendor/fonts/NotoSans-Bold.woff2',
+  './vendor/fonts/NotoSansMono-Regular.woff2',
+  './vendor/fonts/NotoSansMono-Bold.woff2',
+  './vendor/fonts/DejaVuSans-Symbols.woff2',
+  './vendor/fonts/DejaVuSans-Bold-Symbols.woff2'
 ];
 
 self.addEventListener('install', event => {

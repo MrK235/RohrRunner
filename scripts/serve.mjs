@@ -4,7 +4,7 @@ import { extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = realpathSync(fileURLToPath(new URL('../', import.meta.url)));
-const types = { '.css': 'text/css', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json' };
+const types = { '.css': 'text/css', '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.wasm': 'application/wasm', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2' };
 const port = Number(process.env.ROHRRUNNER_PORT) || 4173;
 const publicFiles = new Set(['index.html', 'manifest.webmanifest', 'sw.js']);
 const publicFolders = new Set(['src', 'data', 'icons', 'vendor']);

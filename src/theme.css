@@ -21,6 +21,30 @@ html[data-theme="light"] {
   --red: #bd3434;
 }
 
+/* Rollenfarben für das helle Design */
+html[data-theme="light"] {
+  --label: #4f6168;
+  --label-2: #4f6168;
+  --muted-text: #5a6c72;
+  --heading: #1f2f35;
+  --text-2: #26373d;
+  --field-text: #26373d;
+  --field: #ffffff;
+  --field-line: #c5d1d5;
+  --card: #f7f9fa;
+  --card-line: #cfd9dc;
+  --divider: #d8e1e3;
+  --line-strong: #b9c7cb;
+  --select: #1f6fd1;
+  --warn-bg: #fff6e6;
+  --warn-line: #c2924b;
+  --warn-box-line: #c2924b;
+  --warn-text: #704800;
+  --danger-bg: #fdecec;
+  --danger-line: #d48a8a;
+}
+
+
 html[data-theme="light"] body,
 html[data-theme="light"] .workspace { background: var(--bg); }
 html[data-theme="light"] .topbar,
@@ -278,8 +302,6 @@ html[data-theme="light"] .welcome-modal { color: #26373d; background: #fff; bord
 html[data-theme="light"] .welcome-top { border-color: #dce3e5; }
 html[data-theme="light"] .welcome-wordmark,
 html[data-theme="light"] .welcome-wordmark span+span,
-html[data-theme="light"] .main-wordmark,
-html[data-theme="light"] .main-wordmark span+span { color: #52796c; }
 html[data-theme="light"] .welcome-brand small,
 html[data-theme="light"] .welcome-version,
 html[data-theme="light"] .welcome-heading p { color: #52676d; }

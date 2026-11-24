@@ -101,6 +101,7 @@ RohrRunner besteht aus statischen Browserdateien. Wichtige Bereiche:
 - `src/worker.js` / `src/worker-bundle.js` – Berechnungs-Worker
 - `src/zip.js` – ZIP-Erstellung für lokale Projektpakete
 - `vendor/pdfjs/` und `vendor/pdf-lib/` – lokale PDF-Bibliotheken inklusive Lizenzen
+- `vendor/fonts/` – lokal mitgelieferte, auf benötigte Zeichen reduzierte Schriften Noto Sans/Noto Sans Mono (SIL OFL 1.1) und DejaVu Sans für Pfeile und Symbole, jeweils mit Lizenz
 - `data/pipe-catalog.json` / `data/pipe-catalog.js` – Rohrkatalog
 - `manifest.webmanifest`, `sw.js`, `src/pwa.js` – PWA-Manifest, Offline-Cache und Registrierung
 - `RohrRunner.bat`, `RohrRunner.sh` – Startskripte für lokalen Server und Browser
