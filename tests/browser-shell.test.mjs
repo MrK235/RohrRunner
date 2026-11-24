@@ -218,9 +218,9 @@ test('SL prüfen wird nur für übernommene, aktuell erfolgreiche Steigleitung g
 test('Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button', () => {
   const app=read('src/app.js');
   const result=app.slice(app.indexOf('function showResult('),app.indexOf('    const endpoints=document.createElement',app.indexOf('function showResult(')));
-  assert.match(result,/document\.createTextNode\(format\(sl\?\.lengthM\?\?fl\?\.lengthM,1\)\)/);
-  assert.match(result,/<span>Länge<small>m<\/small><\/span>/);
-  assert.match(result,/velocity\.innerHTML=`<span>SL \$\{format\(sl\?\.velocityMS,1\)\}<\/span><span>FL \$\{format\(fl\?\.velocityMS,1\)\}<\/span>`/);
+  assert.match(result,/unitNode\(format\(sl\?\.lengthM\?\?fl\?\.lengthM,1\),'m'\)/);
+  assert.match(result,/<span>Länge<\/span>/);
+  assert.match(result,/velocity\.innerHTML=`<span>SL \$\{format\(sl\?\.velocityMS,1\)\}<i class="unit"> m\/s<\/i><\/span><span>FL \$\{format\(fl\?\.velocityMS,1\)\}<i class="unit"> m\/s<\/i><\/span>`/);
   assert.doesNotMatch(result,/riserVelocityMinMS|\+ ↑/);
   assert.match(result,/riserButton\.textContent='SL prüfen'/);
   assert.match(read('src/style.css'),/\.riser-open\{[^}]*margin:6px 2px 0 0/);

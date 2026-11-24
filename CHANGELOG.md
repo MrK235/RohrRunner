@@ -1,5 +1,13 @@
 # Änderungsprotokoll
 
+# 1.2.0 — Überarbeitete Oberfläche, Exporte und Seitenleiste
+
+- Oberfläche vereinheitlicht: eigene Schrift, Rollenfarben, ruhigere Kopfzeile, einheitliche Orange-Darstellung für Fehler und Warnungen; bessere Lesbarkeit, Zugänglichkeit und Bedienführung; veraltete Ergebnisse werden gekennzeichnet, der Startdialog ist modal.
+- Seitenleiste auf feste Breite von 490 px mit kompakteren Dropdowns; Ergebnislisten mit Einheiten hinter den Werten und einreihigen Tabellenköpfen.
+- Exporte überarbeitet: Rohrnetz-PDF auf das Netz gezoomt, gegliederte CSV-Listen; Rohrnetz auf PDF-Plänen sichtbar, Klickverlust nach Verschieben behoben.
+- Beschriftungen werden beim Zoomen wieder in jedem Animationsframe platziert; CoolProp-Zusatz aus dem Propylenglykol-Dropdown entfernt.
+- Anwendungs-, Desktop- und angezeigte Versionen auf 1.2.0 synchronisiert; PWA-Cache aktualisiert.
+
 # 1.1.0 — Flüssigeres Zoomen und korrigierte Zeichenbedienung
 
 - Aufwendige Beschriftungsplatzierung beim Zoomen auf das Animationsende verlagert, statt sie in jedem Animationsbild neu auszuführen. Eine quantitative Linux-Performanceverbesserung ist noch nicht vermessen.
