@@ -360,3 +360,7 @@ html[data-theme="light"] #dimPlan.active { color: #066a4e; background: #d8eee6; 
 .icon-button.theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
 .theme-toggle .theme-icon { flex: none; margin: 0; }
 .theme-toggle .theme-icon-dark path { transform: translate(0.9px, -0.9px); }
+
+/* Einheiten direkt hinter den Werten; Tabellenköpfe einreihig. */
+.result-cell .unit, .endpoint-result .unit, .velocity-cell .unit { font-style: normal; color: var(--muted-text); font-size: var(--fs-2xs); white-space: nowrap; }
+.result-table-header, .endpoint-table-header { align-items: center; white-space: nowrap; }
