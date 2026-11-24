@@ -114,11 +114,11 @@ body{min-width:0}
 .result-section-row .size-cell,.result-table-header span:nth-child(2),.result-table-header span:nth-child(3){transform:translateX(-5px)}
 .result-table-header span:nth-child(5),.result-section-row .metric-cell:nth-child(5){transform:translateX(10px)}
 
-.pipe-line.selected{stroke:#f4a340;stroke-width:4;filter:drop-shadow(0 0 5px #f4a34088)}
+.pipe-line.selected{stroke:#6cb4ff;stroke-width:4;filter:drop-shadow(0 0 5px #6cb4ff88)}
 
-.result-section.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
+.result-section.selected{border-color:#6cb4ff;box-shadow:0 0 0 1px #6cb4ff66,inset 3px 0 #6cb4ff}
 
-.endpoint-result.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}.network-node.selected .node-halo{stroke:#f4a340;filter:drop-shadow(0 0 8px #f4a34099)}
+.endpoint-result.selected{border-color:#6cb4ff;box-shadow:0 0 0 1px #6cb4ff66,inset 3px 0 #6cb4ff}.network-node.selected .node-halo{stroke:#6cb4ff;filter:drop-shadow(0 0 8px #6cb4ff99)}
 
 .result-section:hover,.endpoint-result:hover{background:#253640;filter:none;cursor:pointer}
 .result-section.check:hover,.endpoint-result.check:hover{background:#393024}
@@ -126,7 +126,7 @@ body{min-width:0}
 .result-section-title:hover b{color:var(--text)}
 .result-size-select:hover,.result-size-select.liquid:hover{background:#2b3942;border-color:#70818b}
 
-.endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
+.endpoint-result.check,.endpoint-result.limit{box-shadow:none}.endpoint-result.check.selected,.endpoint-result.limit.selected{box-shadow:0 0 0 1px #6cb4ff66,inset 3px 0 #6cb4ff}
 
 #network .outside-pdf text,#network .node-name-label.outside-pdf{fill:#fff;stroke:#15212a}
 
@@ -153,7 +153,7 @@ input[type="number"]:hover::-webkit-inner-spin-button,input[type="number"]:hover
 .terminal-list{gap:5px}
 .terminal-block .total-row{border-top:0;border-bottom:1px solid #2d3e47;margin:0 0 9px;padding:0 0 9px}
 .terminal-card{position:relative;padding:5px 8px 7px;border:1px solid #34434b;border-radius:6px;background:#1a272f;cursor:pointer}
-.terminal-card.selected{border-color:#f4a340;box-shadow:0 0 0 1px #f4a34066,inset 3px 0 #f4a340}
+.terminal-card.selected{border-color:#6cb4ff;box-shadow:0 0 0 1px #6cb4ff66,inset 3px 0 #6cb4ff}
 .terminal-card:not(.edge-card):hover{background:#253640;border-color:#59707b}
 .terminal-card:not(.edge-card){display:grid;grid-template-columns:minmax(0,1fr) minmax(75px,.7fr) minmax(94px,auto);align-items:start;gap:8px}
 .terminal-name{min-width:0;color:#91a3a8;font-size:var(--fs-2xs);cursor:text}
@@ -300,7 +300,7 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 
 .tool-fan-standard{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:top}
 
-.tool-hand-pointer{width:20px;height:20px;fill:currentColor;stroke:#101920;stroke-width:.8;stroke-linejoin:round;vertical-align:top}
+
 
 .tool-pipe{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:top}.tool-pipe circle{fill:currentColor;stroke:currentColor}
 
@@ -341,3 +341,12 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 :where(html[data-theme="dark"]) :focus-visible{outline:2px solid var(--mint);outline-offset:2px}html[data-theme="dark"] .field-unit input:focus-visible{outline:0}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .terminal-card .inline-field-error,.edge-card-grid .inline-field-error{grid-column:1/-1;margin-top:-2px}
+.icon-sprite{position:absolute;width:0;height:0;overflow:hidden}
+.icon{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+.tool .icon{width:20px;height:20px;vertical-align:top}.tool-pipe circle{fill:currentColor}
+.icon-button .icon{width:16px;height:16px}.icon-button{display:inline-flex;align-items:center}
+.secondary .icon,.export-csv .icon,.dialog-actions .icon{width:14px;height:14px}.secondary{display:inline-flex;align-items:center;gap:5px}
+.icon-only{display:inline-grid;place-items:center}.icon-only .icon{width:16px;height:16px}
+.welcome-action-icon .icon{width:18px;height:18px}.welcome-action i .icon{width:16px;height:16px}
+.tool small{max-width:100%;white-space:normal;text-align:center;line-height:1.1;font-size:var(--fs-2xs)}.tool{height:auto;min-height:49px;padding:4px 0}
+.tool{width:56px}

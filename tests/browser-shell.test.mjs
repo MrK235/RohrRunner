@@ -335,7 +335,7 @@ test('Ältere Startknoten mit Standardname Verbund werden für Plan und Listen z
   runInNewContext(`(${source})`,{project})();
   assert.deepEqual(project.nodes.map(node=>node.name),['Start','Eigener Name','Verbund']);
   assert.match(app,/function renderAll\(\)\{migrateStartName\(\)/);
-  assert.match(html,/data-tool="start" title="Start setzen" aria-pressed="false"><span aria-hidden="true">⌂<\/span><small>Start<\/small>/);
+  assert.match(html,/data-tool="start" title="Start setzen" aria-pressed="false"><span aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-start"\/><\/svg><\/span><small>Start<\/small>/);
   assert.doesNotMatch(read('README.md'),/\bVerbund\b/);
 });
 
@@ -471,7 +471,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(html.indexOf('id="calcBadge"')<html.indexOf('<main class="shell">')&&!html.includes('inspector-head'),'calculation status sits in the top header without a heading above the tabs');
   assert.ok(app.includes("setInspectorTab('panelResults')"),'successful calculation opens the result tab');
   assert.ok(app.includes("groupRows('Rohrleitungen','m',pipes"),'secondary-fluid material list uses a concise pipe heading');
-  assert.ok(app.includes('RohrRunnerEngine.sizeLabel(size)')&&app.includes("new Option(`${size.label} (auto)`,'auto')")&&app.includes('autoSizeIdFor(edge,type,row)')&&app.includes("directLimit?'limit':'check'"),'catalog labels, calculated sizes and manual selections remain available');
+  assert.ok(app.includes('RohrRunnerEngine.sizeLabel(size)')&&app.includes("new Option(autoSize?`${autoSize.label} (auto)`:'Automatisch','auto')")&&app.includes('autoSizeIdFor(edge,type,row)')&&app.includes("directLimit?'limit':'check'"),'catalog labels, calculated sizes and manual selections remain available');
   assert.ok(style.includes('.result-section.check')&&style.includes('.result-section.limit')&&!style.includes('.result-section.valid'),'normal pipe sections have no green status highlight');
   assert.ok(app.includes('calibrationHover=svgPoint(e);drawNetwork()'),'calibration line updates while positioning the second point');
   assert.ok(style.includes('.shell')&&style.includes('.inspector')&&style.includes('.stage'));

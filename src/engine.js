@@ -4,7 +4,7 @@
   const G = 9.80665;
   const fluids = new Set(['R513A', 'R448A', 'R744', 'R134A', 'R404A', 'R407C', 'R449A', 'R452A']);
   const idOf = size => `${size.odMm}x${size.wallMm}`;
-  const sizeLabelOf = size => size.dn ? 'DN ' + size.dn + ' · ' + size.inch.trim().replace(/\s+/g, '-') + '"' : size.inch ? size.inch.trim().replace(/\s+/g, '-') + '"' : size.odMm + ' × ' + size.wallMm + ' mm';
+  const sizeLabelOf = size => size.dn ? 'DN ' + size.dn + ' · ' + size.inch.trim().replace(/\s+/g, '-') + '"' : size.inch ? size.inch.trim().replace(/\s+/g, '-') + '"' : String(size.odMm).replace('.', ',') + ' × ' + String(size.wallMm).replace('.', ',') + ' mm';
   const diOf = size => (size.odMm - 2 * size.wallMm) / 1000;
   const fail = message => { throw new Error(message); };
   function frictionFactor(re, roughness, d) {
