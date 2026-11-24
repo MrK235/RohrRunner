@@ -1,8 +1,8 @@
 /* Light palette overrides; dark remains the default theme. */
 .project-row-actions [data-project-action="delete"]:hover {
-  color: #f17676;
-  background: #3a2528;
-  border-color: #bd5555;
+  color: #f5a142;
+  background: #3a2c1f;
+  border-color: #b8742f;
 }
 
 html[data-theme="light"] {
@@ -17,8 +17,8 @@ html[data-theme="light"] {
   --text: #26373d;
   --mint: #087c5b;
   --cyan: #087b96;
-  --amber: #9a5b00;
-  --red: #bd3434;
+  --amber: #b05a00;
+  --red: #b85c00;
 }
 
 /* Rollenfarben für das helle Design */
@@ -40,8 +40,8 @@ html[data-theme="light"] {
   --warn-line: #c2924b;
   --warn-box-line: #c2924b;
   --warn-text: #704800;
-  --danger-bg: #fdecec;
-  --danger-line: #d48a8a;
+  --danger-bg: #fff6e6;
+  --danger-line: #c2924b;
 }
 
 
@@ -180,9 +180,9 @@ html[data-theme="light"] .edge-card-grid label,
 html[data-theme="light"] .edge-card-details summary { color: #4f6268; }
 html[data-theme="light"] .edge-card-details { border-color: #c5d1d5; }
 html[data-theme="light"] .edge-card.check { background: #fff5e3; border-color: #c28b3f; }
-html[data-theme="light"] .edge-card.limit { background: #fff0ee; border-color: #c96c62; }
+html[data-theme="light"] .edge-card.limit { background: #fff5e3; border-color: #c28b3f; }
 html[data-theme="light"] .edge-card.check:hover { background: #f6e7cb; border-color: #bb8540; }
-html[data-theme="light"] .edge-card.limit:hover { background: #f8ddda; border-color: #bb655c; }
+html[data-theme="light"] .edge-card.limit:hover { background: #f6e7cb; border-color: #bb8540; }
 html[data-theme="light"] .riser-open { background: #fff5e3; color: #805000; border-color: #c28b3f; }
 html[data-theme="light"] .riser-open:hover { background: #f4dfb8; }
 html[data-theme="light"] .riser-open.success { color: #126044; background: #e2f6ed; border-color: #51a780; }
@@ -197,7 +197,7 @@ html[data-theme="light"] .riser-calc-badge.warning { color: #805000; background:
 html[data-theme="light"] .riser-preview { color: #34474d; background: #f8fafb; border-color: #c5d1d5; }
 html[data-theme="light"] .riser-preview.ok { color: #126044; background: #e2f6ed; border-color: #51a780; }
 html[data-theme="light"] .riser-preview.check { color: #805000; background: #fff5e3; border-color: #c28b3f; }
-html[data-theme="light"] .riser-preview.limit { color: #a52e2e; background: #fff0ee; border-color: #c96c62; }
+html[data-theme="light"] .riser-preview.limit { color: #9a5200; background: #fff5e3; border-color: #c28b3f; }
 html[data-theme="light"] .riser-dialog #riserCurrent,
 html[data-theme="light"] .riser-fields label,
 html[data-theme="light"] .riser-metrics span,
@@ -241,12 +241,12 @@ html[data-theme="light"] .endpoint-result { background: #fff; border-color: #d2d
 html[data-theme="light"] .result-section.check,
 html[data-theme="light"] .endpoint-result.check { background: #fff5e3; border-color: #c28b3f; }
 html[data-theme="light"] .result-section.limit,
-html[data-theme="light"] .endpoint-result.limit { background: #fff0ee; border-color: #c96c62; }
+html[data-theme="light"] .endpoint-result.limit { background: #fff5e3; border-color: #c28b3f; }
 html[data-theme="light"] .result-section-title small { color: #52676d; }
-html[data-theme="light"] .section-state { color: #a2342b; }
+html[data-theme="light"] .section-state { color: #9a5200; }
 html[data-theme="light"] .section-state.liquid { color: #875100; }
 html[data-theme="light"] .endpoint-result .endpoint-value.check { color: #805000; background: #f4dfb8; }
-html[data-theme="light"] .endpoint-result .endpoint-value.limit { color: #a52e2e; background: #f7d9d5; }
+html[data-theme="light"] .endpoint-result .endpoint-value.limit { color: #9a5200; background: #f4dfb8; }
 html[data-theme="light"] .endpoint-result.selected,
 html[data-theme="light"] .result-section.selected { border-color: #1f6fd1; }
 html[data-theme="light"] .result-size-select,
@@ -259,18 +259,18 @@ html[data-theme="light"] .result-section:hover { background: #e0e6e9; }
 html[data-theme="light"] .result-section.check:hover,
 html[data-theme="light"] .endpoint-result.check:hover { background: #f6e7cb; }
 html[data-theme="light"] .result-section.limit:hover,
-html[data-theme="light"] .endpoint-result.limit:hover { background: #f8ddda; }
+html[data-theme="light"] .endpoint-result.limit:hover { background: #f6e7cb; }
 html[data-theme="light"] .endpoint-result b::before { background: #6c7b80; }
 
 html[data-theme="light"] .issues,
 html[data-theme="light"] .material-stale { background: #fff2dc; border-color: #c2924b; }
 html[data-theme="light"] .issue,
 html[data-theme="light"] .material-stale { color: #704800; }
-html[data-theme="light"] .issue.critical { color: #a52e2e; }
+html[data-theme="light"] .issue.critical { color: #9a5200; }
 html[data-theme="light"] .export-csv { color: #34474d; border-color: #bdcbd0; }
 html[data-theme="light"] .export-csv:hover { color: #26373d; background: #e0e6e9; border-color: #9cafb5; }
 html[data-theme="light"] #deleteSelection:hover,
-html[data-theme="light"] #projectsDialog [data-project-action="delete"]:hover { color: #a52e2e; background: #f9e1e1; border-color: #c96c62; }
+html[data-theme="light"] #projectsDialog [data-project-action="delete"]:hover { color: #9a5200; background: #f4dfb8; border-color: #c28b3f; }
 
 html[data-theme="light"] .material-section { background: #fff; border-color: #cbd7da; }
 html[data-theme="light"] .material-section-heading { background: #edf3f4; }
@@ -355,3 +355,8 @@ html[data-theme="light"] .project-row.current { border-color: #6fae98; }
 html[data-theme="light"] .project-current { background: #d8eee6; color: #066a4e; }
 html[data-theme="light"] .narrow-notice { background: #fff2dc; border-color: #c2924b; color: #704800; }
 html[data-theme="light"] #dimPlan.active { color: #066a4e; background: #d8eee6; border-color: #6fae98; }
+
+/* Theme-Umschalter: Icon exakt mittig (Flex statt Grid, Mondsichel optisch ausgleichen). */
+.icon-button.theme-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.theme-toggle .theme-icon { flex: none; margin: 0; }
+.theme-toggle .theme-icon-dark path { transform: translate(0.9px, -0.9px); }
