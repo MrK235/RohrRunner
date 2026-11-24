@@ -364,3 +364,7 @@ html[data-theme="light"] #dimPlan.active { color: #066a4e; background: #d8eee6; 
 /* Einheiten direkt hinter den Werten; Tabellenköpfe einreihig. */
 .result-cell .unit, .endpoint-result .unit, .velocity-cell .unit { font-style: normal; color: var(--muted-text); font-size: var(--fs-2xs); white-space: nowrap; }
 .result-table-header, .endpoint-table-header { align-items: center; white-space: nowrap; }
+
+/* Breitere Seitenleiste, damit Werte samt Einheiten und Rohrgrößen in einer Zeile passen. */
+@media (min-width: 1051px) { .shell { grid-template-columns: 68px minmax(0, 1fr) clamp(500px, 38vw, 540px); } }
+.result-table-header, .result-section-row { grid-template-columns: 52px minmax(118px, 1fr) minmax(118px, 1fr) 46px 46px 76px !important; }
