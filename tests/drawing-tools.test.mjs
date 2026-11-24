@@ -59,8 +59,13 @@ test('stage accepts drawing clicks beyond the SVG page bounds', () => {
 });
 
 test('pointer capture loss and window blur clear unfinished drags', () => {
-  assert.match(app, /stage\.addEventListener\('lostpointercapture',\(\)=>\{finishNetworkDrag\(true\);dragPan=null\}\)/);
-  assert.match(app, /window\.addEventListener\('blur',\(\)=>\{finishNetworkDrag\(true\);dragPan=null\}\)/);
+  assert.match(app, /stage\.addEventListener\('lostpointercapture',\(\)=>\{finishNetworkDrag\(true\);dragPan=null;panMoved=false\}\)/);
+  assert.match(app, /window\.addEventListener\('blur',\(\)=>\{finishNetworkDrag\(true\);dragPan=null;panMoved=false\}\)/);
+});
+
+test('Nach dem Verschieben der Ansicht nehmen Werkzeuge wieder Klicks an', () => {
+  // Regression: panMoved blieb gesetzt und jeder spätere Klick wurde verworfen.
+  assert.match(app, /const wasPanning=Boolean\(dragPan\)&&panMoved;dragPan=null;panMoved=false;if\(wasPanning\)\{ignoreCanvasClick=true/);
 });
 
 test('Pointer blendet Tastaturcursor aus und fokussiert ohne Scrollen oder Neuzeichnen', () => {

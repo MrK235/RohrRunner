@@ -357,3 +357,6 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 .narrow-notice{display:none}
 @media(max-width:959px){.narrow-notice{display:flex;position:fixed;z-index:1000;left:12px;right:12px;bottom:12px;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--warn-box-line);border-radius:8px;background:#3b3125;color:var(--warn-text);font-size:var(--fs-sm);box-shadow:0 10px 40px #0008}.narrow-notice p{margin:0;flex:1;line-height:1.4}}
 .narrow-notice[hidden]{display:none!important}
+.pipe-casing{fill:none;stroke:#0d1a20e0;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.has-pdf .pipe-line{filter:none}.has-pdf .pipe-preview{stroke:#1d8f73}body:not(.has-pdf) #dimPlan{display:none}
+.stage.plan-dimmed #pdfCanvas{opacity:.4}
+#dimPlan.active{color:var(--mint);border-color:#4b8776;background:#1b372f}#dimPlan:disabled{opacity:.35}
