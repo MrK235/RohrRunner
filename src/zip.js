@@ -11,7 +11,16 @@
     for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
     return (crc ^ 0xffffffff) >>> 0;
   };
-  function create(files) {
+  function dosDateTime(date) {
+    const value = typeof date?.getTime === 'function' && !Number.isNaN(date.getTime()) ? date : new Date();
+    const year = Math.min(2107, Math.max(1980, value.getFullYear()));
+    return {
+      time: (value.getHours() << 11) | (value.getMinutes() << 5) | Math.floor(value.getSeconds() / 2),
+      date: ((year - 1980) << 9) | ((value.getMonth() + 1) << 5) | value.getDate()
+    };
+  }
+  function create(files, modified = new Date()) {
+    const stamp = dosDateTime(modified);
     if (files.length > 0xffff) throw new Error('Zu viele Dateien für ein ZIP-Archiv.');
     const localParts = [], directoryParts = [];
     let offset = 0;
@@ -21,12 +30,12 @@
       if (name.length > 0xffff || data.length > 0xffffffff || offset > 0xffffffff) throw new Error('Datei ist für ein ZIP-Archiv zu groß.');
       const crc = crc32(data), local = new Uint8Array(30 + name.length), localView = new DataView(local.buffer);
       localView.setUint32(0, 0x04034b50, true); localView.setUint16(4, 20, true); localView.setUint16(6, 0x0800, true);
-      localView.setUint16(8, 0, true); localView.setUint16(12, 0, true); localView.setUint16(10, 0x21, true); localView.setUint32(14, crc, true); localView.setUint32(18, data.length, true);
+      localView.setUint16(8, 0, true); localView.setUint16(10, stamp.time, true); localView.setUint16(12, stamp.date, true); localView.setUint32(14, crc, true); localView.setUint32(18, data.length, true);
       localView.setUint32(22, data.length, true); localView.setUint16(26, name.length, true); local.set(name, 30);
       localParts.push(local, data);
       const entry = new Uint8Array(46 + name.length), view = new DataView(entry.buffer);
       view.setUint32(0, 0x02014b50, true); view.setUint16(4, 20, true); view.setUint16(6, 20, true);
-      view.setUint16(8, 0x0800, true); view.setUint16(10, 0, true); view.setUint16(12, 0, true); view.setUint16(14, 0x21, true); view.setUint32(16, crc, true);
+      view.setUint16(8, 0x0800, true); view.setUint16(10, 0, true); view.setUint16(12, stamp.time, true); view.setUint16(14, stamp.date, true); view.setUint32(16, crc, true);
       view.setUint32(20, data.length, true); view.setUint32(24, data.length, true); view.setUint16(28, name.length, true);
       view.setUint32(42, offset, true); entry.set(name, 46); directoryParts.push(entry);
       offset += local.length + data.length;

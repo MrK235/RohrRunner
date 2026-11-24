@@ -42,24 +42,20 @@ npm run serve
 - Rohrserien Viega Temponox Edelstahl und schwarzes Stahlrohr S195T nach EN 10255 M
 - Druckverluste, Geschwindigkeiten, Temperaturverluste und Warnungen
 - Kühlstellen und Rohrstrecken in der Ergebnisansicht; Rohrstrecken von den Kühlstellen über T-Stücke bis zum Start sortiert
-- Lokale Projektverwaltung, `.rohrrunner`-Import, Ergebnis-CSV und Plan-PDF
-- Projektpaket als ZIP mit vollständiger `.rohrrunner`, verfügbaren Berechnungs-/Material-CSV und Plan-PDF; der Plan mit PDF-Grundriss wird nur bei geladenem PDF ergänzt
+- Lokale Projektverwaltung, `.rohrrunner`-Import, Berechnungs- und Material-CSV sowie Rohrnetz-PDF
+- Projektpaket als ZIP mit vollständiger `.rohrrunner`, verfügbaren CSV-Listen und Rohrnetz-PDF; die Fassung mit Grundriss wird nur bei geladenem PDF ergänzt
+
+## Rohrnetz-PDF
+
+Das Rohrnetz-PDF zeigt den Ausschnitt um das gezeichnete Netz auf einem A3-Blatt (quer oder hoch je nach Netzform) mit Längen, Rohrmaßen, Knotennamen und einem Schriftfeld mit Projekt, Medium, Gesamtleistung, Berechnungsstand, Datum, Programmversion und ungefährem Maßstab. Ohne kalibrierten Maßstab entfällt die Maßstabsangabe. Ist ein Grundriss geladen, entsteht zusätzlich eine Fassung mit dem passenden, abgeblendeten Planausschnitt; gedrehte PDF-Seiten werden dabei ohne Grundriss ausgegeben. Rohrmaße erscheinen nur bei aktueller Berechnung.
 
 ## Ergebnis-CSV
 
-Der CSV-Export enthält zunächst Projektinformationen und Vorgabewerte in zwei nebeneinander angeordneten Beschreibungs-/Wertspalten. Erweiterte interne Berechnungsparameter werden nicht exportiert.
+Die Berechnungs-CSV ist in Abschnitte gegliedert: Kopfdaten (Projekt, Stand, Programmversion, Hinweis zur Vorbemessung), Auslegungsvorgaben und Ergebnisübersicht als Parameter/Wert/Einheit, eine Tabelle der Kühlstellen, die Rohrstrecken in derselben Reihenfolge wie in der Ergebnisansicht und zuletzt die Hinweise der Berechnung.
 
-Danach folgen die Ergebniswerte je Rohrstrecke in derselben Reihenfolge wie in der Ergebnisansicht:
+Je Rohrstrecke enthält sie Nummer, Von und Nach, Länge, Zusatzlänge, gegebenenfalls Steigleitung, Leistung, Massenstrom, Rohrgröße SL und FL samt automatischer oder manueller Wahl, Geschwindigkeit, Druckverlust in K und bar, Verdampfungs- und Flüssigkeitstemperatur sowie einen Status. Kälteträgerkreise erhalten dieselbe Gliederung mit Vor- und Rücklauf, Volumen- und Massenstrom, Druckverlust in kPa und Reynolds-Zahl.
 
-- Rohrstrecke von–nach
-- Länge
-- Rohrleitung SL und FL in getrennten Spalten
-- berechnete Verdampfungs- und Flüssigkeitstemperatur
-- Druckverlust SL und FL in K
-- Geschwindigkeit SL und FL in m/s
-- Leistung in kW
-
-Zahlen werden mit zwei Nachkommastellen und der Einheit direkt hinter dem Wert ausgegeben. Das CSV nutzt Semikolontrennung und Dezimalkommas für eine gute Weiterverarbeitung in deutscher Tabellenkalkulation. Namen, die Tabellenprogramme als Formel ausführen könnten, erhalten beim CSV-Export ein führendes Apostroph. Nach einer Änderung am Netz oder Betriebspunkt sind Berechnungs- und Material-CSV erst nach erneuter Berechnung wieder exportierbar; ein Projektpaket enthält weiterhin die aktuelle Projektdatei und Pläne, aber keine veralteten Ergebnis-CSV.
+Einheiten stehen in den Spaltenköpfen, die Zellen enthalten reine Zahlen mit Dezimalkomma; so lassen sich Werte in deutscher Tabellenkalkulation direkt sortieren und summieren. Die Material-CSV enthält Positionsnummern, Rohrsystem mit Werkstoff und Norm sowie Summen je Gruppe. Beide Dateien nutzen Semikolontrennung. Namen, die Tabellenprogramme als Formel ausführen könnten, erhalten ein führendes Apostroph. Nach einer Änderung am Netz oder Betriebspunkt sind Berechnungs- und Material-CSV erst nach erneuter Berechnung wieder exportierbar; ein Projektpaket enthält weiterhin die aktuelle Projektdatei und das Rohrnetz-PDF, aber keine veralteten Ergebnis-CSV.
 
 ## Medien und Startwerte
 
@@ -86,7 +82,7 @@ Nicht abgedeckt sind unter anderem transkritisches CO₂, Druckgasleitungen, Ver
 
 ## Projekte und Datenschutz
 
-Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der vollständigen `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Plan-PDF ohne Hintergrund. Wenn ein PDF-Grundriss geladen ist, enthält das ZIP zusätzlich den Plan mit PDF-Hintergrund. Die `.rohrrunner`-Datei enthält den geladenen Grundriss eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
+Projekte werden im verwendeten Browser in IndexedDB gespeichert, einschließlich Netz, Einstellungen, Maßstab, letztem Ergebnis und gegebenenfalls PDF. **Sichern** erstellt ein ZIP-Paket mit der vollständigen `.rohrrunner`-Projektdatei, verfügbaren Berechnungs- und Material-CSV sowie dem Rohrnetz-PDF. Wenn ein PDF-Grundriss geladen ist, enthält das ZIP zusätzlich das Rohrnetz-PDF mit Grundriss. Die Dateien im ZIP tragen das Erstellungsdatum. Die `.rohrrunner`-Datei enthält den geladenen Grundriss eingebettet und kann nach dem Entpacken direkt wieder geöffnet werden.
 
 Es gibt keinen Anwendungsserver und keine Cloud-Synchronisierung. Der Import ist auf 50 MiB pro Projektdatei, 3000 Knoten, 5000 Rohrstrecken und 25 MiB pro PDF begrenzt; PDF-Seiten mit einer Breite oder Höhe über 10000 PDF-Einheiten werden abgewiesen; die Rasterauflösung beim Zoomen ist begrenzt. Diese Grenzen schützen den Browser vor übergroßen Eingaben und sind keine fachlichen Auslegungsgrenzen. Projektdateien und Grundrisse können vertrauliche Daten enthalten; vor dem Teilen sind Inhalt und Metadaten zu prüfen. Für PDF-Funktionen verwendet der Browser die lokal mitgelieferten Bibliotheken.
 

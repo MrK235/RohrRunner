@@ -42,6 +42,19 @@ test('ZIP-Archiv enthält UTF-8-Dateinamen und exakte Text- und Binärdaten', ()
   assert.equal(crcView.getUint32(crcView.getUint32(end + 16, true) + 16, true), 0xcbf43926);
 });
 
+test('ZIP-Einträge tragen das Erstellungsdatum statt 1980', () => {
+  const archive = create([{ name: 'a.txt', data: 'x' }], new Date(2026, 10, 24, 21, 45, 30));
+  const view = new DataView(archive.buffer);
+  const expectedTime = (21 << 11) | (45 << 5) | 15, expectedDate = ((2026 - 1980) << 9) | (11 << 5) | 24;
+  assert.equal(view.getUint16(10, true), expectedTime);
+  assert.equal(view.getUint16(12, true), expectedDate);
+  let end = archive.length - 22;
+  while (view.getUint32(end, true) !== 0x06054b50) end--;
+  const central = view.getUint32(end + 16, true);
+  assert.equal(view.getUint16(central + 12, true), expectedTime);
+  assert.equal(view.getUint16(central + 14, true), expectedDate);
+});
+
 test('ZIP-Archiv unterstützt eine leere Dateiliste und begrenzt unzulässige Einträge', () => {
   assert.equal(unzipStored(create([])).size, 0);
   assert.throws(() => create([{ name: '', data: '' }]), /Dateiname darf nicht leer sein/);
@@ -73,7 +86,8 @@ test('Projektpaket enthält die vollständige Projektdatei und einen PDF-Plan nu
     assert.deepEqual(JSON.parse(new TextDecoder().decode(files.get('Testnetz.rohrrunner'))), savedProject);
     assert.ok(files.has('Testnetz-berechnung.csv'));
     assert.ok(files.has('Testnetz-materialliste.csv'));
-    assert.ok(files.has('Testnetz-plan-ohne-pdf.pdf'));
-    assert.equal(files.has('Testnetz-plan-mit-pdf.pdf'), withPdf);
+    assert.ok(files.has('Testnetz-rohrnetz.pdf'));
+    assert.equal(files.has('Testnetz-rohrnetz-mit-grundriss.pdf'), withPdf);
+    assert.equal([...files.get('Testnetz-rohrnetz.pdf')][0], 0, 'Rohrnetz-PDF ohne Grundriss');
   }
 });

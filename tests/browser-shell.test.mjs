@@ -116,14 +116,15 @@ test('Veraltete Ergebnisse werden nicht exportiert und CSV-Namen sind keine Form
   const project={name:'=FORMEL()',nodes,edges,resultStale:false,lastResult:{fluid:'R513A',settings:{},totalCoolingKW:1,rows:[{edgeId:'edge',type:'suction',lengthM:2,sizeId:'22x1',velocityMS:1}],issues:[]}};
   const context={project,resultEdgeOrder:()=>({orderedEdges:edges,edgeNodes:new Map([['edge',{parent:'plant',child:'cold'}]])}),displaySizeLabel:()=> '22 × 1 mm',$:()=>({querySelectorAll:()=>[]})};
   const api=runInNewContext(`(()=>{${helper};${csv};${material};return {calculationCsv,materialCsv}})()`,context);
-  const result=api.calculationCsv();assert.match(result,/"'=FORMEL\(\)"/);assert.match(result,/"' =EVIL\(\) → Verbund"/);
+  const result=api.calculationCsv();assert.match(result,/"'=FORMEL\(\)"/);assert.match(result,/"1";"' =EVIL\(\)";"Verbund";"2,00"/);
+  assert.match(result,/"Länge \[m\]"/);assert.match(result,/"Rohrstrecken \(von der Kühlstelle zum Start\)"/);assert.doesNotMatch(result,/"2,00 m"/);assert.match(result,/"Keine Hinweise/);
   nodes[0].name=' =PLANT()';project.lastResult={mode:'secondary',settings:{},fluid:'WATER',secondary:{},rows:[{edgeId:'edge',type:'suction'}]};
   assert.match(api.calculationCsv(),/"'=FORMEL\(\)"/);
-  assert.match(api.calculationCsv(),/"' =PLANT\(\) →  =EVIL\(\)"/);
+  assert.match(api.calculationCsv(),/"1";"' =PLANT\(\)";"' =EVIL\(\)";"Vorlauf"/);
   const materialRow={querySelector:selector=>({b:{textContent:'2 m'},span:{textContent:'+FORMEL()'}}[selector])};
   const section={querySelector:selector=>({'.material-section-heading b':{textContent:'=GRUPPE()'},'.material-unit':{textContent:'m'}}[selector]),querySelectorAll:()=>[materialRow]};
   context.$=()=>({querySelectorAll:()=>[section]});
-  assert.match(api.materialCsv(),/"'=GRUPPE\(\)";"'\+FORMEL\(\)";"2";"m"/);
+  assert.match(api.materialCsv(),/"1";"'=GRUPPE\(\)";"'\+FORMEL\(\)";"2";"m"/);assert.match(api.materialCsv(),/"Summen je Gruppe"[\s\S]*"'=GRUPPE\(\)";"2,0";"m"/);
   project.resultStale=true;assert.equal(api.calculationCsv(),null);assert.equal(api.materialCsv(),null);
   assert.match(app,/,calculation=calculationCsv\(\),materials=materialCsv\(\)/);
   assert.match(app,/\$\('exportCsv'\)\.classList\.add\('hidden'\);\$\('exportMaterialsCsv'\)\.classList\.add\('hidden'\)/);
@@ -237,7 +238,8 @@ test('Steigleitung bleibt in Berechnung, CSV und Materialmengen als zusätzliche
   assert.deepEqual(rows.map(row=>[row.lengthM,row.sizeId,row.riser]),[[7,'22x1',false],[2,'22x1',true],[5,'22x1',false],[1,'18x1',true],[9,'12x1',false]]);
   assert.match(app, /\[true,'Steigleitung · Saugleitung'\]/);
   assert.match(app, /row\.riser===riser/);
-  assert.match(app, /'Strecke ohne Steigleitung','Steigleitungslänge'/);
+  assert.match(app, /'davon Steigleitung \[m\]'/);
+  assert.match(app, /'Steigleitung Rohr','Steigleitung min\. Geschwindigkeit \[m\/s\]'/);
   assert.match(app, /data-edge-riser="enabled"/);
   assert.match(app, /data-edge-riser="length"/);
   assert.match(app, /class="terminal-riser edge-riser"/);
