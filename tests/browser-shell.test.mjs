@@ -335,7 +335,7 @@ test('Ältere Startknoten mit Standardname Verbund werden für Plan und Listen z
   runInNewContext(`(${source})`,{project})();
   assert.deepEqual(project.nodes.map(node=>node.name),['Start','Eigener Name','Verbund']);
   assert.match(app,/function renderAll\(\)\{migrateStartName\(\)/);
-  assert.match(html,/data-tool="start" title="Start setzen"><span>⌂<\/span><small>Start<\/small>/);
+  assert.match(html,/data-tool="start" title="Start setzen" aria-pressed="false"><span aria-hidden="true">⌂<\/span><small>Start<\/small>/);
   assert.doesNotMatch(read('README.md'),/\bVerbund\b/);
 });
 

@@ -334,3 +334,10 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 .project-label-row{gap:6px}.field-unit em{color:#7f9399}.result-table-header small,.endpoint-table-header small{color:#869aa0}.scope-note{color:#86999f}.material-section-heading .material-unit{color:#8a9da3}.canvas-hint{color:#83959b}
 .form-grid{align-items:end}
 #results[data-has-result="1"][data-stale="1"] .endpoint-result,#results[data-has-result="1"][data-stale="1"] .result-section,#results[data-has-result="1"][data-stale="1"] .secondary-summary{opacity:.5}.issue.result-stale{font-weight:600}
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.icon-button .glyph{margin-left:0;font-size:inherit}
+.inline-field-error{display:block;margin-top:3px;min-height:0;white-space:normal}
+.field-unit:has([aria-invalid="true"]),.terminal-name:has(>input[aria-invalid="true"]) input{border-color:var(--red)!important}
+:where(html[data-theme="dark"]) :focus-visible{outline:2px solid var(--mint);outline-offset:2px}html[data-theme="dark"] .field-unit input:focus-visible{outline:0}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+.terminal-card .inline-field-error,.edge-card-grid .inline-field-error{grid-column:1/-1;margin-top:-2px}
