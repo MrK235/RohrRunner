@@ -304,3 +304,22 @@ html[data-theme="light"] .field-unit input:focus-visible { outline: 0; }
   .project-row { flex-wrap: wrap; }
   .project-row-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
 }
+
+/* Lesbarkeit: kleine Beschriftungen im hellen Design mit mindestens 4,5:1 Kontrast */
+html[data-theme="light"] .result-table-header,
+html[data-theme="light"] .endpoint-table-header,
+html[data-theme="light"] .result-table-header small,
+html[data-theme="light"] .endpoint-table-header small,
+html[data-theme="light"] .bottom-bar,
+html[data-theme="light"] .terminal-name,
+html[data-theme="light"] .terminal-load,
+html[data-theme="light"] .terminal-card-length,
+html[data-theme="light"] .edge-card-grid label,
+html[data-theme="light"] .edge-card-details summary,
+html[data-theme="light"] .advanced-settings summary,
+html[data-theme="light"] .tool,
+html[data-theme="light"] .eyebrow,
+html[data-theme="light"] .project-label-row .save-state { color: #4f6168; }
+html[data-theme="light"] .tool.active { color: #066a4e; }
+html[data-theme="light"] .topbar > .badge small,
+html[data-theme="light"] .riser-calc-badge small { color: #4f6168; border-left-color: #c5d1d5; }
