@@ -350,3 +350,9 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 .welcome-action-icon .icon{width:18px;height:18px}.welcome-action i .icon{width:16px;height:16px}
 .tool small{max-width:100%;white-space:normal;text-align:center;line-height:1.1;font-size:var(--fs-2xs)}.tool{height:auto;min-height:49px;padding:4px 0}
 .tool{width:56px}
+.canvas-guide{position:absolute;z-index:4;left:50%;top:18px;transform:translateX(-50%);max-width:min(460px,calc(100% - 32px));padding:9px 14px;border:1px solid #31525a;border-radius:8px;background:#16262ee6;color:#cfe0e2;font-size:var(--fs-sm);line-height:1.4;text-align:center;pointer-events:none;box-shadow:0 8px 30px #0006}
+.terminal-name input{border-bottom:1px dashed #3d525b}.terminal-name input:hover{border-bottom-color:#6b8189}.terminal-name input:focus{border-bottom-style:solid;border-bottom-color:#54cfa9}
+.project-row.current{border-color:#3f7a68}.project-current{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:#1b372f;color:var(--mint);font:600 var(--fs-2xs) var(--sans);vertical-align:1px}
+.narrow-notice{display:none}
+@media(max-width:959px){.narrow-notice{display:flex;position:fixed;z-index:1000;left:12px;right:12px;bottom:12px;gap:12px;align-items:center;padding:12px 14px;border:1px solid #73583a;border-radius:8px;background:#3b3125;color:#f0c98c;font-size:var(--fs-sm);box-shadow:0 10px 40px #0008}.narrow-notice p{margin:0;flex:1;line-height:1.4}}
+.narrow-notice[hidden]{display:none!important}
