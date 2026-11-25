@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.2.2 — Desktop-Updates ohne veraltete PWA-Dateien
+
+- Desktop-App entfernt beim Start frühere RohrRunner-Service-Worker und deren PWA-Cache und lädt eine noch davon gesteuerte Oberfläche einmal neu.
+- Gespeicherte Projekte bleiben erhalten; die Browser-PWA registriert ihren Service Worker weiterhin und speichert die neue Startdatei auch offline.
+- Anwendungs-, Desktop- und angezeigte Versionen auf 1.2.2 synchronisiert.
+
 # 1.2.1 — Scharfer Zoom und lesbare Auswahlfelder
 
 - Rohrschema-SVG wird beim Zoomen in der Zielgröße gezeichnet, damit die Linux-WebView keine vergrößerte Rasterebene anzeigt.

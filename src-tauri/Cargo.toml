@@ -1,6 +1,6 @@
 [package]
 name = "rohrrunner"
-version = "1.2.1"
+version = "1.2.2"
 description = "Lokale Rohrnetzplanung und technische Vorbemessung"
 authors = ["RohrRunner"]
 edition = "2021"
