@@ -5,6 +5,8 @@
 /* Keep the PDF page and its vector overlay at the same aspect ratio and scale. */
 #pdfCanvas,#network{inset:auto;width:auto;height:auto;object-fit:contain;}
 #pdfCanvas{pointer-events:none;opacity:1;}
+select{color-scheme:dark}
+select option{color:#d5e0e2;background:#111e26}
 #network{z-index:2;overflow:visible;}
 .stage.panning{cursor:grabbing!important;}
 .drop-hint{position:absolute;inset:12px;z-index:5;border:2px dashed var(--mint);border-radius:12px;background:#11231fd9;color:#b5f5dc;display:grid;place-items:center;font:600 0.9375rem var(--sans);pointer-events:none;}

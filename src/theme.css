@@ -20,6 +20,8 @@ html[data-theme="light"] {
   --amber: #b05a00;
   --red: #b85c00;
 }
+html[data-theme="light"] select { color-scheme: light; }
+html[data-theme="light"] select option { color: #26373d; background: #f8fafb; }
 
 /* Rollenfarben für das helle Design */
 html[data-theme="light"] {

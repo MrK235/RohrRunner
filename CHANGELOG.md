@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.2.1 — Scharfer Zoom und lesbare Auswahlfelder
+
+- Rohrschema-SVG wird beim Zoomen in der Zielgröße gezeichnet, damit die Linux-WebView keine vergrößerte Rasterebene anzeigt.
+- Auswahlfelder und ihre Optionen erhalten explizite Farben für dunkles und helles Design, auch in nativen Linux-Menüs.
+- Versionsanzeigen und Desktop-Metadaten auf 1.2.1 synchronisiert; der PWA-Cache wird erneuert.
+
 # 1.2.0 — Überarbeitete Oberfläche, Exporte und Seitenleiste
 
 - Oberfläche vereinheitlicht: eigene Schrift, Rollenfarben, ruhigere Kopfzeile, einheitliche Orange-Darstellung für Fehler und Warnungen; bessere Lesbarkeit, Zugänglichkeit und Bedienführung; veraltete Ergebnisse werden gekennzeichnet, der Startdialog ist modal.
