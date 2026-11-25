@@ -447,6 +447,32 @@ test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () =
   await new Promise(resolve=>setImmediate(resolve));assert.equal(saved.length,2);
 });
 
+test('Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu', async () => {
+  const deleted=[],registered=[],registrations=[{scope:'http://tauri.localhost/',unregister:async()=>true}];
+  let reloads=0;
+  const serviceWorker={controller:{},getRegistrations:async()=>registrations,register:async path=>registered.push(path)};
+  const caches={keys:async()=>['rohrrunner-pwa-v1','other-cache'],delete:async name=>{deleted.push(name);return true}};
+  const window={__TAURI_INTERNALS__:{},caches,addEventListener:()=>{throw Error('Desktop darf keinen Service Worker registrieren')}};
+  const location={origin:'http://tauri.localhost',protocol:'http:',reload:()=>reloads++};
+  runInNewContext(read('src/desktop-cache.js'),{window,navigator:{serviceWorker},location,caches,console});
+  runInNewContext(read('src/pwa.js'),{window,navigator:{serviceWorker},location,console});
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.deepEqual(deleted,['rohrrunner-pwa-v1']);
+  assert.equal(reloads,1);
+  assert.deepEqual(registered,[]);
+});
+
+test('Browser registriert den PWA-Service-Worker weiterhin', () => {
+  let onLoad,registration;
+  const window={addEventListener:(type,handler)=>{if(type==='load')onLoad=handler}};
+  const navigator={serviceWorker:{register:(path,options)=>{registration={path,options};return Promise.resolve()}}};
+  runInNewContext(read('src/desktop-cache.js'),{window,navigator,location:{protocol:'http:'},console});
+  runInNewContext(read('src/pwa.js'),{window,navigator,location:{protocol:'http:'},console});
+  onLoad();
+  assert.equal(registration.path,'./sw.js');
+  assert.equal(registration.options.scope,'./');
+});
+
 test('Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab', () => {
   const config=JSON.parse(read('src-tauri/tauri.conf.json'));
   assert.match(config.app.security.csp,/default-src 'self'/);
