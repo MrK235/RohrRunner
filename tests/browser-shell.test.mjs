@@ -447,6 +447,15 @@ test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () =
   await new Promise(resolve=>setImmediate(resolve));assert.equal(saved.length,2);
 });
 
+test('PWA-Aktivierung löscht nur alte RohrRunner-Caches', async () => {
+  const listeners={},deleted=[];
+  const self={registration:{scope:'http://127.0.0.1:4173/'},location:{origin:'http://127.0.0.1:4173'},clients:{claim:async()=>{}},addEventListener:(type,handler)=>listeners[type]=handler};
+  const caches={keys:async()=>['rohrrunner-pwa-v39','rohrrunner-pwa-v40','other-app-cache'],delete:async name=>{deleted.push(name);return true}};
+  runInNewContext(read('sw.js'),{self,caches,URL,Set,Promise});
+  let work;listeners.activate({waitUntil:promise=>work=promise});await work;
+  assert.deepEqual(deleted,['rohrrunner-pwa-v39']);
+});
+
 test('Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu', async () => {
   const deleted=[],registered=[],registrations=[{scope:'http://tauri.localhost/',unregister:async()=>true}];
   let reloads=0;

@@ -4,7 +4,7 @@
 
 RohrRunner ist eine lokale Browseranwendung zur grafischen Erfassung und technischen Vorbemessung von Kältemittelrohrnetzen. Auf einem PDF-Grundriss oder einer leeren Zeichenfläche entstehen rechtwinklige Leitungsnetze mit Start, Kühlstellen, Lasten und Betriebspunkten.
 
-**Version 1.2.3** · PWA · Tauri Desktop · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
+**Version 1.2.4** · PWA · Tauri Desktop · Kein Build-Schritt · Keine npm-Laufzeitpakete · Lokale Projektverwaltung
 
 [Öffentliches Repository auf GitHub](https://github.com/MrK235/RohrRunner)
 

@@ -1,5 +1,10 @@
 # Änderungsprotokoll
 
+# 1.2.4 — PWA-Cache-Bereinigung eingegrenzt
+
+- Bei der Aktivierung entfernt der Service Worker nur ältere RohrRunner-PWA-Caches; andere Cache-Storage-Einträge desselben Ursprungs bleiben erhalten.
+- Regressionstest für fremde und aktuelle Caches ergänzt; Versionsanzeigen und Desktop-Metadaten auf 1.2.4 synchronisiert.
+
 # 1.2.3 — Online-Versionshinweis
 
 - Die Anwendung prüft beim Start die neueste stabile GitHub-Veröffentlichung und zeigt bei einer neueren Version einen schließbaren Hinweis mit Download-Link.
