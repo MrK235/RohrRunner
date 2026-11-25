@@ -1,5 +1,11 @@
 # Änderungsprotokoll
 
+# 1.2.3 — Online-Versionshinweis
+
+- Die Anwendung prüft beim Start die neueste stabile GitHub-Veröffentlichung und zeigt bei einer neueren Version einen schließbaren Hinweis mit Download-Link.
+- Der Versionscheck läuft bei fehlender Verbindung ohne Einschränkung der Anwendung weiter; die Desktop-CSP erlaubt ausschließlich den nötigen GitHub-API-Aufruf.
+- Anwendungs-, Desktop- und angezeigte Versionen auf 1.2.3 synchronisiert.
+
 # 1.2.2 — Desktop-Updates ohne veraltete PWA-Dateien
 
 - Desktop-App entfernt beim Start frühere RohrRunner-Service-Worker und deren PWA-Cache und lädt eine noch davon gesteuerte Oberfläche einmal neu.
