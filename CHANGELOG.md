@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.2.5 — Orange Markierung und klarere Kälteträger-Ergebnisse
+
+- Markierte Rohrstrecken, Knoten und Listeneinträge werden wieder orange hervorgehoben; Blau war nicht kontrastreich genug.
+- Kälteträger-Ergebnisliste zeigt Einheiten hinter den Werten statt in den Überschriften; Kühlstellenspalte heißt „Druckverlust“.
+- Kugelabsperrventile in der Kältemittel-Materialliste werden wie T-Stücke mit Ø-Außendurchmesser angezeigt.
+- Versionsanzeigen und Desktop-Metadaten auf 1.2.5 synchronisiert; der PWA-Cache wird erneuert.
+
 # 1.2.4 — PWA-Cache-Bereinigung eingegrenzt
 
 - Bei der Aktivierung entfernt der Service Worker nur ältere RohrRunner-PWA-Caches; andere Cache-Storage-Einträge desselben Ursprungs bleiben erhalten.
