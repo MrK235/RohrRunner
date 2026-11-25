@@ -362,3 +362,6 @@ html[data-theme="dark"] #panelCalculation .field-unit:hover input[type="number"]
 .pipe-casing{fill:none;stroke:#0d1a20e0;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}.has-pdf .pipe-line{filter:none}.has-pdf .pipe-preview{stroke:#1d8f73}body:not(.has-pdf) #dimPlan{display:none}
 .stage.plan-dimmed #pdfCanvas{opacity:.4}
 #dimPlan.active{color:var(--mint);border-color:#4b8776;background:#1b372f}#dimPlan:disabled{opacity:.35}
+
+.update-notice{position:fixed;z-index:1100;right:18px;bottom:48px;width:min(360px,calc(100vw - 36px));display:flex;gap:12px;padding:16px;border:1px solid var(--line-strong);border-radius:10px;background:var(--panel);color:var(--text);box-shadow:0 12px 40px #0008;font:var(--fs-sm) var(--sans)}
+.update-notice[hidden]{display:none}.update-notice>div{min-width:0;flex:1}.update-notice strong{display:block;color:var(--heading);font-size:var(--fs-md)}.update-notice p{margin:6px 0 10px;color:var(--label);line-height:1.4}.update-notice a{color:var(--mint);font-weight:650;text-decoration:underline;text-underline-offset:3px}.update-notice button{align-self:flex-start;border:0;background:transparent;color:var(--muted);font-size:1.25rem;line-height:1;padding:0 2px}.update-notice button:hover{color:var(--text)}

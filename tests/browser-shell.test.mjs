@@ -473,9 +473,39 @@ test('Browser registriert den PWA-Service-Worker weiterhin', () => {
   assert.equal(registration.options.scope,'./');
 });
 
+test('Online-Versionscheck meldet nur neuere stabile Releases und merkt sich das Schließen', async () => {
+  const run = async (tag,extra={},options={}) => {
+    const parts={'[data-update-version]':{textContent:''},'[data-update-link]':{href:''},'[data-update-dismiss]':{onclick:null}};
+    const notice={hidden:true,querySelector:selector=>parts[selector]};
+    const stored=new Map();
+    if(options.dismissed)stored.set('rohrrunner.dismissedUpdate.v1',options.dismissed);
+    const document={querySelector:()=>({textContent:'Version 1.2.2'}),getElementById:()=>notice};
+    let requested='';
+    const fetch=async url=>{requested=url;if(options.offline)throw Error('offline');return{ok:true,json:async()=>({tag_name:tag,...extra})}};
+    const localStorage={getItem:key=>stored.get(key),setItem:(key,value)=>stored.set(key,value)};
+    runInNewContext(read('src/update-check.js'),{document,fetch,localStorage,AbortController,setTimeout,clearTimeout});
+    await new Promise(resolve=>setImmediate(resolve));
+    return{notice,parts,stored,requested};
+  };
+  const newer=await run('v1.2.10');
+  assert.match(newer.requested,/api\.github\.com\/repos\/MrK235\/RohrRunner\/releases\/latest$/);
+  assert.equal(newer.notice.hidden,false);
+  assert.equal(newer.parts['[data-update-version]'].textContent,'1.2.10');
+  assert.equal(newer.parts['[data-update-link]'].href,'https://github.com/MrK235/RohrRunner/releases/tag/v1.2.10');
+  newer.parts['[data-update-dismiss]'].onclick();
+  assert.equal(newer.notice.hidden,true);
+  assert.equal(newer.stored.get('rohrrunner.dismissedUpdate.v1'),'1.2.10');
+  for(const [tag,extra] of [['v1.2.2',{}],['v1.1.99',{}],['v1.3.0',{prerelease:true}],['invalid',{}]]){
+    assert.equal((await run(tag,extra)).notice.hidden,true);
+  }
+  assert.equal((await run('v1.2.10',{}, {dismissed:'1.2.10'})).notice.hidden,true);
+  assert.equal((await run('v1.2.10',{}, {offline:true})).notice.hidden,true);
+});
+
 test('Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab', () => {
   const config=JSON.parse(read('src-tauri/tauri.conf.json'));
   assert.match(config.app.security.csp,/default-src 'self'/);
+  assert.match(config.app.security.csp,/connect-src[^;]*https:\/\/api\.github\.com/);
   assert.match(config.app.security.csp,/object-src 'none'/);
   assert.match(config.app.security.csp,/worker-src 'self' blob:/);
   assert.match(read('scripts/test.mjs'),/tests\/materials\.test\.mjs/);
