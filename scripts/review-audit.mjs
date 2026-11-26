@@ -193,8 +193,9 @@ if (process.argv.includes('--stress')) {
       edges: [{ id: 'trunk', from: 's', to: 'j', pipeRiser: true, pipeRiserLengthM: 2 },
         { id: 'keep', from: 'j', to: 'a', pipeRiser: true, pipeRiserLengthM: 6 }, { id: 'remove', from: 'j', to: 'b' }] };
     const result = editor.deleteSelection(net, { kind: 'node', id: 'b' });
-    assert.equal(result.edges.length, 1);
-    assert.equal(result.edges[0].pipeRiserLengthM, 8, `Steigleitung schrumpft von 2+6 auf ${result.edges[0].pipeRiserLengthM} m.`);
+    assert.equal(result.edges.length, 2);
+    assert.equal(result.edges.reduce((sum, edge) => sum + Number(edge.pipeRiserLengthM || 0), 0), 8,
+      'Die beiden hydraulisch getrennten Steigleitungen müssen erhalten bleiben.');
   });
   await check('UI-01', 'Kälteträger-Druckverletzung erreicht die Statuszuordnung', () => {
     const net = network(), c = createContext({ project: { ...net, calibration: 1 }, RohrRunnerEngine: engine });

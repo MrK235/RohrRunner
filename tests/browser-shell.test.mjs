@@ -169,7 +169,8 @@ test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekt
   assert.equal(state.history.length,0);assert.equal(state.future.length,0);assert.equal(state.selection,null);
   assert.equal(ctx.pending.size,0);assert.equal(nodes.calculate.disabled,false);
   assert.equal(nodes.results.dataset.hasResult,'');assert.match(nodes.results.innerHTML,/Berechnung starten/);
-  assert.match(app,/const embeddedPdf=data\.pdfBase64;await persistProject\(\);stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
+  assert.match(app,/const embeddedPdf=data\.pdfBase64;/);
+  assert.match(app,/await persistProject\(\);stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
 });
 
 test('Lokaler Server liefert nur öffentliche Anwendungsdateien aus', async t => {

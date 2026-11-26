@@ -168,6 +168,10 @@
         if (incident.length >= 3) continue;
         if (incident.length === 2) {
           const [first, second] = incident;
+          // A single merged edge cannot represent two risers with different sizes.
+          // Keep the degree-two junction and both hydraulic sections intact.
+          if (first.pipeRiser && Number(first.pipeRiserLengthM) > 0 ||
+              second.pipeRiser && Number(second.pipeRiserLengthM) > 0) continue;
           const otherA = first.from === node.id ? first.to : first.from;
           const otherB = second.from === node.id ? second.to : second.from;
           const point = id => remainingNodes.find(item => item.id === id);

@@ -4,21 +4,15 @@ Diese Datei hält reproduzierbare Defekte und für Nutzende sichtbare Einschrän
 
 ## Offene, reproduzierbare Defekte
 
-Der [Code Review vom 26. November 2026](docs/reviews/2026-11-26/REVIEW.md) untersucht Version **1.2.5** (`2d36441`). Die folgenden Defekte sind offen; Reproduktionen, Ursachen, Abnahmekriterien und Rohprotokolle stehen im Bericht. Der Review-Commit behebt diese Produktfehler nicht.
+Der [Code Review vom 26. November 2026](docs/reviews/2026-11-26/REVIEW.md) untersucht Version **1.2.5** (`2d36441`). Der [Folgebericht](docs/reviews/2026-11-26/FOLLOWUP.md) hält die Korrekturen und verbleibenden Prüflücken fest. Die Version blieb unverändert.
 
 | ID | Priorität | Befund | Vorläufige Umgehung |
 | --- | --- | --- | --- |
-| R01 | P1 | PDF.js 3.11.174 ohne Mitigation für CVE-2024-4367 | Nur vertrauenswürdige PDFs laden. |
-| R02 | P1 | Netzänderungen während einer Berechnung können von deren altem Ergebnis überschrieben werden. | Lauf abwarten, dann ändern und neu berechnen. |
-| R03 | P1 | Ungültige Koordinaten können im Kälteträger-Solver ein gültiges Ergebnis mit NaN-Werten ergeben; Pfadenden werden nicht abgeglichen. | Importierte Daten und gezeichnete Längen prüfen; auffällige Ergebnisse nicht verwenden. |
-| R04 | P1 | Unzureichend validierte Importe können den Editor teilweise umstellen und beschädigen. | Vorher sichern; bei Fehlern neu laden und gespeichertes Projekt öffnen. |
-| R05 | P1 | Beim Löschen eines T-Abzweigs gehen Steigleitungsdaten der zweiten zusammengeführten Strecke verloren. | Steigleitungsangaben nach dem Zusammenführen prüfen und korrigieren. |
-| R06 | P2 | Unter Windows umgehen kodierte Rückwärtsschrägstriche die Dateifreigabeliste des lokalen Servers innerhalb des Repositorys. | Keine vertraulichen Dateien im vom Server bedienten Repository ablegen. |
-| R07 | P2 | Flüssigkeitszeile und Endpunkt verwenden unterschiedliche Temperaturbasen. | Bei Gleitgemischen Zeilen- und Endpunktwerte nicht als identische Größe behandeln. |
-| R08 | P2 | Kälteträgerwarnungen markieren betroffene Ergebniszeilen nicht vollständig. | Globale Meldungen und Einzelwerte prüfen. |
-| R09 | P2 | Druckverlustwerte mit kPa überlaufen die Ergebniszellen bei 1280 px Fensterbreite. | Werte über den CSV-Export prüfen. |
+| R04 | P1 | Struktur und PDF werden vor dem Import geprüft; ein Fehler nach Beginn des Projektwechsels kann den Editor weiterhin teilweise umstellen. | Vorher sichern; bei Fehlern neu laden und gespeichertes Projekt öffnen. |
+| R08 | P2 | Kälteträgerwarnungen tragen nun Kantenbezüge und Tabellenmarkierungen; die Zuordnung im Plan und CSV ist noch nicht durchgehend geprüft. | Globale Meldungen und Einzelwerte prüfen. |
+| R09 | P2 | Die Ergebnisbreiten wurden angepasst, aber die Darstellung bei mehreren Fensterbreiten wurde noch nicht visuell nachgeprüft. | Werte bei engen Fenstern über den CSV-Export prüfen. |
 
-Zusätzlich dokumentiert der Bericht das unter verzögertem PDF-Zugriff reproduzierte Speicherrisiko R10 und die Belastungsgrenze R11. Ein Browser-Datenverlust beziehungsweise Absturz ist für diese beiden Fälle nicht nachgewiesen.
+R01–R03, R05–R07 und R11 sind mit den dokumentierten Regressionsfällen behoben beziehungsweise mitigiert. R10 ist für den reproduzierten Mischdatensatz durch eine Momentaufnahme korrigiert; eine serialisierte Speicherwarteschlange und Browserprüfung unter verzögertem IndexedDB-Zugriff fehlen noch. Ein Browser-Datenverlust wurde nicht nachgewiesen.
 
 ## Bekannte Einschränkungen
 

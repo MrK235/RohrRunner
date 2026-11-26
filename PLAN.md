@@ -1,5 +1,13 @@
 # Berechnungsmodell von RohrRunner
 
+## Prüf- und Validierungsstand nach dem Review vom 26. November 2026
+
+Vor der hydraulischen Rechnung werden nun endliche Knoten- und Pfadkoordinaten, ein positiver endlicher Maßstab sowie die Übereinstimmung der ersten und letzten Pfadpunkte mit den Anschlussknoten geprüft. Ungültige geometrische Eingaben werden abgewiesen, bevor sie `NaN` in Druckverlust- oder Geschwindigkeitswerte tragen können. Zusatzlängen, Widerstände und Steigleitungslängen müssen endliche nichtnegative Werte sein; Höhendifferenzen dürfen ein Vorzeichen haben, müssen aber endlich sein. Diese Prüfung erweitert die Eingabekontrolle, nicht den fachlichen Geltungsbereich.
+
+Bei Kältemittelgemischen wird die Temperaturdifferenz einer Flüssigkeitsstrecke jetzt wie der Flüssigkeits-Endpunktwert aus der Blasenpunktkurve berechnet. Für Sauggas bleibt die Taupunktkurve maßgeblich. Dadurch können ausgewiesene FL-Streckenwerte gegenüber älteren Ergebnisdateien abweichen; Druckverluste und Rohrwahl werden dadurch nicht neu definiert. Der [Review](docs/reviews/2026-11-26/REVIEW.md) dokumentiert den reproduzierten Unterschied an einem synthetischen R448A-Einzelabschnitt. Bereits gespeicherte Ergebnisse müssen nach einer Projektänderung neu berechnet werden; eine rückwirkende Umrechnung alter Exporte erfolgt nicht.
+
+Für Kälteträgerbäume werden Kindknoten und Rohrzeilen für wiederholte Abfragen indiziert. Das ändert weder Gleichungen noch die begrenzte Upgrade-Heuristik. Der synthetische 1499-Kühlstellen-Fall wurde nach dieser Änderung unter dem gewählten 30-Sekunden-Testbudget abgeschlossen. Die gemessene Laufzeit ist keine allgemeine Zusage für andere Netze oder Hardware.
+
 Dieses Dokument beschreibt den implementierten Rechenkern in `src/engine.js`, den Stoffdatenzugriff in `src/stoffdaten.js` und den Interpolationspfad in `src/fast-data.js`. Es ist eine technische Dokumentation des Programmstands, keine Anlagenfreigabe oder normative Auslegungsanweisung.
 
 ## 1. Geltungsbereich

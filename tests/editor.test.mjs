@@ -135,7 +135,7 @@ test('eine von PDF.js abgelöste PDF wird vor dem Projektexport wiederhergestell
   const serializer = app.match(/async function projectFile\(\)\{[^\n]*\}/)?.[0];
   const base64 = app.match(/const toBase64=bytes=>\{[^\n]*\};/)?.[0];
   assert.ok(helper && serializer && base64);
-  assert.match(app, /pdfjsLib\.getDocument\(\{data:new Uint8Array\(nextBytes\.slice\(0\)\)\}\)/);
+  assert.match(app, /pdfjsLib\.getDocument\(\{data:new Uint8Array\(nextBytes\.slice\(0\)\),isEvalSupported:false,enableScripting:false\}\)/);
   const fixture = Buffer.from('%PDF-1.4\n%%EOF\n');
   const original = Uint8Array.from(fixture).buffer;
   const detached = original.slice(0);

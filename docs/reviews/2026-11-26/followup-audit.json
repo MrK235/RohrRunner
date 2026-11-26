@@ -1,0 +1,228 @@
+{
+  "node": "v24.22.3",
+  "platform": "win32",
+  "commit": "bedaa59a122d0170b8de668119376bc802ffdcbc",
+  "checks": [
+    {
+      "id": "SEC-01",
+      "title": "PDF.js besitzt den Fix oder die Mitigation für CVE-2024-4367",
+      "status": "pass",
+      "evidence": {
+        "version": "3.11.174"
+      },
+      "durationMs": 24.126900000000006
+    },
+    {
+      "id": "SEC-02",
+      "title": "Lokaler Server sperrt private Dateien auch bei Windows-Pfadtrennern",
+      "status": "pass",
+      "evidence": [
+        {
+          "path": "/",
+          "status": 200
+        },
+        {
+          "path": "/.git/config",
+          "status": 403
+        },
+        {
+          "path": "/src/x%5c..%5c..%5cAGENTS.md",
+          "status": 403
+        }
+      ],
+      "durationMs": 288.68629999999996
+    },
+    {
+      "id": "BUILD-01",
+      "title": "Eingebetteter Worker entspricht den aktuellen Quellen",
+      "status": "pass",
+      "evidence": {
+        "bytes": 12513102,
+        "normalizedLineEndings": true
+      },
+      "durationMs": 99.35570000000001
+    },
+    {
+      "id": "PWA-01",
+      "title": "Alle Dateien der Offline-App-Shell sind vorhanden",
+      "status": "pass",
+      "evidence": {
+        "files": 35
+      },
+      "durationMs": 15.823399999999992
+    },
+    {
+      "id": "DATA-01",
+      "title": "Kataloge und Versionen sind konsistent",
+      "status": "pass",
+      "evidence": {
+        "version": "1.2.5",
+        "series": 4
+      },
+      "durationMs": 6.603099999999927
+    },
+    {
+      "id": "INPUT-01",
+      "title": "Import weist null-Knoten vor dem Projektwechsel ab",
+      "status": "pass",
+      "durationMs": 1.2292999999999665
+    },
+    {
+      "id": "INPUT-02",
+      "title": "Unvollständige Koordinaten ergeben kein gültiges NaN-Ergebnis",
+      "status": "pass",
+      "evidence": {
+        "rejected": true
+      },
+      "durationMs": 1.4307999999999765
+    },
+    {
+      "id": "INPUT-03",
+      "title": "Maßstab Infinity wird abgewiesen",
+      "status": "pass",
+      "durationMs": 0.03489999999999327
+    },
+    {
+      "id": "INPUT-04",
+      "title": "Pfad muss zu den angegebenen Knoten passen",
+      "status": "pass",
+      "durationMs": 0.04900000000009186
+    },
+    {
+      "id": "ASYNC-01",
+      "title": "Eine Netzänderung verwirft das laufende Berechnungsergebnis",
+      "status": "pass",
+      "durationMs": 1.2661000000000513
+    },
+    {
+      "id": "ASYNC-02",
+      "title": "Asynchrones Speichern vermischt keine Projekt- und PDF-Stände",
+      "status": "pass",
+      "durationMs": 0.7369999999999663
+    },
+    {
+      "id": "EDIT-01",
+      "title": "Löschen eines Abzweigs erhält beide Steigleitungslängen",
+      "status": "pass",
+      "durationMs": 0.21250000000009095
+    },
+    {
+      "id": "UI-01",
+      "title": "Kälteträger-Druckverletzung erreicht die Statuszuordnung",
+      "status": "pass",
+      "durationMs": 0.8123000000000502
+    },
+    {
+      "id": "HYD-01",
+      "title": "Einzelne Flüssigkeitsstrecke und Endpunkt verwenden dieselbe Temperaturbasis",
+      "status": "pass",
+      "durationMs": 2268.799
+    },
+    {
+      "id": "HYD-02",
+      "title": "Kälteträger stimmt mit unabhängiger Darcy-Weisbach-Nachrechnung überein",
+      "status": "pass",
+      "evidence": {
+        "circuitPressureDropPa": 6429.281416353078,
+        "massFlowKgS": 0.19853306871308668,
+        "propertySource": "dieselbe lokale CoolProp-Instanz; keine unabhängige Stoffwertvalidierung"
+      },
+      "durationMs": 9.856699999999819
+    },
+    {
+      "id": "MEDIA-01",
+      "title": "Alle acht Kältemittel liefern endliche Ergebnisse im kleinen Standardnetz",
+      "status": "pass",
+      "evidence": [
+        {
+          "fluid": "R513A",
+          "valid": true,
+          "sizes": [
+            "12x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R448A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R744",
+          "valid": true,
+          "sizes": [
+            "9.52x0.56",
+            "9.52x0.56"
+          ]
+        },
+        {
+          "fluid": "R134A",
+          "valid": true,
+          "sizes": [
+            "12x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R404A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R407C",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R449A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R452A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        }
+      ],
+      "durationMs": 2034.7684999999997
+    },
+    {
+      "id": "MEDIA-02",
+      "title": "Neun Kälteträger in beiden Rohrserien liefern endliche Ergebnisse",
+      "status": "pass",
+      "evidence": {
+        "cases": 18
+      },
+      "durationMs": 81.01339999999982
+    },
+    {
+      "id": "EDIT-02",
+      "title": "Deterministische Geometrieprobe mit 1000 Verschiebungen bleibt orthogonal",
+      "status": "pass",
+      "evidence": {
+        "seed": 235,
+        "cases": 1000
+      },
+      "durationMs": 29.91649999999936
+    }
+  ],
+  "summary": {
+    "pass": 18,
+    "fail": 0
+  }
+}

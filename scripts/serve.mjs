@@ -15,7 +15,7 @@ createServer((request, response) => {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
     const requested = pathname === '/' ? 'index.html' : pathname.slice(1);
     const parts = requested.split('/');
-    if (parts.some(part => !part || part === '.' || part === '..' || part.startsWith('.')) ||
+    if (requested.includes('\\') || parts.some(part => !part || part === '.' || part === '..' || part.startsWith('.')) ||
         !(publicFiles.has(requested) || publicFolders.has(parts[0]) && parts.length > 1)) {
       response.writeHead(403).end('Forbidden');
       return;

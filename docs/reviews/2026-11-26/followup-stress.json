@@ -1,0 +1,83 @@
+{
+  "node": "v24.22.3",
+  "platform": "win32",
+  "commit": "bedaa59a122d0170b8de668119376bc802ffdcbc",
+  "checks": [
+    {
+      "id": "STRESS-10",
+      "title": "10 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-10",
+        "title": "10 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 21,
+          "edges": 20,
+          "valid": true,
+          "memoryMiB": 158
+        },
+        "durationMs": 1685.4478
+      },
+      "durationMs": 1957.4496
+    },
+    {
+      "id": "STRESS-100",
+      "title": "100 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-100",
+        "title": "100 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 201,
+          "edges": 200,
+          "valid": true,
+          "memoryMiB": 156
+        },
+        "durationMs": 1720.8271
+      },
+      "durationMs": 1972.3828000000003
+    },
+    {
+      "id": "STRESS-500",
+      "title": "500 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-500",
+        "title": "500 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 1001,
+          "edges": 1000,
+          "valid": true,
+          "memoryMiB": 170
+        },
+        "durationMs": 1812.2784
+      },
+      "durationMs": 2069.9294000000004
+    },
+    {
+      "id": "STRESS-1499",
+      "title": "1499 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-1499",
+        "title": "1499 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 2999,
+          "edges": 2998,
+          "valid": true,
+          "memoryMiB": 239
+        },
+        "durationMs": 2885.1436000000003
+      },
+      "durationMs": 3237.5472
+    }
+  ],
+  "summary": {
+    "pass": 4,
+    "fail": 0
+  }
+}
