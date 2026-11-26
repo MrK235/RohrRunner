@@ -143,34 +143,79 @@ test('Projekt- und PDF-Import haben Größen- und Komplexitätsgrenzen', async (
   await assert.rejects(importPdf({size:25*1024*1024+1,arrayBuffer:()=>{throw new Error('PDF wurde geladen')}}),/PDF ist zu groß/);
   assert.match(app,/if\(file\.size>MAX_PROJECT_BYTES\)throw Error/);
   assert.match(app,/if\(bytes\.byteLength>MAX_PDF_BYTES\)throw new Error/);
-  const load=app.slice(app.indexOf('async function loadPdfBytes('),app.indexOf("  $('openPdf')")).trim();
+  const load=app.slice(app.indexOf('async function preparePdfDocument('),app.indexOf("  $('openPdf')")).trim();
   const old={destroy:()=>{}},next={getPage:async()=>({getViewport:()=>({width:12000,height:800})}),destroy(){this.destroyed=true}};
   const ctx={MAX_PDF_BYTES:25*1024*1024,window:{pdfjsLib:{}},pdfjsLib:{getDocument:()=>({promise:Promise.resolve(next)})},pdf:old,pdfBytes:new ArrayBuffer(1),pdfName:'alt.pdf'};
-  const loadPdf=runInNewContext(`(${load})`,ctx);
+  const loadPdf=runInNewContext(`(()=>{${load};return loadPdfBytes})()`,ctx);
   await assert.rejects(loadPdf(new ArrayBuffer(10)),/PDF-Seite überschreitet/);
   assert.equal(ctx.pdf,old);assert.equal(ctx.pdfName,'alt.pdf');assert.equal(next.destroyed,true);
 });
 
-test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten', async () => {
-  const app=read('src/app.js');
-  const stop=app.slice(app.indexOf('function stopPreviousCalculation('),app.indexOf('  function startEmpty(')).trim();
-  const open=app.slice(app.indexOf('async function activateProject('),app.indexOf('  async function restoreProjects(')).trim();
-  const block=()=>({innerHTML:'',dataset:{},classList:{add(){}},replaceChildren(){}});
-  const nodes={calculate:{disabled:true,innerHTML:''},projectName:{value:''},pageLabel:{textContent:''},projectsDialog:{close(){}},
+const switchHarness=(app,overrides={})=>{
+  const stop=app.slice(app.indexOf('function abortWorkerJobs('),app.indexOf('  function startEmpty(')).trim();
+  const open=app.slice(app.indexOf('function storedResultUsable('),app.indexOf('  async function restoreProjects(')).trim();
+  const block=()=>({innerHTML:'',dataset:{},classList:{add(){},toggle(){}},replaceChildren(){}});
+  const nodes={calculate:{disabled:true,innerHTML:''},projectName:{value:'Alt'},pageLabel:{textContent:''},projectsDialog:{close(){}},emptyState:block(),
     results:block(),materials:block(),issues:block(),calculationError:block(),exportCsv:block(),exportMaterialsCsv:block()};
-  const ctx={clearInterval:()=>{},clearTimeout:()=>{},scheduleSave:{timer:0},pending:new Map([[3,{}]]),$:id=>nodes[id],
+  const ctx={clearInterval:()=>{},clearTimeout:()=>{},cancelAnimationFrame:()=>{},scheduleSave:{timer:0},pending:new Map([[3,{}]]),$:id=>nodes[id],
     storedProjects:async()=>[{id:'new',settings:{},nodes:[],edges:[]}],persistProject:async()=>{},
-    pdfRenderTask:null,pdf:null,pdfPage:null,pdfBytes:null,renderViewport:null,canvas:{},pdfName:'',
-    migrateTerminalRisers:()=>{},defaults:{},document:{querySelector:()=>null},renderAll:()=>{},updateScale:()=>{},
-    invalidate:()=>{},localStorage:{setItem:()=>{}},ACTIVE:'active',toast:message=>{ctx.error=message},updateHistoryButtons:()=>{}};
-  const api=runInNewContext(`(()=>{let project={id:'old'},runId=3,calculationStatusTimer=1,history=['old'],future=['old'],selection={id:'old'},projectHasBeenSaved=true;${stop};${open};return {activateProject,state:()=>({project,runId,history,future,selection})}})()`,ctx);
+    canvas:{},zoomFrame:0,migrateTerminalRisers:()=>{},defaults:{},document:{querySelector:()=>null},renderAll:()=>{},updateScale:()=>{},fitSurface:()=>{},
+    settingsFromUI:()=>({}),showResult:()=>{},clearResultsView:()=>{nodes.results.dataset.hasResult='';nodes.results.innerHTML='Berechnung starten'},
+    invalidate:()=>{},localStorage:{setItem:()=>{}},ACTIVE:'active',toast:message=>{ctx.error=message},updateHistoryButtons:()=>{},...overrides};
+  const api=runInNewContext(`(()=>{let project={id:'old',nodes:[1],edges:[]},runId=3,calculationStatusTimer=1,history=['old'],future=['old'],selection={id:'old'},projectHasBeenSaved=true,worker=null,pdfRenderTask=null,pdf=ctxPdf,pdfPage=null,pdfBytes=null,renderViewport=null,pdfName='alt.pdf',zoom=2,zoomTarget=2,pan={x:5,y:5},panTarget={x:5,y:5};${stop};${open};return {activateProject,switchProject,state:()=>({project,runId,history,future,selection,pdf,pdfName,zoomTarget})}})()`,{...ctx,ctxPdf:overrides.ctxPdf||null});
+  return {api,ctx,nodes};
+};
+
+test('Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten', async () => {
+  const app=read('src/app.js'),{api,ctx,nodes}=switchHarness(app);
   await api.activateProject('new');
   const state=api.state();assert.equal(state.project.id,'new',ctx.error);assert.equal(state.runId,4);
   assert.equal(state.history.length,0);assert.equal(state.future.length,0);assert.equal(state.selection,null);
   assert.equal(ctx.pending.size,0);assert.equal(nodes.calculate.disabled,false);
   assert.equal(nodes.results.dataset.hasResult,'');assert.match(nodes.results.innerHTML,/Berechnung starten/);
-  assert.match(app,/const embeddedPdf=data\.pdfBase64;/);
-  assert.match(app,/await persistProject\(\);stopPreviousCalculation\(\);history=\[\];future=\[\];selection=null/);
+  assert.match(app,/validateProjectImport\(data\)\}catch\(err\)\{toast\('Projektdatei ungültig: /);
+  assert.match(app,/await switchProject\(next,\{saved:false,bytes:data\.pdfBase64/);
+});
+
+test('Später Fehler beim Projektwechsel stellt das vorherige Projekt vollständig wieder her', async () => {
+  const app=read('src/app.js'),oldPdf={destroy(){this.destroyed=true}};
+  const {api,ctx}=switchHarness(app,{ctxPdf:oldPdf,renderAll:()=>{if(api.state().project.id==='new')throw new Error('Renderfehler')}});
+  await api.activateProject('new');
+  const state=api.state();
+  assert.equal(state.project.id,'old');assert.deepEqual([...state.history],['old']);assert.deepEqual([...state.future],['old']);
+  assert.equal(state.selection.id,'old');assert.equal(state.pdf,oldPdf);assert.equal(state.pdfName,'alt.pdf');assert.equal(state.zoomTarget,2);
+  assert.equal(oldPdf.destroyed,undefined);assert.match(ctx.error,/bisherige Projekt bleibt geöffnet.*Renderfehler/);
+  const failedPdf={destroy(){this.destroyed=true}},rejected=switchHarness(app,{ctxPdf:oldPdf,preparePdfDocument:async()=>({pdf:failedPdf,bytes:new ArrayBuffer(1)}),renderAll:()=>{if(rejected.api.state().project.id==='x')throw new Error('spät')}});
+  await assert.rejects(rejected.api.switchProject({id:'x',nodes:[],edges:[]},{bytes:new ArrayBuffer(1)}),/spät/);
+  assert.equal(rejected.api.state().project.id,'old');assert.equal(failedPdf.destroyed,true);assert.equal(oldPdf.destroyed,undefined);
+});
+
+test('Ungültiges PDF bricht den Projektwechsel vor jeder Zustandsänderung ab', async () => {
+  const app=read('src/app.js'),{api}=switchHarness(app,{preparePdfDocument:async()=>{throw new Error('PDF defekt')}});
+  await assert.rejects(api.switchProject({id:'x',nodes:[],edges:[]},{bytes:new ArrayBuffer(1)}),/PDF defekt/);
+  const state=api.state();assert.equal(state.project.id,'old');assert.equal(state.runId,3);assert.equal(state.history.length,1);
+});
+
+test('Speichervorgänge laufen nacheinander und vermischen keine Projekte', async () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('  function persistProject('),app.indexOf('  function scheduleSave(')).trim();
+  const writes=[],releases=[];let active='';
+  const ctx={$:()=>({value:'',innerHTML:''}),settingsFromUI:()=>({}),clone:value=>JSON.parse(JSON.stringify(value)),
+    projectPdfBytes:async()=>null,putStoredProject:value=>new Promise(resolve=>{writes.push(value.id+':start');releases.push(()=>{writes.push(value.id+':end');resolve()})}),
+    Uint8Array,localStorage:{setItem:(key,value)=>{active=value}},ACTIVE:'a',renderProjectList(){},Promise,Date};
+  const api=runInNewContext(`(()=>{let project={id:'A',nodes:[1]},pdfName='',projectHasBeenSaved=true,saveQueue=Promise.resolve();${source};return {persistProject,set:p=>{project=p}}})()`,ctx);
+  const first=api.persistProject();api.set({id:'B',nodes:[2]});const second=api.persistProject();
+  await new Promise(resolve=>setTimeout(resolve,5));assert.deepEqual(writes,['A:start'],'zweiter Schreibvorgang startet vor Ende des ersten');
+  releases[0]();await first;await new Promise(resolve=>setTimeout(resolve,5));releases[1]();await second;
+  assert.deepEqual(writes,['A:start','A:end','B:start','B:end']);assert.equal(active,'B');
+});
+
+test('Abgebrochene Berechnung beendet den beschäftigten Worker', () => {
+  const app=read('src/app.js'),source=app.slice(app.indexOf('  function abortWorkerJobs('),app.indexOf('  function stopPreviousCalculation(')).trim();
+  const busy={terminate(){this.terminated=true}},idle={terminate(){this.terminated=true}};
+  const run=(current,pending)=>runInNewContext(`(()=>{let worker=current;${source};abortWorkerJobs();return worker})()`,{current,pending});
+  assert.equal(run(busy,new Map([[1,{}]])),null);assert.equal(busy.terminated,true);
+  assert.equal(run(idle,new Map()),idle);assert.equal(idle.terminated,undefined);
+  assert.match(app,/if\(!workerUrl\)\{await workerSourceLoading;/);
 });
 
 test('Lokaler Server liefert nur öffentliche Anwendungsdateien aus', async t => {

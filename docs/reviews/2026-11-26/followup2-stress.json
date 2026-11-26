@@ -1,0 +1,242 @@
+{
+  "node": "v22.23.4",
+  "platform": "linux",
+  "commit": "504b9c25ec72a2fa32968fde6ba8fe3d668309f3",
+  "checks": [
+    {
+      "id": "STRESS-KT-comb-manual-10",
+      "title": "10 Kühlstellen, comb, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 21,
+        "edges": 20,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1439,
+        "memoryMiB": 177,
+        "elapsedMsIncludingStart": 1594,
+        "targetMs": 10000
+      },
+      "durationMs": 1594.317135
+    },
+    {
+      "id": "STRESS-KT-comb-manual-100",
+      "title": "100 Kühlstellen, comb, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 201,
+        "edges": 200,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1366,
+        "memoryMiB": 179,
+        "elapsedMsIncludingStart": 1514,
+        "targetMs": 10000
+      },
+      "durationMs": 1513.786351
+    },
+    {
+      "id": "STRESS-KT-comb-manual-500",
+      "title": "500 Kühlstellen, comb, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 1001,
+        "edges": 1000,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1389,
+        "memoryMiB": 190,
+        "elapsedMsIncludingStart": 1515,
+        "targetMs": 10000
+      },
+      "durationMs": 1514.6195930000004
+    },
+    {
+      "id": "STRESS-KT-comb-manual-1499",
+      "title": "1499 Kühlstellen, comb, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 2999,
+        "edges": 2998,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1624,
+        "memoryMiB": 220,
+        "elapsedMsIncludingStart": 1752,
+        "targetMs": 10000
+      },
+      "durationMs": 1752.4810959999995
+    },
+    {
+      "id": "STRESS-KT-star-manual-1499",
+      "title": "1499 Kühlstellen, star, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 1501,
+        "edges": 1500,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1372,
+        "memoryMiB": 188,
+        "elapsedMsIncludingStart": 1491,
+        "targetMs": 10000
+      },
+      "durationMs": 1491.4848039999997
+    },
+    {
+      "id": "STRESS-KT-tree-manual-1499",
+      "title": "1499 Kühlstellen, tree, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 2523,
+        "edges": 2522,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1390,
+        "memoryMiB": 197,
+        "elapsedMsIncludingStart": 1522,
+        "targetMs": 10000
+      },
+      "durationMs": 1522.5021020000013
+    },
+    {
+      "id": "STRESS-KT-distributor-manual-1499",
+      "title": "1499 Kühlstellen, distributor, manual, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 3038,
+        "edges": 3037,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1408,
+        "memoryMiB": 200,
+        "elapsedMsIncludingStart": 1540,
+        "targetMs": 10000
+      },
+      "durationMs": 1539.7728629999983
+    },
+    {
+      "id": "STRESS-KT-comb-auto-1499",
+      "title": "1499 Kühlstellen, comb, auto, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 2999,
+        "edges": 2998,
+        "valid": false,
+        "issues": 1435,
+        "calculationMs": 6646,
+        "memoryMiB": 337,
+        "elapsedMsIncludingStart": 6788,
+        "targetMs": 10000
+      },
+      "durationMs": 6788.355159000001
+    },
+    {
+      "id": "STRESS-KT-star-auto-1499",
+      "title": "1499 Kühlstellen, star, auto, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 1501,
+        "edges": 1500,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 1512,
+        "memoryMiB": 192,
+        "elapsedMsIncludingStart": 1664,
+        "targetMs": 10000
+      },
+      "durationMs": 1663.8161760000003
+    },
+    {
+      "id": "STRESS-KT-tree-auto-1499",
+      "title": "1499 Kühlstellen, tree, auto, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 2523,
+        "edges": 2522,
+        "valid": false,
+        "issues": 1395,
+        "calculationMs": 4930,
+        "memoryMiB": 333,
+        "elapsedMsIncludingStart": 5089,
+        "targetMs": 10000
+      },
+      "durationMs": 5089.523483000001
+    },
+    {
+      "id": "STRESS-KT-distributor-auto-1499",
+      "title": "1499 Kühlstellen, distributor, auto, secondary: Ziel ≤ 10 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 3038,
+        "edges": 3037,
+        "valid": false,
+        "issues": 1033,
+        "calculationMs": 5839,
+        "memoryMiB": 338,
+        "elapsedMsIncludingStart": 5978,
+        "targetMs": 10000
+      },
+      "durationMs": 5977.879808999998
+    },
+    {
+      "id": "STRESS-KM-comb-auto-10",
+      "title": "10 Kühlstellen, comb, auto, refrigerant: Ziel ≤ 60 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 21,
+        "edges": 20,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 3937,
+        "memoryMiB": 223,
+        "elapsedMsIncludingStart": 4073,
+        "targetMs": 60000
+      },
+      "durationMs": 4072.926201000002
+    },
+    {
+      "id": "STRESS-KM-comb-auto-20",
+      "title": "20 Kühlstellen, comb, auto, refrigerant: Ziel ≤ 60 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 41,
+        "edges": 40,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 32058,
+        "memoryMiB": 248,
+        "elapsedMsIncludingStart": 32219,
+        "targetMs": 60000
+      },
+      "durationMs": 32219.392536000007
+    },
+    {
+      "id": "STRESS-KM-comb-auto-50",
+      "title": "50 Kühlstellen, comb, auto, refrigerant: Ziel ≤ 60 s",
+      "status": "fail",
+      "error": "spawnSync <node> ETIMEDOUT",
+      "durationMs": 180118.835885
+    },
+    {
+      "id": "STRESS-KM-tree-auto-20",
+      "title": "20 Kühlstellen, tree, auto, refrigerant: Ziel ≤ 60 s",
+      "status": "pass",
+      "evidence": {
+        "nodes": 36,
+        "edges": 35,
+        "valid": true,
+        "issues": 0,
+        "calculationMs": 30316,
+        "memoryMiB": 249,
+        "elapsedMsIncludingStart": 30456,
+        "targetMs": 60000
+      },
+      "durationMs": 30455.886946000013
+    }
+  ],
+  "summary": {
+    "pass": 14,
+    "fail": 1
+  }
+}

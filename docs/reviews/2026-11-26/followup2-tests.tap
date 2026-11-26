@@ -1,0 +1,562 @@
+TAP version 13
+# Subtest: Linux-Release erstellt AppImage und DEB und kann bestehende Releases ergänzen
+ok 1 - Linux-Release erstellt AppImage und DEB und kann bestehende Releases ergänzen
+  ---
+  duration_ms: 1.643865
+  type: 'test'
+  ...
+# Subtest: Netz berechnen und Rohrdimensionen erhalten passende Hover-Zustände
+ok 2 - Netz berechnen und Rohrdimensionen erhalten passende Hover-Zustände
+  ---
+  duration_ms: 1.536092
+  type: 'test'
+  ...
+# Subtest: Berechnungseingaben erhalten nur im dunklen Design grauen Hover samt passenden Pfeilen
+ok 3 - Berechnungseingaben erhalten nur im dunklen Design grauen Hover samt passenden Pfeilen
+  ---
+  duration_ms: 0.499527
+  type: 'test'
+  ...
+# Subtest: Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche
+ok 4 - Zahlenfeld-Pfeile übernehmen im hellen Design die helle Eingabefläche
+  ---
+  duration_ms: 0.420559
+  type: 'test'
+  ...
+# Subtest: Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover
+ok 5 - Kühlstellen und Ergebnisse reagieren in beiden Designmodi auf Hover
+  ---
+  duration_ms: 1.296333
+  type: 'test'
+  ...
+# Subtest: Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich
+ok 6 - Ergebnis- und Material-Hover gelten in beiden Designmodi einheitlich
+  ---
+  duration_ms: 0.891262
+  type: 'test'
+  ...
+# Subtest: Designschalter sitzt zwischen Sichern und Fensterrand mit ausgeglichenen Abständen
+ok 7 - Designschalter sitzt zwischen Sichern und Fensterrand mit ausgeglichenen Abständen
+  ---
+  duration_ms: 0.587763
+  type: 'test'
+  ...
+# Subtest: Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung
+ok 8 - Designschalter zeigt nur Symbole und folgt im Automatikmodus der Systemeinstellung
+  ---
+  duration_ms: 3.366107
+  type: 'test'
+  ...
+# Subtest: Veraltete Ergebnisse werden nicht exportiert und CSV-Namen sind keine Formeln
+ok 9 - Veraltete Ergebnisse werden nicht exportiert und CSV-Namen sind keine Formeln
+  ---
+  duration_ms: 4.883444
+  type: 'test'
+  ...
+# Subtest: Projekt- und PDF-Import haben Größen- und Komplexitätsgrenzen
+ok 10 - Projekt- und PDF-Import haben Größen- und Komplexitätsgrenzen
+  ---
+  duration_ms: 4.883024
+  type: 'test'
+  ...
+# Subtest: Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten
+ok 11 - Projektwechsel verwirft laufende Berechnungen und Undo aus anderen Projekten
+  ---
+  duration_ms: 2.643581
+  type: 'test'
+  ...
+# Subtest: Später Fehler beim Projektwechsel stellt das vorherige Projekt vollständig wieder her
+ok 12 - Später Fehler beim Projektwechsel stellt das vorherige Projekt vollständig wieder her
+  ---
+  duration_ms: 2.682113
+  type: 'test'
+  ...
+# Subtest: Ungültiges PDF bricht den Projektwechsel vor jeder Zustandsänderung ab
+ok 13 - Ungültiges PDF bricht den Projektwechsel vor jeder Zustandsänderung ab
+  ---
+  duration_ms: 1.474857
+  type: 'test'
+  ...
+# Subtest: Speichervorgänge laufen nacheinander und vermischen keine Projekte
+ok 14 - Speichervorgänge laufen nacheinander und vermischen keine Projekte
+  ---
+  duration_ms: 13.975746
+  type: 'test'
+  ...
+# Subtest: Abgebrochene Berechnung beendet den beschäftigten Worker
+ok 15 - Abgebrochene Berechnung beendet den beschäftigten Worker
+  ---
+  duration_ms: 1.47066
+  type: 'test'
+  ...
+# Subtest: Lokaler Server liefert nur öffentliche Anwendungsdateien aus
+ok 16 - Lokaler Server liefert nur öffentliche Anwendungsdateien aus
+  ---
+  duration_ms: 97.668661
+  type: 'test'
+  ...
+# Subtest: SL prüfen erscheint nur bei betroffener oder bereits angepasster Steigleitung
+ok 17 - SL prüfen erscheint nur bei betroffener oder bereits angepasster Steigleitung
+  ---
+  duration_ms: 0.915408
+  type: 'test'
+  ...
+# Subtest: SL prüfen wird nur für übernommene, aktuell erfolgreiche Steigleitung grün
+ok 18 - SL prüfen wird nur für übernommene, aktuell erfolgreiche Steigleitung grün
+  ---
+  duration_ms: 0.840006
+  type: 'test'
+  ...
+# Subtest: Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button
+ok 19 - Rohrstrecken zeigen Gesamtlänge und nur normale Geschwindigkeiten samt SL-prüfen-Button
+  ---
+  duration_ms: 1.55054
+  type: 'test'
+  ...
+# Subtest: Steigleitung bleibt in Berechnung, CSV und Materialmengen als zusätzliche Sauglänge erhalten
+ok 20 - Steigleitung bleibt in Berechnung, CSV und Materialmengen als zusätzliche Sauglänge erhalten
+  ---
+  duration_ms: 1.867544
+  type: 'test'
+  ...
+# Subtest: Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale Steigleitung einmal
+ok 21 - Gesamtlänge summiert Planstrecke, zusätzliche Rohrlänge und vertikale Steigleitung einmal
+  ---
+  duration_ms: 0.780415
+  type: 'test'
+  ...
+# Subtest: Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übrige Werte erst bei Bestätigung
+ok 22 - Zusätzliche Längen aktualisieren beide Längenanzeigen bei Eingabe, übrige Werte erst bei Bestätigung
+  ---
+  duration_ms: 1.274862
+  type: 'test'
+  ...
+# Subtest: alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrecke
+ok 23 - alte Kühlstellenlängen wandern einmalig auf die angeschlossene Rohrstrecke
+  ---
+  duration_ms: 1.048939
+  type: 'test'
+  ...
+# Subtest: ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung überführt
+ok 24 - ältere Steigleitung an gemeinsamer Rohrstrecke wird ohne Verdopplung überführt
+  ---
+  duration_ms: 0.622829
+  type: 'test'
+  ...
+# Subtest: Ältere Startknoten mit Standardname Verbund werden für Plan und Listen zu Start
+ok 25 - Ältere Startknoten mit Standardname Verbund werden für Plan und Listen zu Start
+  ---
+  duration_ms: 0.774393
+  type: 'test'
+  ...
+# Subtest: Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Start
+ok 26 - Rohrstrecken in Vorgaben und Ergebnissen folgen Kühlstellen zum Start
+  ---
+  duration_ms: 1.668522
+  type: 'test'
+  ...
+# Subtest: Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile
+ok 27 - Kühlstellen enthalten nur Name, Leistung und Gesamtlänge in einer Zeile
+  ---
+  duration_ms: 0.526057
+  type: 'test'
+  ...
+# Subtest: Gleichzeitigkeit steht am Ende der Auslegungskriterien
+ok 28 - Gleichzeitigkeit steht am Ende der Auslegungskriterien
+  ---
+  duration_ms: 0.11738
+  type: 'test'
+  ...
+# Subtest: Steigleitungsdialog zeigt ausschließlich relevante Geschwindigkeiten und Status
+ok 29 - Steigleitungsdialog zeigt ausschließlich relevante Geschwindigkeiten und Status
+  ---
+  duration_ms: 0.820059
+  type: 'test'
+  ...
+# Subtest: Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Klick
+ok 30 - Steigleitung prüft mit Laufstatus und übernimmt erst nach gesondertem Klick
+  ---
+  duration_ms: 4.670384
+  type: 'test'
+  ...
+# Subtest: PWA cached ausschließlich App-Dateien und keine Fehlerseiten
+ok 31 - PWA cached ausschließlich App-Dateien und keine Fehlerseiten
+  ---
+  duration_ms: 2.287753
+  type: 'test'
+  ...
+# Subtest: PWA-Aktivierung löscht nur alte RohrRunner-Caches
+ok 32 - PWA-Aktivierung löscht nur alte RohrRunner-Caches
+  ---
+  duration_ms: 0.670338
+  type: 'test'
+  ...
+# Subtest: Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu
+ok 33 - Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu
+  ---
+  duration_ms: 6.300914
+  type: 'test'
+  ...
+# Subtest: Browser registriert den PWA-Service-Worker weiterhin
+ok 34 - Browser registriert den PWA-Service-Worker weiterhin
+  ---
+  duration_ms: 0.881274
+  type: 'test'
+  ...
+# Subtest: Online-Versionscheck meldet nur neuere stabile Releases und merkt sich das Schließen
+ok 35 - Online-Versionscheck meldet nur neuere stabile Releases und merkt sich das Schließen
+  ---
+  duration_ms: 4.438609
+  type: 'test'
+  ...
+# Subtest: Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab
+ok 36 - Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab
+  ---
+  duration_ms: 0.524835
+  type: 'test'
+  ...
+# Subtest: browser shell ships local calculation assets and workflow controls
+ok 37 - browser shell ships local calculation assets and workflow controls
+  ---
+  duration_ms: 66.54745
+  type: 'test'
+  ...
+# Subtest: Aufteilen einer Rohrstrecke verteilt die Steigleitungslänge ohne Verdopplung
+ok 38 - Aufteilen einer Rohrstrecke verteilt die Steigleitungslänge ohne Verdopplung
+  ---
+  duration_ms: 4.0127
+  type: 'test'
+  ...
+# Subtest: switching away from calibration releases its click interception
+ok 39 - switching away from calibration releases its click interception
+  ---
+  duration_ms: 1.243714
+  type: 'test'
+  ...
+# Subtest: Tastaturposition setzt Punkte und beendet Leitungen ohne Pointer
+ok 40 - Tastaturposition setzt Punkte und beendet Leitungen ohne Pointer
+  ---
+  duration_ms: 1.358579
+  type: 'test'
+  ...
+# Subtest: stage accepts drawing clicks beyond the SVG page bounds
+ok 41 - stage accepts drawing clicks beyond the SVG page bounds
+  ---
+  duration_ms: 0.175259
+  type: 'test'
+  ...
+# Subtest: pointer capture loss and window blur clear unfinished drags
+ok 42 - pointer capture loss and window blur clear unfinished drags
+  ---
+  duration_ms: 0.180939
+  type: 'test'
+  ...
+# Subtest: Nach dem Verschieben der Ansicht nehmen Werkzeuge wieder Klicks an
+ok 43 - Nach dem Verschieben der Ansicht nehmen Werkzeuge wieder Klicks an
+  ---
+  duration_ms: 0.138821
+  type: 'test'
+  ...
+# Subtest: Pointer blendet Tastaturcursor aus und fokussiert ohne Scrollen oder Neuzeichnen
+ok 44 - Pointer blendet Tastaturcursor aus und fokussiert ohne Scrollen oder Neuzeichnen
+  ---
+  duration_ms: 1.27884
+  type: 'test'
+  ...
+# Subtest: Kühlstellen setzen verschiebt den Fokus nicht in die Seitenleiste
+ok 45 - Kühlstellen setzen verschiebt den Fokus nicht in die Seitenleiste
+  ---
+  duration_ms: 0.356058
+  type: 'test'
+  ...
+# Subtest: Zoom platziert Beschriftungen in jedem Animationsframe neu, vollständiges Neuzeichnen nur am Ende
+ok 46 - Zoom platziert Beschriftungen in jedem Animationsframe neu, vollständiges Neuzeichnen nur am Ende
+  ---
+  duration_ms: 1.645307
+  type: 'test'
+  ...
+# Subtest: Standard-Betriebspunkte sind je Kältemittel konsistent mit der Oberfläche
+ok 47 - Standard-Betriebspunkte sind je Kältemittel konsistent mit der Oberfläche
+  ---
+  duration_ms: 2.019008
+  type: 'test'
+  ...
+# Subtest: frei definierbare Leistungen akzeptieren deutsche und internationale Dezimalwerte
+ok 48 - frei definierbare Leistungen akzeptieren deutsche und internationale Dezimalwerte
+  ---
+  duration_ms: 0.150282
+  type: 'test'
+  ...
+# Subtest: jeder Leitungs-Klick erzeugt genau einen rechtwinkligen Richtungsabschnitt
+ok 49 - jeder Leitungs-Klick erzeugt genau einen rechtwinkligen Richtungsabschnitt
+  ---
+  duration_ms: 0.567475
+  type: 'test'
+  ...
+# Subtest: Doppelklick auf freier Fläche beendet die Leitung mit einem T-Stück
+ok 50 - Doppelklick auf freier Fläche beendet die Leitung mit einem T-Stück
+  ---
+  duration_ms: 0.851047
+  type: 'test'
+  ...
+# Subtest: Schnittpunkte rechtwinkliger Rohre werden für automatische T-Stücke erkannt
+ok 51 - Schnittpunkte rechtwinkliger Rohre werden für automatische T-Stücke erkannt
+  ---
+  duration_ms: 0.132068
+  type: 'test'
+  ...
+# Subtest: Knoten und Rohrsegmente lassen sich rechtwinklig und dynamisch verschieben
+ok 52 - Knoten und Rohrsegmente lassen sich rechtwinklig und dynamisch verschieben
+  ---
+  duration_ms: 0.465474
+  type: 'test'
+  ...
+# Subtest: beim Löschen eines T-Abzweigs wird die verbleibende Leitung verbunden
+ok 53 - beim Löschen eines T-Abzweigs wird die verbleibende Leitung verbunden
+  ---
+  duration_ms: 0.306906
+  type: 'test'
+  ...
+# Subtest: eine von PDF.js abgelöste PDF wird vor dem Projektexport wiederhergestellt
+ok 54 - eine von PDF.js abgelöste PDF wird vor dem Projektexport wiederhergestellt
+  ---
+  duration_ms: 1.933539
+  type: 'test'
+  ...
+# Subtest: Rohrangaben an senkrechter Leitung haben Vorrang vor Kühlstellennamen
+ok 55 - Rohrangaben an senkrechter Leitung haben Vorrang vor Kühlstellennamen
+  ---
+  duration_ms: 4.66805
+  type: 'test'
+  ...
+# Subtest: Ergebnis-Nachrechnung hält alle anderen Rohrgrößen fest, ohne den Editor zu ändern
+ok 56 - Ergebnis-Nachrechnung hält alle anderen Rohrgrößen fest, ohne den Editor zu ändern
+  ---
+  duration_ms: 0.982704
+  type: 'test'
+  ...
+# Subtest: UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente ab
+ok 57 - UI-Verträge decken Dialoge, Kalibrierung und alle referenzierten Elemente ab
+  ---
+  duration_ms: 1.597167
+  type: 'test'
+  ...
+# Subtest: metrischer Katalog und Browserdaten enthalten nur die freigegebenen Größen
+ok 58 - metrischer Katalog und Browserdaten enthalten nur die freigegebenen Größen
+  ---
+  duration_ms: 1511.24444
+  type: 'test'
+  ...
+# Subtest: K65-Rohrgrößen tragen für R744 durchgehend Zollbezeichnungen
+ok 59 - K65-Rohrgrößen tragen für R744 durchgehend Zollbezeichnungen
+  ---
+  duration_ms: 0.293841
+  type: 'test'
+  ...
+# Subtest: Darcy friction helper follows laminar limit and turbulent monotonicity
+ok 60 - Darcy friction helper follows laminar limit and turbulent monotonicity
+  ---
+  duration_ms: 0.087344
+  type: 'test'
+  ...
+# Subtest: Grenzwertfehler verwenden die Beschriftungen der Berechnungsansicht
+ok 61 - Grenzwertfehler verwenden die Beschriftungen der Berechnungsansicht
+  ---
+  duration_ms: 0.243878
+  type: 'test'
+  ...
+# Subtest: topology and scale validation reject loops and uncalibrated plans
+ok 62 - topology and scale validation reject loops and uncalibrated plans
+  ---
+  duration_ms: 0.204624
+  type: 'test'
+  ...
+# Subtest: terminal pipe allowance is added to the final section without implicit riser
+ok 63 - terminal pipe allowance is added to the final section without implicit riser
+  ---
+  duration_ms: 0.121508
+  type: 'test'
+  ...
+# Subtest: Saugdruckrückrechnung lässt geodätischen Druckgewinn zu
+ok 64 - Saugdruckrückrechnung lässt geodätischen Druckgewinn zu
+  ---
+  duration_ms: 53.338493
+  type: 'test'
+  ...
+# Subtest: Fehler bei Endpunkt-Stoffwerten werden mit Kühlstelle gemeldet
+ok 65 - Fehler bei Endpunkt-Stoffwerten werden mit Kühlstelle gemeldet
+  ---
+  duration_ms: 390.654356
+  type: 'test'
+  ...
+# Subtest: markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ihre Kühlstellen
+ok 66 - markierte gemeinsame Rohrstrecke prüft die Mindestgeschwindigkeit für ihre Kühlstellen
+  ---
+  duration_ms: 37.683916
+  type: 'test'
+  ...
+# Subtest: Steigleitungsminimum berücksichtigt nur Lastfälle auf dem betroffenen Pfad
+ok 67 - Steigleitungsminimum berücksichtigt nur Lastfälle auf dem betroffenen Pfad
+  ---
+  duration_ms: 61.725682
+  type: 'test'
+  ...
+# Subtest: Warnungen nennen und markieren nur betroffene Kühlstellen-Lastfälle
+ok 68 - Warnungen nennen und markieren nur betroffene Kühlstellen-Lastfälle
+  ---
+  duration_ms: 34.133464
+  type: 'test'
+  ...
+# Subtest: eigener Steigleitungsdurchmesser wirkt nur auf die angegebene Teillänge
+ok 69 - eigener Steigleitungsdurchmesser wirkt nur auf die angegebene Teillänge
+  ---
+  duration_ms: 327.355672
+  type: 'test'
+  ...
+# Subtest: 2D-Steigleitung addiert Sauglänge, Druckverlust und Materialanteil ohne Flüssigkeitszuschlag
+ok 70 - 2D-Steigleitung addiert Sauglänge, Druckverlust und Materialanteil ohne Flüssigkeitszuschlag
+  ---
+  duration_ms: 47.182571
+  type: 'test'
+  ...
+# Subtest: nur explizite Steigleitungslänge wird geprüft, zusätzliche Rohrlängen bleiben normale Strecke
+ok 71 - nur explizite Steigleitungslänge wird geprüft, zusätzliche Rohrlängen bleiben normale Strecke
+  ---
+  duration_ms: 92.712902
+  type: 'test'
+  ...
+# Subtest: SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung
+ok 72 - SL zum Start und FL zu den Kühlstellen sind unabhängig von Zeichenreihenfolge und Kantenrichtung
+  ---
+  duration_ms: 89.880205
+  type: 'test'
+  ...
+# Subtest: summierter Druckverlust markiert die Kühlstelle, nicht unkritische Einzelabschnitte
+ok 73 - summierter Druckverlust markiert die Kühlstelle, nicht unkritische Einzelabschnitte
+  ---
+  duration_ms: 3.691177
+  type: 'test'
+  ...
+# Subtest: Nachrechnung einer Ergebnisgröße verändert keine anderen Rohrgrößen
+ok 74 - Nachrechnung einer Ergebnisgröße verändert keine anderen Rohrgrößen
+  ---
+  duration_ms: 24.631833
+  type: 'test'
+  ...
+# Subtest: Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast
+ok 75 - Rohränderung koppelt Massenstrom, aber nicht einen unbelasteten Seitenast
+  ---
+  duration_ms: 11.711918
+  type: 'test'
+  ...
+# Subtest: Fast-Path bleibt außerhalb geprüfter Bereiche und beim R448A-Viskositätslimit deaktiviert
+ok 76 - Fast-Path bleibt außerhalb geprüfter Bereiche und beim R448A-Viskositätslimit deaktiviert
+  ---
+  duration_ms: 0.130906
+  type: 'test'
+  ...
+# Subtest: Fast-Path der zusätzlichen Kältemittel bleibt beim synthetischen Netz nahe am direkten Solver
+ok 77 - Fast-Path der zusätzlichen Kältemittel bleibt beim synthetischen Netz nahe am direkten Solver
+  ---
+  duration_ms: 7758.770796
+  type: 'test'
+  ...
+# Subtest: Fast-Path deckt Sättigung von Gemischen mit Temperaturgleit ohne CoolProp-Rückfall ab
+ok 78 - Fast-Path deckt Sättigung von Gemischen mit Temperaturgleit ohne CoolProp-Rückfall ab
+  ---
+  duration_ms: 490.477669
+  type: 'test'
+  ...
+# Subtest: R744 transcritical and a missing terminal load are refused explicitly
+ok 79 - R744 transcritical and a missing terminal load are refused explicitly
+  ---
+  duration_ms: 0.51154
+  type: 'test'
+  ...
+# Subtest: zusätzliche lokale Kältemittel liefern Sättigungs- und Einphasenwerte für den Solver
+ok 80 - zusätzliche lokale Kältemittel liefern Sättigungs- und Einphasenwerte für den Solver
+  ---
+  duration_ms: 14.753396
+  type: 'test'
+  ...
+# Subtest: zusätzliche Kältemittel dimensionieren synthetische Netze vollständig lokal
+ok 81 - zusätzliche Kältemittel dimensionieren synthetische Netze vollständig lokal
+  ---
+  duration_ms: 286.207705
+  type: 'test'
+  ...
+# Subtest: Kälteträger-Stoffdaten liefern Wasser- und Glykolwerte im Modellbereich
+ok 82 - Kälteträger-Stoffdaten liefern Wasser- und Glykolwerte im Modellbereich
+  ---
+  duration_ms: 18.004126
+  type: 'test'
+  ...
+# Subtest: Hersteller-Kälteträger liefern Offline-Stoffwerte mit Volumenbasis und begrenzten Bereichen
+ok 83 - Hersteller-Kälteträger liefern Offline-Stoffwerte mit Volumenbasis und begrenzten Bereichen
+  ---
+  duration_ms: 0.739999
+  type: 'test'
+  ...
+# Subtest: Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in den gewählten Rohrserien
+ok 84 - Kälteträger-Solver berechnet Wasser sowie Ethylen- und Propylenglykol in den gewählten Rohrserien
+  ---
+  duration_ms: 3.418445
+  type: 'test'
+  ...
+# Subtest: Kälteträger-Solver stoppt vor dem Gefrierpunkt und meldet manuelle Fremdgrößen
+ok 85 - Kälteträger-Solver stoppt vor dem Gefrierpunkt und meldet manuelle Fremdgrößen
+  ---
+  duration_ms: 0.259447
+  type: 'test'
+  ...
+# Subtest: gleiche T-Stücke und nötige Absatznippel werden je Abzweig und Leitungsart gezählt
+ok 86 - gleiche T-Stücke und nötige Absatznippel werden je Abzweig und Leitungsart gezählt
+  ---
+  duration_ms: 2.029719
+  type: 'test'
+  ...
+# Subtest: gleiche Anschlussgrößen erzeugen keine Reduzierung
+ok 87 - gleiche Anschlussgrößen erzeugen keine Reduzierung
+  ---
+  duration_ms: 0.315703
+  type: 'test'
+  ...
+# Subtest: Worker-Start unterstützt file:// per Bundle und HTTP mit Worker-Datei
+ok 88 - Worker-Start unterstützt file:// per Bundle und HTTP mit Worker-Datei
+  ---
+  duration_ms: 2.38753
+  type: 'test'
+  ...
+# Subtest: ZIP-Archiv enthält UTF-8-Dateinamen und exakte Text- und Binärdaten
+ok 89 - ZIP-Archiv enthält UTF-8-Dateinamen und exakte Text- und Binärdaten
+  ---
+  duration_ms: 1.413553
+  type: 'test'
+  ...
+# Subtest: ZIP-Einträge tragen das Erstellungsdatum statt 1980
+ok 90 - ZIP-Einträge tragen das Erstellungsdatum statt 1980
+  ---
+  duration_ms: 0.338174
+  type: 'test'
+  ...
+# Subtest: ZIP-Archiv unterstützt eine leere Dateiliste und begrenzt unzulässige Einträge
+ok 91 - ZIP-Archiv unterstützt eine leere Dateiliste und begrenzt unzulässige Einträge
+  ---
+  duration_ms: 0.28806
+  type: 'test'
+  ...
+# Subtest: Projektpaket enthält die vollständige Projektdatei und einen PDF-Plan nur bei vorhandenem Grundriss
+ok 92 - Projektpaket enthält die vollständige Projektdatei und einen PDF-Plan nur bei vorhandenem Grundriss
+  ---
+  duration_ms: 1.464028
+  type: 'test'
+  ...
+1..92
+# tests 92
+# suites 0
+# pass 92
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11374.960005
