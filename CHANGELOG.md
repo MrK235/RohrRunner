@@ -1,5 +1,14 @@
 # Änderungsprotokoll
 
+# 1.2.7 — Schnellere Kältemittel-Dimensionierung und Review-Restpunkte
+
+- Kältemittel-Dimensionierung großer Netze deutlich beschleunigt: gemeinsamer Lastfall bei Gleichzeitigkeit 1, verzögerte Neuberechnung der Endpunkt-Lastfälle sonst (50 Kühlstellen etwa 17 s statt über 180 s); 90 synthetische Vergleichsnetze ohne Abweichung.
+- Kälteträger-Dimensionierung mit automatischen Größen für große Netze beschleunigt (1499 Kühlstellen etwa 7 s statt 99 s).
+- Projektimport und Projektwechsel mit vollständiger Rücksetzung bei späten Fehlern; Speichervorgänge serialisiert; verworfene Berechnungen beenden den Worker.
+- Kälteträger: jeder unzulässige Verbraucherkreis wird gemeldet, Geschwindigkeitswarnungen markieren nur die betroffene Vor- oder Rücklaufleitung in Tabelle und CSV; Ergebnistabelle passt ohne Querscrollen in die Seitenleiste.
+- Referenzabgleich mit NIST-Stoffwerten und Colebrook-White sowie Lastprüfung mit festen Laufzeitzielen ergänzt.
+- Versionsanzeigen und Desktop-Metadaten auf 1.2.7 synchronisiert; der PWA-Cache wird erneuert.
+
 # 1.2.6 — Review-Korrekturen und Stabilität
 
 - PDF-Import abgesichert, Projekteingaben und Solverdaten validiert sowie veraltete Berechnungsergebnisse verworfen.
