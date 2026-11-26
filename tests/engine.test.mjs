@@ -446,3 +446,28 @@ test('Kälteträger-Solver stoppt vor dem Gefrierpunkt und meldet manuelle Fremd
   const plan=network();plan.edges[0].thermal={suction:{mode:'manual',sizeId:'165.1x4.85'}};
   assert.throws(()=>context.RohrRunnerEngine.calculate(plan,1,base,context.RohrStoffdaten,catalog),/manuelle Rohrgröße/);
 });
+
+test('Kältemittel-Dimensionierung bleibt bei verzögerter Lastfallneuberechnung unverändert', async () => {
+  await context.RohrStoffdaten.load();
+  // Referenzwerte mit dem vorherigen Upgrade-Verfahren (alle Lastfälle je Durchgang) erzeugt.
+  const net = { nodes: [{ id: 's', type: 'start', x: 0, y: 0 }], edges: [] };
+  const link = (a, b) => net.edges.push({ id: `${a.id}-${b.id}`, from: a.id, to: b.id, points: [{ x: a.x, y: a.y }, { x: b.x, y: b.y }] });
+  let previous = net.nodes[0];
+  for (let i = 0; i < 6; i++) {
+    const junction = { id: `j${i}`, type: 'junction', x: i + 1, y: 0 }, end = { id: `e${i}`, type: 'endpoint', name: `S${i}`, x: i + 1, y: 1, coolingKW: 4 };
+    link(previous, junction); link(junction, end); net.nodes.push(junction, end); previous = junction;
+  }
+  net.nodes.forEach((node, index) => { if (node.type === 'endpoint') node.coolingKW = 2 + index % 5; });
+  const base = { fluid: 'R513A', evaporationC: -10, condensationC: 45, superheatK: 25, subcoolingK: 2, suctionLimitK: 1, liquidLimitK: 0.5,
+    minVelocityMS: 0, maxVelocityMS: 30, designPressureBar: 24, roughnessMicroM: 1.5, fittingsFactor: 1.5, viscosityMarginPercent: 15 };
+  const expected = {
+    1: [['54x1.5','22x1','18x1','10x1','54x1.5','22x1','22x1','10x1','54x1.5','22x1','18x1','10x1','35x1.5','18x1','22x1','10x1','28x1.5','12x1','22x1','10x1','22x1','10x1','22x1','10x1'], [0.811226,0.65113,0.590806,0.690003,0.564484,0.983404]],
+    0.7: [['54x1.5','22x1','18x1','10x1','54x1.5','22x1','22x1','10x1','35x1.5','18x1','18x1','10x1','35x1.5','15x1','22x1','10x1','28x1.5','10x1','15x1','10x1','22x1','10x1','22x1','10x1'], [0.783324,0.608064,0.666747,0.741747,0.997083,0.987464]]
+  };
+  for (const [simultaneity, [sizes, suctionK]] of Object.entries(expected)) {
+    const result = context.RohrRunnerEngine.calculate(structuredClone(net), 4, { ...base, simultaneity: Number(simultaneity) }, context.RohrStoffdaten, catalog);
+    assert.equal(result.valid, true);
+    assert.deepEqual([...result.rows].map(row => row.sizeId), sizes);
+    assert.deepEqual([...result.endpoints].map(endpoint => Number(endpoint.suctionK.toFixed(6))), suctionK);
+  }
+});

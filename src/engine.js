@@ -168,7 +168,10 @@
       return {drop,v:vmaxSeen,vMin:vminSeen,mainVMax,riserVMin,riserVMax,pOut:pressure,props:latest,phaseRisk};
     }
     const scenarios=[];
-    function solveScenario(target, retain=false){
+    // Bei Gleichzeitigkeit 1 sind alle Endpunkt-Lastfälle hydraulisch identisch; der Netzzustand
+    // wird dann einmal gelöst und je Endpunkt ausgewertet.
+    const sharedLoadCase=simultaneity===1;
+    function solveNetwork(target){
       let massByNode=flowsFor(target), suctionP=new Map([[graph.start.id,rootP]]), liquidPByNode=new Map([[graph.start.id,liquidP]]), lineResults=new Map(), converged=false;
       for(let iteration=0;iteration<12;iteration++){
         for(let i=graph.order.length-1;i>=0;i--){const id=graph.order[i],node=graph.byId.get(id);if(node.type!=='endpoint')massByNode.set(id,children.get(id).reduce((sum,c)=>sum+massByNode.get(c),0));}
@@ -194,38 +197,61 @@
       const liquidEnd=new Map([[graph.start.id,liquidP]]);
       for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,pIn=liquidEnd.get(pid),r=segment(edge,'liquid',massByNode.get(id),pIn,selected.get(`${edge.id}:liquid`));liquidEnd.set(id,r.pOut);lineResults.set(`${edge.id}:liquid`,{...r,flow:massByNode.get(id),pIn});}
       for(let i=1;i<graph.order.length;i++){const id=graph.order[i],edge=parentEdge.get(id),pid=graph.parent.get(id).id,out=suctionP.get(pid),flow=massByNode.get(id);let pin=Math.max(1001,out+100),r;for(let j=0;j<25;j++){r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`));const err=pin-r.drop-out;if(Math.abs(err)<Math.max(.5,pin*1e-8))break;pin=Math.max(1001,pin-err*.7);}r=segment(edge,'suction',flow,pin,selected.get(`${edge.id}:suction`));if(Math.abs(pin-r.drop-out)>Math.max(5,pin*1e-5))fail(`${edge.label||'Saugleitung'}: Druckrückrechnung konvergiert nicht.`);suctionP.set(id,pin);lineResults.set(`${edge.id}:suction`,{...r,flow,pIn:pin,pOut:out});}
+      return {lineResults,massByNode,suctionP,liquidEnd};
+    }
+    function endpointScenario(target,{lineResults,massByNode,suctionP,liquidEnd}){
       const endpoint=graph.byId.get(target), psEnd=suctionP.get(target),plEnd=liquidEnd.get(target),sK=data.saturationAtPressure(f,psEnd).dewK-data.saturationAtPressure(f,rootP).dewK,lK=data.saturationAtPressure(f,liquidP).bubbleK-data.saturationAtPressure(f,plEnd).bubbleK;
       const phaseRisk=pathTo(target).some(id=>lineResults.get(`${id}:liquid`)?.phaseRisk);
       const remaining=phaseRisk?0:data.saturationAtPressure(f,plEnd).bubbleK-liquidT;
       return {targetId:target,name:endpoint.name,evaporationC:data.saturationAtPressure(f,psEnd).dewK-273.15,coolingKW:Number(endpoint.coolingKW)||0,suctionK:sK,liquidK:lK,remainingSubcoolingK:remaining,suctionPressurePa:psEnd,liquidPressurePa:plEnd,lineResults,massByNode,suctionP,liquidEnd};
     }
-    // Deterministic upgrade loop: evaluate whole-network endpoint cases, then grow the
-    // pipe with the greatest weighted reduction on the currently failing path.
+    // Deterministic upgrade loop: grow the pipe with the greatest weighted reduction on the
+    // path of the worst endpoint issue. Endpoint cases are re-solved lazily: after an upgrade
+    // the previous issue values of the other cases serve as upper bounds (larger pipes do not
+    // increase losses), and a case is re-solved only when it would decide the next step.
     const manual=new Set(edges.flatMap(e=>['suction','liquid'].filter(t=>e.thermal?.[t]?.mode==='manual').map(t=>`${e.id}:${t}`)));
-    let finalScenarios=[], needsRecompute=false;
+    const edgeById=new Map(edges.map(e=>[e.id,e])), edgeOfKey=key=>key.slice(0,key.lastIndexOf(':'));
+    const lineKeys=edges.flatMap(e=>['suction','liquid'].map(t=>`${e.id}:${t}`));
+    function scenarioIssues(s,index){
+      const out=[],path=new Set(pathTo(s.targetId));
+      if(s.suctionK>limS)out.push({type:'suction',target:s.targetId,excess:s.suctionK/limS-1,path,scenario:s,group:0,index,local:0});
+      if(s.liquidK>limL||s.remainingSubcoolingK<=0)out.push({type:'liquid',target:s.targetId,excess:Math.max(s.liquidK/limL-1,s.remainingSubcoolingK<=0?1:0),path,scenario:s,group:0,index,local:1});
+      for(const issue of out){if(issue.type!=='suction')continue;let worst=0;for(const edgeId of path)worst=Math.max(worst,s.lineResults.get(`${edgeId}:suction`)?.v||0);if(worst>vmax)issue.excess=Math.max(issue.excess,worst/vmax-1);}
+      // velocity limits are checked on each full-load target scenario.
+      let local=0;
+      for(const [key,r] of s.lineResults){if(!key.endsWith(':suction'))continue;const edgeId=edgeOfKey(key),velocity=edgeById.get(edgeId)?.riserSizeId?r.mainVMax:r.v;if(!(velocity>vmax))continue;const affected=terminalsByEdge.get(edgeId)?.filter(id=>s.massByNode.get(id)>0)||[];if(affected.length)out.push({type:'suction',target:affected[0],excess:velocity/vmax-1,path:new Set([edgeId]),scenario:s,group:1,index,local:local++});}
+      return out;
+    }
+    const terminalCount=graph.terminals.length, current=new Array(terminalCount), stale=new Array(terminalCount).fill(true), issuesByScenario=Array.from({length:terminalCount},()=>[]);
+    function refresh(index){
+      if(sharedLoadCase){const state=solveNetwork(graph.terminals[0].id);graph.terminals.forEach((end,i)=>{current[i]=endpointScenario(end.id,state);issuesByScenario[i]=scenarioIssues(current[i],i);stale[i]=false;});return;}
+      current[index]=endpointScenario(graph.terminals[index].id,solveNetwork(graph.terminals[index].id));issuesByScenario[index]=scenarioIssues(current[index],index);stale[index]=false;
+    }
+    const refreshAll=()=>{for(let i=0;i<terminalCount;i++)if(stale[i])refresh(i);};
+    // Same order as a stable sort by descending excess over all cases.
+    const ranksBefore=(a,b)=>a.excess>b.excess||a.excess===b.excess&&(a.group-b.group||a.index-b.index||a.local-b.local)<0;
     // Bound the upgrade search by all possible catalog transitions in the network.
     const maxUpgradePasses=Math.max(1,edges.length*2*(sizes.length-1));
+    refreshAll();
     for(let pass=0;pass<maxUpgradePasses;pass++){
-      finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
-      needsRecompute=false;
-      const rowByKey=new Map();for(const e of edges)for(const t of ['suction','liquid'])rowByKey.set(`${e.id}:${t}`,[]);
-      for(const s of finalScenarios)for(const [key,r] of s.lineResults)rowByKey.get(key)?.push({scenario:s,result:r});
-      const issues=[];
-      for(const s of finalScenarios){if(s.suctionK>limS)issues.push({type:'suction',target:s.targetId,excess:s.suctionK/limS-1,path:new Set(pathTo(s.targetId))});if(s.liquidK>limL||s.remainingSubcoolingK<=0)issues.push({type:'liquid',target:s.targetId,excess:Math.max(s.liquidK/limL-1,s.remainingSubcoolingK<=0?1:0),path:new Set(pathTo(s.targetId))});}
-      for(const issue of issues){let worst=0;for(const [key,r] of rowByKey)if(key.endsWith(issue.type)&&issue.path.has(key.slice(0,key.lastIndexOf(':'))))worst=Math.max(worst,r.find(x=>x.scenario.targetId===(issue.scenarioTarget??issue.target))?.result.v||0);if(issue.type==='suction'&&worst>vmax)issue.excess=Math.max(issue.excess,worst/vmax-1);}
-      // velocity limits are checked on each full-load target scenario.
-      for(const s of finalScenarios)for(const [key,r] of s.lineResults)if(key.endsWith(':suction')&&(edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':')))?.riserSizeId?r.mainVMax:r.v)>vmax){const edgeId=key.slice(0,key.lastIndexOf(':')),affected=terminalsByEdge.get(edgeId)?.filter(id=>s.massByNode.get(id)>0)||[];if(affected.length)issues.push({type:'suction',target:affected[0],scenarioTarget:s.targetId,excess:(edges.find(e=>e.id===edgeId)?.riserSizeId?r.mainVMax:r.v)/vmax-1,path:new Set([edgeId])});}
-      let worstIssue=issues.sort((a,b)=>b.excess-a.excess)[0];if(!worstIssue)break;
-      const keys=[...rowByKey.keys()].filter(key=>key.endsWith(worstIssue.type)&&worstIssue.path.has(key.slice(0,key.lastIndexOf(':')))&&!manual.has(key));
+      let worstIssue;
+      for(;;){
+        worstIssue=null;for(const list of issuesByScenario)for(const issue of list)if(!worstIssue||ranksBefore(issue,worstIssue))worstIssue=issue;
+        if(!worstIssue){if(stale.some(Boolean)){refreshAll();continue;}break;}
+        if(stale[worstIssue.index]){refresh(worstIssue.index);continue;}
+        break;
+      }
+      if(!worstIssue)break;
       let best=null;
-      for(const key of keys){const current=selected.get(key),ix=sizes.indexOf(current);if(ix<0||ix>=sizes.length-1)continue;const candidates=rowByKey.get(key).filter(x=>x.scenario.targetId===(worstIssue.scenarioTarget??worstIssue.target));const drop=candidates.reduce((sum,x)=>sum+x.result.drop,0);const edgeId=key.slice(0,key.lastIndexOf(':'));const edge=edges.find(e=>e.id===edgeId);const length=edge._lengthM||1;const score=drop/Math.max(length,0.1)/(diOf(sizes[ix+1])**2/diOf(current)**2-1);if(!best||score>best.score)best={key,score,ix};}
+      for(const key of lineKeys){if(!key.endsWith(worstIssue.type)||!worstIssue.path.has(edgeOfKey(key))||manual.has(key))continue;const current=selected.get(key),ix=sizes.indexOf(current);if(ix<0||ix>=sizes.length-1)continue;const drop=worstIssue.scenario.lineResults.get(key)?.drop||0;const length=edgeById.get(edgeOfKey(key))._lengthM||1;const score=drop/Math.max(length,0.1)/(diOf(sizes[ix+1])**2/diOf(current)**2-1);if(!best||score>best.score)best={key,score,ix};}
       if(!best)break;
       const factor=Math.max(1.05,Math.pow(1+worstIssue.excess,.2)),targetDiameter=diOf(sizes[best.ix])*factor;
       let targetIndex=best.ix+1;while(targetIndex<sizes.length-1&&diOf(sizes[targetIndex])<targetDiameter)targetIndex++;
       selected.set(best.key,sizes[targetIndex]);
-      needsRecompute=true;
+      stale.fill(true);
     }
-    if(needsRecompute)finalScenarios=graph.terminals.map(end=>solveScenario(end.id));
+    refreshAll();
+    const finalScenarios=current;
     const issues=[], velocityByEdge=new Map();
     const directEdgeIds=(s,type,limit)=>pathTo(s.targetId).filter(id=>{const r=s.lineResults.get(`${id}:${type}`);return r&&Math.abs(data.saturationAtPressure(f,r.pIn)[type==='liquid'?'bubbleK':'dewK']-data.saturationAtPressure(f,r.pOut)[type==='liquid'?'bubbleK':'dewK'])>limit+1e-6});
     for(const s of finalScenarios){const targetPath=new Set(pathTo(s.targetId));if(s.suctionK>limS+1e-6)issues.push({targetId:s.targetId,type:'suction',edgeIds:directEdgeIds(s,'suction',limS),message:`${s.name}: Druckverlust SL ${s.suctionK.toFixed(2)} K überschreitet ${limS} K.`});if(s.liquidK>limL+1e-6)issues.push({targetId:s.targetId,type:'liquid',edgeIds:directEdgeIds(s,'liquid',limL),message:`${s.name}: Druckverlust FL ${s.liquidK.toFixed(2)} K überschreitet ${limL} K.`});if(s.remainingSubcoolingK<=0)issues.push({targetId:s.targetId,type:'phase',edgeIds:pathTo(s.targetId).filter(id=>s.lineResults.get(`${id}:liquid`)?.phaseRisk),message:`${s.name}: Flüssigkeit erreicht die Phasengrenze.`});for(const [key,r] of s.lineResults){if(key.endsWith(':suction')&&r.v>vmax+1e-6){const edgeId=key.slice(0,key.lastIndexOf(':')),current=velocityByEdge.get(edgeId)||{velocity:0,targetIds:new Set()};current.velocity=Math.max(current.velocity,r.v);if(targetPath.has(edgeId))current.targetIds.add(s.targetId);velocityByEdge.set(edgeId,current)}const edge=edges.find(e=>e.id===key.slice(0,key.lastIndexOf(':'))),riserVelocity=r.riserVMin;if(key.endsWith(':suction')&&targetPath.has(edge?.id)&&edge?.suctionRiser&&Number(edge.riserLengthM)>0&&riserVelocity<vmin-1e-6){const critical=riserVelocity<5-1e-6;issues.push({targetId:s.targetId,edgeId:edge.id,type:'oil-return',severity:critical?'critical':'check',message:`${s.name} · ${edge.label||'Rohrstrecke '+(graph.byId.get(edge.from)?.name||edge.from)+' ↔ '+(graph.byId.get(edge.to)?.name||edge.to)}: Steigleitung ${riserVelocity.toFixed(1)} m/s – ${critical?'kritisch (unter 5 m/s)':'prüfen (unter '+vmin+' m/s)'}.`});}}}

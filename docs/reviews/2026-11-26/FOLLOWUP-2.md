@@ -49,13 +49,26 @@ Quelle der Stoffwerte: NIST Chemistry WebBook, SRD 69, Thermophysical Properties
 | --- | --- |
 | Review-Audit | 21 bestanden, 0 fehlgeschlagen; [Protokoll](followup2-audit.json) |
 | Testsuite | 92 bestanden, 0 fehlgeschlagen; [Protokoll](followup2-tests.tap) |
-| Lastprüfung | 14 bestanden, 1 verfehlt (Kältemittel 50 Kühlstellen); [Protokoll](followup2-stress.json) |
+| Lastprüfung | 14 bestanden, 1 verfehlt (Kältemittel 50 Kühlstellen); [Protokoll](followup2-stress.json). Nach dem Nachtrag 15 bestanden; [Protokoll](followup3-stress.json) |
 | Browser | Import, Berechnung, Öffnen aus der Projektliste mit gespeichertem Ergebnis, Markierungen, Layout bei drei Breiten und zwei Designs |
 
 Die JSON-Protokolle nennen den zum Testzeitpunkt ausgecheckten `HEAD`; die beschriebenen Änderungen lagen während der Messung im Arbeitsbaum.
 
+## Nachtrag: Laufzeit der Kältemittel-Dimensionierung
+
+Ursache des verfehlten Ziels: Jeder Upgrade-Durchgang löste alle n Endpunkt-Lastfälle über das ganze Netz, die Zahl der Durchgänge wächst mit der Netzgröße. Bei 20 Kühlstellen waren das 72 Durchgänge × 20 Lastfälle mit rund 2,65 Mio. Segmentrechnungen.
+
+| Änderung | Wirkung |
+| --- | --- |
+| Gleichzeitigkeit 1: ein gemeinsamer Netzzustand für alle Endpunkt-Lastfälle (rechnerisch identisch) | 20 Kühlstellen: 33,6 s → 3,4 s (132 509 Segmentrechnungen) |
+| Gleichzeitigkeit unter 1: verzögerte Neuberechnung mit den vorigen Überschreitungen als obere Schranken | 20 Kühlstellen, Gleichzeitigkeit 0,8: 30,6 s → 5,8 s (213 statt 1380 Netzlösungen) |
+
+Lastprüfung nach der Änderung (Kindprozess einschließlich Start, parallel zu einer Vergleichsrechnung gemessen): Kältemittel Kamm 10 / 20 / 50 Kühlstellen 2,8 / 4,7 / 19,7 s, Baum 20 Kühlstellen 4,8 s; alle 15 Fälle eingehalten. Ohne Parallellast lag der 50er-Fall bei 16,8 s Rechenzeit.
+
+Abgleich mit dem vorherigen Verfahren: 90 zufällige synthetische Bäume (2 bis 9 Kühlstellen, R513A, R448A, R134A, R744, R404A, Gleichzeitigkeit 1 und 0,6 bis 0,9, teils mit Steigleitungen, knappe Grenzen) ergaben in 86 Fällen ein vollständig identisches Ergebnisobjekt (Rohrwahl, alle Zeilen-, Endpunkt- und Meldungswerte); in 4 Fällen brachen beide Stände mit derselben Fehlermeldung ab. Abweichungen traten nicht auf; ausgeschlossen sind sie für andere Netze wegen der Schrankenannahme nicht. Annahme und Grenze der Schranken sind in [PLAN.md](../../../PLAN.md) beschrieben.
+
 ## Verbleibende Arbeit
 
 1. PDF.js mit Worker und Desktop-CSP aktualisieren (unverändert offen).
-2. Laufzeit der Kältemittel-Dimensionierung für Netze ab etwa 30 Kühlstellen verbessern.
+2. Kältemittel-Dimensionierung sehr großer Netze (deutlich über 50 Kühlstellen): Zahl der Upgrade-Durchgänge verringern, etwa durch inkrementelle Neuberechnung nur betroffener Teilbäume.
 3. Referenzvalidierung für Glykolgemische, Herstellerprodukte und Gemische mit Temperaturgleit; Abgleich der Netzrechnung mit dokumentierten Anlagendaten.
