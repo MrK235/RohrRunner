@@ -1,0 +1,72 @@
+{
+  "node": "v24.22.3",
+  "platform": "win32",
+  "commit": "2d364414f5d43f4eb7ee6605e5c100abc0e3b0ac",
+  "checks": [
+    {
+      "id": "STRESS-10",
+      "title": "10 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-10",
+        "title": "10 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 21,
+          "edges": 20,
+          "valid": true,
+          "memoryMiB": 157
+        },
+        "durationMs": 1702.8856999999998
+      },
+      "durationMs": 1975.3656999999998
+    },
+    {
+      "id": "STRESS-100",
+      "title": "100 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-100",
+        "title": "100 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 201,
+          "edges": 200,
+          "valid": true,
+          "memoryMiB": 158
+        },
+        "durationMs": 1772.6005
+      },
+      "durationMs": 2037.3076
+    },
+    {
+      "id": "STRESS-500",
+      "title": "500 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "pass",
+      "evidence": {
+        "id": "STRESS-500",
+        "title": "500 Kühlstellen im Kälteträgerbaum",
+        "status": "pass",
+        "evidence": {
+          "nodes": 1001,
+          "edges": 1000,
+          "valid": true,
+          "memoryMiB": 167
+        },
+        "durationMs": 11346.7598
+      },
+      "durationMs": 11735.8728
+    },
+    {
+      "id": "STRESS-1499",
+      "title": "1499 Kühlstellen innerhalb von 30 Sekunden",
+      "status": "fail",
+      "error": "spawnSync <node> ETIMEDOUT",
+      "durationMs": 30022.2239
+    }
+  ],
+  "summary": {
+    "pass": 3,
+    "fail": 1
+  }
+}

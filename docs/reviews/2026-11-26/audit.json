@@ -1,0 +1,219 @@
+{
+  "node": "v24.22.3",
+  "platform": "win32",
+  "commit": "2d364414f5d43f4eb7ee6605e5c100abc0e3b0ac",
+  "checks": [
+    {
+      "id": "SEC-01",
+      "title": "PDF.js besitzt den Fix oder die Mitigation für CVE-2024-4367",
+      "status": "fail",
+      "error": "PDF.js 3.11.174; loadPdfBytes setzt isEvalSupported nicht auf false (GHSA-wgrm-67xf-hhpq).",
+      "durationMs": 18.413299999999992
+    },
+    {
+      "id": "SEC-02",
+      "title": "Lokaler Server sperrt private Dateien auch bei Windows-Pfadtrennern",
+      "status": "fail",
+      "error": "[{\"path\":\"/\",\"status\":200},{\"path\":\"/.git/config\",\"status\":403},{\"path\":\"/src/x%5c..%5c..%5cAGENTS.md\",\"status\":200}]",
+      "durationMs": 220.3313
+    },
+    {
+      "id": "BUILD-01",
+      "title": "Eingebetteter Worker entspricht den aktuellen Quellen",
+      "status": "pass",
+      "evidence": {
+        "bytes": 12510472,
+        "normalizedLineEndings": true
+      },
+      "durationMs": 86.75979999999998
+    },
+    {
+      "id": "PWA-01",
+      "title": "Alle Dateien der Offline-App-Shell sind vorhanden",
+      "status": "pass",
+      "evidence": {
+        "files": 35
+      },
+      "durationMs": 17.920999999999992
+    },
+    {
+      "id": "DATA-01",
+      "title": "Kataloge und Versionen sind konsistent",
+      "status": "pass",
+      "evidence": {
+        "version": "1.2.5",
+        "series": 4
+      },
+      "durationMs": 2.9595999999999663
+    },
+    {
+      "id": "INPUT-01",
+      "title": "Import weist null-Knoten vor dem Projektwechsel ab",
+      "status": "fail",
+      "error": "Missing expected exception: validateProjectImport akzeptiert nodes:[null]; renderAll/migrateStartName dereferenziert anschließend node.type.",
+      "durationMs": 1.0482000000000085
+    },
+    {
+      "id": "INPUT-02",
+      "title": "Unvollständige Koordinaten ergeben kein gültiges NaN-Ergebnis",
+      "status": "fail",
+      "error": "valid=true; lengthM=NaN; pressureDropPa=NaN; issues=0",
+      "durationMs": 1740.7558
+    },
+    {
+      "id": "INPUT-03",
+      "title": "Maßstab Infinity wird abgewiesen",
+      "status": "fail",
+      "error": "Missing expected exception: analyze akzeptiert Infinity als Maßstab.",
+      "durationMs": 0.08579999999983556
+    },
+    {
+      "id": "INPUT-04",
+      "title": "Pfad muss zu den angegebenen Knoten passen",
+      "status": "fail",
+      "error": "Missing expected exception: Knotenabstand 100 m, Pfad nur 1 m: analyze akzeptiert die falsche Länge.",
+      "durationMs": 0.06480000000010477
+    },
+    {
+      "id": "ASYNC-01",
+      "title": "Eine Netzänderung verwirft das laufende Berechnungsergebnis",
+      "status": "fail",
+      "error": "Altes Ergebnis wurde akzeptiert; aktuelle Last 20 kW, Ergebnislast 3 kW; resultStale=false.\n+ actual - expected\n\n+ {\n+   rows: [],\n+   sourceCoolingKW: 3,\n+   valid: true\n+ }\n- null\n",
+      "durationMs": 1.7656999999999243
+    },
+    {
+      "id": "ASYNC-02",
+      "title": "Asynchrones Speichern vermischt keine Projekt- und PDF-Stände",
+      "status": "fail",
+      "error": "Datensatz B/B.pdf enthält PDF-Bytes aus Projekt A.\n\n'B' !== 'A'\n",
+      "durationMs": 0.834599999999682
+    },
+    {
+      "id": "EDIT-01",
+      "title": "Löschen eines Abzweigs erhält beide Steigleitungslängen",
+      "status": "fail",
+      "error": "Steigleitung schrumpft von 2+6 auf 2 m.\n\n2 !== 8\n",
+      "durationMs": 0.411200000000008
+    },
+    {
+      "id": "UI-01",
+      "title": "Kälteträger-Druckverletzung erreicht die Statuszuordnung",
+      "status": "fail",
+      "error": "secondary-pressure ergibt eine leere Status-Map; renderSecondaryResult setzt ebenfalls keine limit/check-Klassen.",
+      "durationMs": 0.9639999999999418
+    },
+    {
+      "id": "HYD-01",
+      "title": "Einzelne Flüssigkeitsstrecke und Endpunkt verwenden dieselbe Temperaturbasis",
+      "status": "fail",
+      "error": "FL-Zeile=0.06444071415967301 K (Taupunkt); identischer Einzelpfad=0.06741904302072044 K (Blasenpunkt).",
+      "durationMs": 463.8747000000003
+    },
+    {
+      "id": "HYD-02",
+      "title": "Kälteträger stimmt mit unabhängiger Darcy-Weisbach-Nachrechnung überein",
+      "status": "pass",
+      "evidence": {
+        "circuitPressureDropPa": 6429.281416353078,
+        "massFlowKgS": 0.19853306871308668,
+        "propertySource": "dieselbe lokale CoolProp-Instanz; keine unabhängige Stoffwertvalidierung"
+      },
+      "durationMs": 0.3746000000001004
+    },
+    {
+      "id": "MEDIA-01",
+      "title": "Alle acht Kältemittel liefern endliche Ergebnisse im kleinen Standardnetz",
+      "status": "pass",
+      "evidence": [
+        {
+          "fluid": "R513A",
+          "valid": true,
+          "sizes": [
+            "12x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R448A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R744",
+          "valid": true,
+          "sizes": [
+            "9.52x0.56",
+            "9.52x0.56"
+          ]
+        },
+        {
+          "fluid": "R134A",
+          "valid": true,
+          "sizes": [
+            "12x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R404A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R407C",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R449A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        },
+        {
+          "fluid": "R452A",
+          "valid": true,
+          "sizes": [
+            "10x1",
+            "6x1"
+          ]
+        }
+      ],
+      "durationMs": 585.5312999999996
+    },
+    {
+      "id": "MEDIA-02",
+      "title": "Neun Kälteträger in beiden Rohrserien liefern endliche Ergebnisse",
+      "status": "pass",
+      "evidence": {
+        "cases": 18
+      },
+      "durationMs": 23.407400000000052
+    },
+    {
+      "id": "EDIT-02",
+      "title": "Deterministische Geometrieprobe mit 1000 Verschiebungen bleibt orthogonal",
+      "status": "pass",
+      "evidence": {
+        "seed": 235,
+        "cases": 1000
+      },
+      "durationMs": 8.36239999999998
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "fail": 11
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "repetitions": 1,
+  "method": "both",
+  "initializationMs": 105.4101,
+  "comparedFields": {
+    "rows": [
+      "diameterMm",
+      "lengthM",
+      "flowKgS",
+      "velocityMS",
+      "pressureDropPa",
+      "temperatureDropK"
+    ],
+    "endpoints": [
+      "evaporationC",
+      "suctionK",
+      "liquidK",
+      "remainingSubcoolingK",
+      "suctionPressureBar",
+      "liquidPressureBar"
+    ]
+  },
+  "results": [
+    {
+      "fluid": "R513A",
+      "spots": 1,
+      "fastDataCreationMs": 1752.2315,
+      "directMsPerRun": 2785.0572,
+      "fastMsPerRun": 11.878399999999601,
+      "maxAbsoluteDifference": 22.208032697006274,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.0009289150768894561,
+      "maxRelativeField": "Rohr trunk-0:suction.pressureDropPa",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R448A",
+      "spots": 1,
+      "fastDataCreationMs": 910.4217000000008,
+      "directMsPerRun": 19668.3145,
+      "fastMsPerRun": 9.52679999999964,
+      "maxAbsoluteDifference": 5.453703040180699,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.0003159028041632005,
+      "maxRelativeField": "Rohr trunk-0:liquid.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R744",
+      "spots": 1,
+      "fastDataCreationMs": null,
+      "directMsPerRun": 217.04219999999987,
+      "fastMsPerRun": null,
+      "maxAbsoluteDifference": null,
+      "maxAbsoluteField": null,
+      "maxRelativeDifference": null,
+      "maxRelativeField": null,
+      "sizeOrStatusMismatches": null
+    },
+    {
+      "fluid": "R134A",
+      "spots": 1,
+      "fastDataCreationMs": 50.231299999999464,
+      "directMsPerRun": 1204.9667000000009,
+      "fastMsPerRun": 18.006600000000617,
+      "maxAbsoluteDifference": 9.751344654156128,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.0007614404216757591,
+      "maxRelativeField": "Rohr trunk-0:suction.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R404A",
+      "spots": 1,
+      "fastDataCreationMs": 353.84600000000137,
+      "directMsPerRun": 8669.651000000002,
+      "fastMsPerRun": 7.10580000000482,
+      "maxAbsoluteDifference": 2.724313623228227,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.00011820372193915439,
+      "maxRelativeField": "Rohr trunk-0:liquid.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R407C",
+      "spots": 1,
+      "fastDataCreationMs": 319.97329999999783,
+      "directMsPerRun": 7886.806100000002,
+      "fastMsPerRun": 6.160400000000664,
+      "maxAbsoluteDifference": 5.719806013428752,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.00035304530626904053,
+      "maxRelativeField": "Rohr trunk-0:liquid.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R449A",
+      "spots": 1,
+      "fastDataCreationMs": 576.0469000000012,
+      "directMsPerRun": 14756.496,
+      "fastMsPerRun": 4.820699999996577,
+      "maxAbsoluteDifference": 6.246806614875823,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.0006385405204251046,
+      "maxRelativeField": "Rohr trunk-0:suction.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    },
+    {
+      "fluid": "R452A",
+      "spots": 1,
+      "fastDataCreationMs": 380.28480000000127,
+      "directMsPerRun": 9399.679799999998,
+      "fastMsPerRun": 5.4764000000141095,
+      "maxAbsoluteDifference": 15.331582685659669,
+      "maxAbsoluteField": "Rohr trunk-0:liquid.pressureDropPa",
+      "maxRelativeDifference": 0.000552018236499522,
+      "maxRelativeField": "Rohr trunk-0:liquid.temperatureDropK",
+      "sizeOrStatusMismatches": 0
+    }
+  ]
+}
