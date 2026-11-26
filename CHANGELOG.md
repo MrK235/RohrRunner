@@ -1,5 +1,12 @@
 # Änderungsprotokoll
 
+# 1.2.6 — Review-Korrekturen und Stabilität
+
+- PDF-Import abgesichert, Projekteingaben und Solverdaten validiert sowie veraltete Berechnungsergebnisse verworfen.
+- Editor erhält Steigleitungsdaten; Kälteträgerwarnungen und Flüssigkeitswerte präzisiert; Solver für große Netze beschleunigt.
+- Lokalen Dateiserverpfad gehärtet, Speichermomentaufnahme stabilisiert und Review-Regressionen in CI aufgenommen.
+- Versionsanzeigen und Desktop-Metadaten auf 1.2.6 synchronisiert; der PWA-Cache wird erneuert.
+
 # 1.2.5 — Orange Markierung und klarere Kälteträger-Ergebnisse
 
 - Markierte Rohrstrecken, Knoten und Listeneinträge werden wieder orange hervorgehoben; Blau war nicht kontrastreich genug.
