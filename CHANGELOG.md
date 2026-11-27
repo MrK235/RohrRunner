@@ -1,5 +1,13 @@
 # Änderungsprotokoll
 
+# 1.2.8 — Flexible Rohrnetze und Desktop-Update-Hinweis
+
+- Rohrstrecken, Start und Kühlstellen können in beliebiger Reihenfolge gezeichnet werden; spätere Abgriffe teilen die angeklickte Leitung zuverlässig.
+- Kreuzungen bleiben ohne Verbindung. Ein Anschluss entsteht nur durch gezieltes Anklicken einer Leitung oder eines Knotens.
+- Fehlerhafte Rohrendpunkte werden bei kleiner Abweichung korrigiert; größere Abweichungen markieren die betroffene Leitung.
+- Der Update-Link öffnet in Windows und Linux den Standardbrowser. Der Hinweis erscheint bei jedem Start erneut, solange eine neuere Version verfügbar ist.
+- Versionsanzeigen und Desktop-Metadaten auf 1.2.8 synchronisiert; PWA-Cache erneuert.
+
 # 1.2.7 — Schnellere Kältemittel-Dimensionierung und Review-Restpunkte
 
 - Kältemittel-Dimensionierung großer Netze deutlich beschleunigt: gemeinsamer Lastfall bei Gleichzeitigkeit 1, verzögerte Neuberechnung der Endpunkt-Lastfälle sonst (50 Kühlstellen etwa 17 s statt über 180 s); 90 synthetische Vergleichsnetze ohne Abweichung.

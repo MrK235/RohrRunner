@@ -217,6 +217,7 @@ if (process.argv.includes('--stress')) {
     const elements = new Map();
     const element = () => ({ classList: { add() {}, remove() {} }, dataset: {}, querySelector: () => null, prepend() {}, disabled: false });
     const c = createContext({ project: { ...network(), calibration: 1 }, dirty: false, runId: 0, pending: new Map(), calculationStatusTimer: null, worker: null,
+      clone: plain, Editor: { repairAnchors: () => [], geometryIssues: () => [], parseDecimal: Number },
       $: id => { if (!elements.has(id)) elements.set(id, element()); return elements.get(id); },
       performance, setInterval: () => 1, clearInterval() {}, setTool() {}, settingsFromUI: () => ({ ...base }),
       projectForCalculation: () => network(), ensureWorker: async () => ({ postMessage() {} }),
