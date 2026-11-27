@@ -28,7 +28,9 @@ jobs:
 
       - name: Tauri-Linux-Abhängigkeiten installieren
         run: |
-          sudo apt-get update
+          # The hosted runner also has a Microsoft apt source that can return
+          # 403 independently of the Ubuntu packages needed for Tauri.
+          sudo apt-get update -o Dir::Etc::sourcelist="sources.list.d/ubuntu.sources" -o Dir::Etc::sourceparts="-"
           sudo apt-get install -y \
             libwebkit2gtk-4.1-dev \
             build-essential \
