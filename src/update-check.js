@@ -8,7 +8,6 @@
   const current = parseVersion(currentText);
   if (!current || !notice) return;
 
-  const dismissedKey = 'rohrrunner.dismissedUpdate.v1';
   async function checkForUpdate() {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
@@ -30,13 +29,19 @@
     const difference = latest.findIndex((part, index) => part !== current[index]);
     if (difference < 0 || latest[difference] < current[difference]) return;
     const version = latest.join('.');
-    try { if (localStorage.getItem(dismissedKey) === version) return; } catch {}
     notice.querySelector('[data-update-version]').textContent = version;
-    notice.querySelector('[data-update-link]').href = `https://github.com/MrK235/RohrRunner/releases/tag/v${version}`;
+    const link = notice.querySelector('[data-update-link]');
+    link.href = `https://github.com/MrK235/RohrRunner/releases/tag/v${version}`;
+    link.onclick = async event => {
+      const invoke = window.__TAURI__?.core?.invoke;
+      if (typeof invoke !== 'function') return;
+      event.preventDefault();
+      try { await invoke('open_release_page', { version }); }
+      catch (error) { console.error('Release-Seite konnte nicht geöffnet werden.', error); }
+    };
     notice.hidden = false;
     notice.querySelector('[data-update-dismiss]').onclick = () => {
       notice.hidden = true;
-      try { localStorage.setItem(dismissedKey, version); } catch {}
     };
   }
   checkForUpdate();

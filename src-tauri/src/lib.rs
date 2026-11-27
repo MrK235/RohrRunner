@@ -1,5 +1,31 @@
 use std::fs;
 use tauri_plugin_dialog::DialogExt;
+use std::process::Command;
+
+#[tauri::command]
+fn open_release_page(version: String) -> Result<(), String> {
+    let valid = version.split('.').count() == 3
+        && version.split('.').all(|part| !part.is_empty() && part.bytes().all(|byte| byte.is_ascii_digit()));
+    if !valid {
+        return Err("Ungültige Release-Version.".into());
+    }
+    let url = format!("https://github.com/MrK235/RohrRunner/releases/tag/v{version}");
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        Command::new("cmd")
+            .args(["/C", "start", "", &url])
+            .creation_flags(0x08000000)
+            .spawn()
+            .map_err(|error| format!("Browser konnte nicht gestartet werden: {error}"))?;
+    }
+    #[cfg(target_os = "linux")]
+    Command::new("xdg-open")
+        .arg(&url)
+        .spawn()
+        .map_err(|error| format!("Browser konnte nicht gestartet werden: {error}"))?;
+    Ok(())
+}
 
 #[tauri::command]
 async fn save_export_file(
@@ -29,7 +55,7 @@ async fn save_export_file(
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![save_export_file])
+        .invoke_handler(tauri::generate_handler![save_export_file, open_release_page])
         .run(tauri::generate_context!())
         .expect("error while running RohrRunner");
 }

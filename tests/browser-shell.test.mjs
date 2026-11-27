@@ -496,10 +496,10 @@ test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () =
 test('PWA-Aktivierung löscht nur alte RohrRunner-Caches', async () => {
   const listeners={},deleted=[];
   const self={registration:{scope:'http://127.0.0.1:4173/'},location:{origin:'http://127.0.0.1:4173'},clients:{claim:async()=>{}},addEventListener:(type,handler)=>listeners[type]=handler};
-  const caches={keys:async()=>['rohrrunner-pwa-v41','rohrrunner-pwa-v42','rohrrunner-pwa-v42-connections','rohrrunner-pwa-v42-explicit-connections','other-app-cache'],delete:async name=>{deleted.push(name);return true}};
+  const caches={keys:async()=>['rohrrunner-pwa-v41','rohrrunner-pwa-v42','rohrrunner-pwa-v42-connections','rohrrunner-pwa-v42-explicit-connections','rohrrunner-pwa-v42-update-links','other-app-cache'],delete:async name=>{deleted.push(name);return true}};
   runInNewContext(read('sw.js'),{self,caches,URL,Set,Promise});
   let work;listeners.activate({waitUntil:promise=>work=promise});await work;
-  assert.deepEqual(deleted,['rohrrunner-pwa-v41','rohrrunner-pwa-v42','rohrrunner-pwa-v42-connections']);
+  assert.deepEqual(deleted,['rohrrunner-pwa-v41','rohrrunner-pwa-v42','rohrrunner-pwa-v42-connections','rohrrunner-pwa-v42-explicit-connections']);
 });
 
 test('Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu', async () => {
@@ -528,19 +528,18 @@ test('Browser registriert den PWA-Service-Worker weiterhin', () => {
   assert.equal(registration.options.scope,'./');
 });
 
-test('Online-Versionscheck meldet nur neuere stabile Releases und merkt sich das Schließen', async () => {
+test('Online-Versionscheck meldet neue Releases bei jedem Start und öffnet sie im Desktop-Browser', async () => {
   const run = async (tag,extra={},options={}) => {
     const parts={'[data-update-version]':{textContent:''},'[data-update-link]':{href:''},'[data-update-dismiss]':{onclick:null}};
     const notice={hidden:true,querySelector:selector=>parts[selector]};
-    const stored=new Map();
-    if(options.dismissed)stored.set('rohrrunner.dismissedUpdate.v1',options.dismissed);
     const document={querySelector:()=>({textContent:'Version 1.2.2'}),getElementById:()=>notice};
     let requested='';
     const fetch=async url=>{requested=url;if(options.offline)throw Error('offline');return{ok:true,json:async()=>({tag_name:tag,...extra})}};
-    const localStorage={getItem:key=>stored.get(key),setItem:(key,value)=>stored.set(key,value)};
-    runInNewContext(read('src/update-check.js'),{document,fetch,localStorage,AbortController,setTimeout,clearTimeout});
+    const calls=[];
+    const window=options.desktop?{__TAURI__:{core:{invoke:(command,args)=>{calls.push({command,args});return Promise.resolve()}}}}:{};
+    runInNewContext(read('src/update-check.js'),{document,fetch,window,console,AbortController,setTimeout,clearTimeout});
     await new Promise(resolve=>setImmediate(resolve));
-    return{notice,parts,stored,requested};
+    return{notice,parts,calls,requested};
   };
   const newer=await run('v1.2.10');
   assert.match(newer.requested,/api\.github\.com\/repos\/MrK235\/RohrRunner\/releases\/latest$/);
@@ -549,12 +548,23 @@ test('Online-Versionscheck meldet nur neuere stabile Releases und merkt sich das
   assert.equal(newer.parts['[data-update-link]'].href,'https://github.com/MrK235/RohrRunner/releases/tag/v1.2.10');
   newer.parts['[data-update-dismiss]'].onclick();
   assert.equal(newer.notice.hidden,true);
-  assert.equal(newer.stored.get('rohrrunner.dismissedUpdate.v1'),'1.2.10');
+  assert.equal((await run('v1.2.10')).notice.hidden,false);
+  const desktop=await run('v1.2.10',{}, {desktop:true});
+  let prevented=false;
+  await desktop.parts['[data-update-link]'].onclick({preventDefault(){prevented=true}});
+  assert.equal(prevented,true);
+  assert.deepEqual(JSON.parse(JSON.stringify(desktop.calls)),[{command:'open_release_page',args:{version:'1.2.10'}}]);
+  prevented=false;
+  await newer.parts['[data-update-link]'].onclick({preventDefault(){prevented=true}});
+  assert.equal(prevented,false);
   for(const [tag,extra] of [['v1.2.2',{}],['v1.1.99',{}],['v1.3.0',{prerelease:true}],['invalid',{}]]){
     assert.equal((await run(tag,extra)).notice.hidden,true);
   }
-  assert.equal((await run('v1.2.10',{}, {dismissed:'1.2.10'})).notice.hidden,true);
   assert.equal((await run('v1.2.10',{}, {offline:true})).notice.hidden,true);
+  const desktopSource=read('src-tauri/src/lib.rs');
+  assert.match(desktopSource,/generate_handler!\[save_export_file, open_release_page\]/);
+  assert.match(desktopSource,/Command::new\("cmd"\)/);
+  assert.match(desktopSource,/Command::new\("xdg-open"\)/);
 });
 
 test('Desktop-Konfiguration beschränkt Ressourcen und Testauswahl deckt Materiallisten ab', () => {
@@ -596,7 +606,7 @@ test('browser shell ships local calculation assets and workflow controls', () =>
   assert.ok(app.includes("location.protocol==='file:'")&&app.includes("new Blob([window.RohrRunnerWorkerBundle]"),'file:// starts the bundled Blob worker');
   assert.ok(app.includes('window.__TAURI__?.core?.invoke')&&app.includes("invoke('save_export_file'")&&app.includes('Array.from(bytes)'),'desktop exports use the native save dialog');
   assert.match(tauriConfig, /"withGlobalTauri": true/);
-  assert.ok(tauriLib.includes('tauri_plugin_dialog')&&tauriLib.includes('blocking_save_file')&&tauriLib.includes('generate_handler![save_export_file]'),'Tauri registers the native export command');
+  assert.ok(tauriLib.includes('tauri_plugin_dialog')&&tauriLib.includes('blocking_save_file')&&tauriLib.includes('generate_handler![save_export_file, open_release_page]'),'Tauri registers the native export command');
   assert.ok(thermo.includes("new URL('../vendor/coolprop/coolprop-local.js', scriptBase)"));
   assert.ok(launcher.includes('scripts\\serve.mjs')&&launcher.includes('http://127.0.0.1:%ROHRRUNNER_PORT%/'),'Windows launcher starts the server and opens the browser');
   assert.ok(linuxLauncher.includes('#!/usr/bin/env bash')&&linuxLauncher.includes('scripts/serve.mjs')&&linuxLauncher.includes('xdg-open'),'Linux launcher starts the server and opens the browser');
