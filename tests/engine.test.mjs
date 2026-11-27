@@ -476,7 +476,7 @@ test('Nachträgliche Kühlstelle auf einer Leitung ist auch im Solver mit einem 
   runInContext(read('src/editor-core.js'),vm);
   await context.RohrStoffdaten.load();
   const plan={nodes:[{id:'s',type:'start',x:0,y:0},{id:'a',type:'endpoint',name:'A',coolingKW:2,x:10,y:0},{id:'b',type:'endpoint',name:'B',coolingKW:2,x:5,y:0}],edges:[{id:'main',from:'s',to:'a',points:[{x:0,y:0},{x:10,y:0}]}]};
-  let id=0;context.RohrRunnerEditor.connectTopology(plan,()=>`split-${++id}`);
+  let id=0;context.RohrRunnerEditor.connectTopology(plan,()=>`split-${++id}`,{attachments:[{nodeId:'b',edgeId:'main'}]});
   const result=context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog);
   assert.equal(result.endpoints.length,2);assert.equal(result.rows.length,6);
   assert.ok(result.rows.every(row=>Number.isFinite(row.pressureDropPa)&&Number.isFinite(row.lengthM)));

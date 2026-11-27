@@ -149,40 +149,45 @@
     return repaired;
   }
 
-  // Run on a transaction copy. Crossings connect; terminals keep one outlet.
-  function connectTopology(network, uid) {
+  // Run on a transaction copy. Only explicit node/edge attachments connect.
+  function connectTopology(network, uid, {attachments=[]}={}) {
     const nodes=network.nodes,originals=network.edges;
     const pointOf=id=>nodes.find(n=>n.id===id);
     const pathOf=e=>e.points||[pointOf(e.from),pointOf(e.to)];
     const junctionAt=point=>{
-      let node=nodes.find(n=>n.type!=='endpoint'&&close(n,point));
-      if(!node){node={id:uid('junction'),type:'junction',name:`T-${nodes.filter(n=>n.type==='junction').length+1}`,...clonePoint(point)};nodes.push(node);}
-      return node;
+      const node={id:uid('junction'),type:'junction',name:`T-${nodes.filter(n=>n.type==='junction').length+1}`,...clonePoint(point)};
+      nodes.push(node);return node;
     };
-    // Reuse coincident junctions, giving the plant node precedence.
-    const canonical=[];
-    for(const node of [...nodes].sort((a,b)=>(b.type==='start')-(a.type==='start'))){
-      if(node.type==='endpoint')continue;
-      const found=canonical.find(n=>close(n,node));
-      if(!found){canonical.push(node);continue;}
-      for(const edge of originals){if(edge.from===node.id)edge.from=found.id;if(edge.to===node.id)edge.to=found.id;}
-      nodes.splice(nodes.indexOf(node),1);
+
+    // A placement at an existing pipe end reuses that explicit connection.
+    for(const attachment of attachments){
+      const node=pointOf(attachment.nodeId),edge=originals.find(e=>e.id===attachment.edgeId);
+      if(!node||!edge||node.type==='endpoint')continue;
+      const old=[pointOf(edge.from),pointOf(edge.to)].find(n=>n.id!==node.id&&n.type==='junction'&&close(n,node));
+      if(!old)continue;
+      for(const pipe of originals){if(pipe.from===old.id)pipe.from=node.id;if(pipe.to===old.id)pipe.to=node.id;}
+      nodes.splice(nodes.indexOf(old),1);
     }
+    // Collinear overlap is ambiguous, unlike a perpendicular crossing.
     for(let i=0;i<originals.length;i++)for(let j=i+1;j<originals.length;j++){
       const a=pathOf(originals[i]),b=pathOf(originals[j]);
       for(let x=1;x<a.length;x++)for(let y=1;y<b.length;y++){
-        if(close(a[x-1],a[x])||close(b[y-1],b[y]))continue;
-        const hit=segmentIntersection(a[x-1],a[x],b[y-1],b[y]);
-        if(hit)junctionAt(hit);
+        const p=a[x-1],q=a[x],r=b[y-1],t=b[y];
+        for(const [axis,fixed] of [['x','y'],['y','x']]){
+          if(Math.abs(p[fixed]-q[fixed])>EPSILON||Math.abs(r[fixed]-t[fixed])>EPSILON||Math.abs(p[fixed]-r[fixed])>EPSILON)continue;
+          if(Math.min(Math.max(p[axis],q[axis]),Math.max(r[axis],t[axis]))-Math.max(Math.min(p[axis],q[axis]),Math.min(r[axis],t[axis]))>EPSILON)throw Error('Überlappende oder doppelte Rohrstrecken: bitte die vorhandene Leitung verwenden.');
+        }
       }
     }
     const links=[];
     for(const terminal of [...nodes].filter(n=>n.type==='endpoint')){
       const incident=originals.filter(e=>e.from===terminal.id||e.to===terminal.id);
-      const interior=originals.some(e=>e.from!==terminal.id&&e.to!==terminal.id&&pathOf(e).slice(1).some((p,i)=>pointOnSegment(terminal,pathOf(e)[i],p)));
-      const existing=nodes.find(n=>n.type!=='endpoint'&&close(n,terminal));
+      const interior=attachments.some(a=>a.nodeId===terminal.id&&originals.some(e=>e.id===a.edgeId&&e.from!==terminal.id&&e.to!==terminal.id));
+      const attachedEdges=originals.filter(e=>incident.includes(e)||attachments.some(a=>a.nodeId===terminal.id&&a.edgeId===e.id));
+      const existing=nodes.find(n=>n.type!=='endpoint'&&close(n,terminal)&&attachedEdges.some(e=>e.from===n.id||e.to===n.id));
       if(incident.length>1||interior||existing){
         const junction=existing||junctionAt(terminal);
+        attachments=attachments.map(a=>a.nodeId===terminal.id?{...a,nodeId:junction.id}:a);
         for(const edge of incident){if(edge.from===terminal.id)edge.from=junction.id;if(edge.to===terminal.id)edge.to=junction.id;}
         // Retain an existing terminal link and its hydraulic properties.
         const previous=incident.find(e=>e.from===e.to);
@@ -196,7 +201,7 @@
       for(let i=1;i<path.length;i++)lengths.push(lengths.at(-1)+Math.abs(path[i].x-path[i-1].x)+Math.abs(path[i].y-path[i-1].y));
       const total=lengths.at(-1),cuts=[{node:pointOf(edge.from),at:0}];
       for(const node of nodes){
-        if(node.type==='endpoint'||node.id===edge.from||node.id===edge.to)continue;
+        if(node.type==='endpoint'||node.id===edge.from||node.id===edge.to||!attachments.some(a=>a.nodeId===node.id&&a.edgeId===edge.id))continue;
         for(let i=1;i<path.length;i++)if(pointOnSegment(node,path[i-1],path[i])){
           const at=lengths[i-1]+Math.abs(node.x-path[i-1].x)+Math.abs(node.y-path[i-1].y);
           if(at>EPSILON&&at<total-EPSILON)cuts.push({node,at});break;

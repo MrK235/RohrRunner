@@ -134,7 +134,7 @@ test('Hauptleitung und Abgriff funktionieren in beiden Reihenfolgen und Zeichenr
   for(const reverseMain of [false,true])for(const reverseBranch of [false,true])for(const branchFirst of [false,true]){
     const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),t=node('t',50,0),c=node('c',50,50,'endpoint');
     const {context:cxt}=drawingHarness({nodes:[a,b,t,c],edges:[]});
-    const pairs=[reverseMain?[b,a]:[a,b],reverseBranch?[c,t]:[t,c]];if(branchFirst)pairs.reverse();
+    const pairs=[reverseMain?[t,a]:[a,t],reverseMain?[b,t]:[t,b],reverseBranch?[c,t]:[t,c]];if(branchFirst)pairs.reverse();
     for(const [from,to] of pairs)assert.equal(cxt.addConnection(from.id,to.id,[from,to]),true);
     assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,3);
     assert.equal(cxt.project.edges.filter(e=>e.from==='t'||e.to==='t').length,3);
@@ -156,8 +156,7 @@ test('Start und Kühlstellen können vor oder nach den Rohrstrecken gesetzt werd
 test('Kühlstelle auf einer Hauptleitung behält einen eigenen Anschluss ohne erfundene Planlänge',()=>{
   for(const terminalFirst of [true,false]){
     const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint');const {context:cxt}=drawingHarness({nodes:[a,b],edges:[]});
-    if(terminalFirst)cxt.createEndpoint({x:50,y:0});
-    cxt.addConnection(a.id,b.id,[a,b]);
+    if(terminalFirst){cxt.createEndpoint({x:50,y:0});const terminal=cxt.project.nodes.at(-1);cxt.addConnection(a.id,terminal.id,[a,terminal]);cxt.addConnection(terminal.id,b.id,[terminal,b]);}else cxt.addConnection(a.id,b.id,[a,b]);
     if(!terminalFirst)cxt.createEndpoint({x:50,y:0});
     assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,3);
     const total=cxt.project.edges.reduce((sum,e)=>sum+e.points.slice(1).reduce((s,p,i)=>s+Math.abs(p.x-e.points[i].x)+Math.abs(p.y-e.points[i].y),0),0);
@@ -166,10 +165,10 @@ test('Kühlstelle auf einer Hauptleitung behält einen eigenen Anschluss ohne er
   }
 });
 
-test('Kreuzungen werden geteilt, Ziel hinter der ersten Kreuzung bleibt verbunden',()=>{
+test('Über eine Leitung hinaus zeichnen erzeugt eine Kreuzung ohne Verbindung',()=>{
   const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',50,-50),d=node('d',50,50,'endpoint');
   const {context:cxt}=drawingHarness({nodes:[a,b,c,d],edges:[line('main',a,b)]});cxt.pipeStart=cxt.project.nodes[2];cxt.connectPipe(d,[c,d]);
-  assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,4);assert.ok(cxt.project.edges.some(e=>e.to==='d'||e.from==='d'));
+  assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,2);assert.equal(cxt.project.nodes.length,4);assert.ok(cxt.project.edges.some(e=>e.from==='c'&&e.to==='d'));assert.deepEqual(JSON.parse(JSON.stringify(cxt.project.edges.find(e=>e.id==='main'))),line('main',a,b));
 });
 
 test('Überlappende Leitungen werden atomar abgelehnt',()=>{
@@ -187,7 +186,7 @@ test('Anschlussreparatur nutzt bekannte Knoten-IDs und lässt größere Abweichu
 test('Aufteilen an mehreren Abgriffen erhält sämtliche extensiven Leitungswerte',()=>{
   const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',25,0),d=node('d',75,0);
   const network={nodes:[a,b,c,d],edges:[line('main',a,b,{extraLengthM:8,pipeRiserLengthM:4,riserLengthM:6,zeta:2,thermal:{suction:{deltaZ:-4,mode:'manual',sizeId:'22x1'},liquid:{deltaZ:4}}})]};let id=0;
-  topologyEditor.connectTopology(network,()=>`id-${++id}`);assertGeometry(network);assert.equal(network.edges.length,3);
+  topologyEditor.connectTopology(network,()=>`id-${++id}`,{attachments:[{nodeId:c.id,edgeId:'main'},{nodeId:d.id,edgeId:'main'}]});assertGeometry(network);assert.equal(network.edges.length,3);
   for(const key of ['extraLengthM','pipeRiserLengthM','riserLengthM','zeta'])assert.equal(network.edges.reduce((sum,e)=>sum+e[key],0),{extraLengthM:8,pipeRiserLengthM:4,riserLengthM:6,zeta:2}[key]);
   assert.equal(network.edges.reduce((sum,e)=>sum+e.thermal.suction.deltaZ,0),-4);assert.ok(network.edges.every(e=>e.thermal.suction.sizeId==='22x1'));
 });
@@ -213,4 +212,34 @@ test('Weitere Zeichenaktionen kaschieren keine große Anschlussabweichung im Alt
   const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',0,50,'endpoint');
   const invalid={...line('main',a,b),points:[{x:10,y:0},b]};const {context:cxt}=drawingHarness({nodes:[a,b,c],edges:[invalid]});
   const before=JSON.stringify(cxt.project);assert.equal(cxt.addConnection(a.id,c.id,[a,c]),false);assert.equal(JSON.stringify(cxt.project),before);
+});
+
+test('Überkreuzungen bleiben in beiden Zeichenreihenfolgen und nach weiteren Änderungen unverbunden',()=>{
+  for(const reverse of [false,true])for(const verticalFirst of [false,true]){
+    const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',50,-50),d=node('d',50,50,'endpoint');
+    const {context:cxt}=drawingHarness({nodes:[a,b,c,d],edges:[]});
+    const pairs=verticalFirst?[[c,d],[a,b]]:[[a,b],[c,d]];
+    for(const pair of pairs){if(reverse)pair.reverse();assert.equal(cxt.addConnection(pair[0].id,pair[1].id,pair),true);}
+    assert.equal(cxt.project.nodes.length,4);assert.equal(cxt.project.edges.length,2);assertGeometry(cxt.project);
+    cxt.createEndpoint({x:200,y:200});assert.equal(cxt.project.edges.length,2);assert.equal(cxt.project.nodes.length,5);
+  }
+});
+
+test('Über einen vorhandenen T-Knoten zeichnen schließt die neue Leitung nicht an',()=>{
+  const a=node('a',0,0,'start'),t=node('t',50,0),b=node('b',100,0,'endpoint'),c=node('c',50,-50),d=node('d',50,50,'endpoint');
+  const {context:cxt}=drawingHarness({nodes:[a,t,b,c,d],edges:[line('left',a,t),line('right',t,b)]});
+  assert.equal(cxt.addConnection(c.id,d.id,[c,d]),true);assertGeometry(cxt.project);
+  assert.equal(cxt.project.edges.filter(e=>e.from==='t'||e.to==='t').length,2);
+  assert.ok(cxt.project.edges.some(e=>e.from==='c'&&e.to==='d'));
+});
+
+test('Expliziter Klick an einer Kreuzung teilt nur die ausgewählte Leitung',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',50,-50),d=node('d',50,50,'endpoint'),t=node('t',50,0);
+  const {context:cxt}=drawingHarness({nodes:[a,b,c,d,t],edges:[line('horizontal',a,b),line('up',c,t),line('down',t,d)]});
+  const clicked=cxt.splitEdgeAt(cxt.project.edges[0],{x:50,y:0});
+  assert.notEqual(clicked.id,'t');assert.equal(cxt.project.edges.length,4);
+  assert.equal(cxt.project.edges.filter(e=>e.from===clicked.id||e.to===clicked.id).length,2);
+  assert.equal(cxt.project.edges.filter(e=>e.from==='t'||e.to==='t').length,2);
+  cxt.createEndpoint({x:200,y:200});
+  assert.equal(cxt.project.edges.filter(e=>e.from===clicked.id||e.to===clicked.id).length,2);assertGeometry(cxt.project);
 });

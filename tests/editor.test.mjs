@@ -65,7 +65,7 @@ test('Doppelklick auf freier Fläche beendet die Leitung mit einem T-Stück', ()
   assert.equal(connections[0].to,project.nodes[1].id);
 });
 
-test('Schnittpunkte rechtwinkliger Rohre werden für automatische T-Stücke erkannt', () => {
+test('Geometrische Schnittpunkte rechtwinkliger Rohre werden erkannt', () => {
   assert.deepEqual(
     Object.values(editor.segmentIntersection({ x: 50, y: 0 }, { x: 50, y: 100 }, { x: 0, y: 40 }, { x: 100, y: 40 })),
     [50, 40]
