@@ -125,3 +125,9 @@ Der Browser-/Solver-Testlauf benötigt Node.js, aber keine zusätzlichen npm-Lau
 Mehr dazu: [Architektur](ARCHITECTURE.md) · [Mitwirken](CONTRIBUTING.md) · [Änderungsprotokoll](CHANGELOG.md) · [Sicherheitsmeldungen](SECURITY.md)
 
 **Lizenzhinweis:** Die Lizenzen der mitgelieferten Drittbibliotheken liegen bei `vendor/coolprop/LICENSE`, `vendor/pdfjs/LICENSE` und `vendor/pdf-lib/LICENSE`. RohrRunner selbst hat derzeit keine separate Lizenzdatei oder erklärte Projektlizenz; diese Drittbibliothekslizenzen gelten nicht für das übrige Projekt.
+
+### Rohrnetz in beliebiger Reihenfolge zeichnen
+
+Im Rohrwerkzeug kann der erste Punkt frei, an einem Knoten oder auf einer vorhandenen Leitung liegen. Ein Doppelklick beendet die Strecke mit einem freien Anschlussknoten. Start und Kühlstellen können anschließend auf freie Enden gesetzt werden. Für einen späteren Abgriff auf eine vorhandene Strecke klicken und zur Kühlstelle zeichnen; die Hauptleitung wird automatisch geteilt. Kreuzungen sind verbunden, und die Strecke wird bis zum gewählten Ziel geführt. Überlappende Strecken sind nicht zulässig; geschlossene Kreise bleiben außerhalb des Berechnungsmodells.
+
+Eine direkt auf der Hauptleitung platzierte Kühlstelle bekommt einen eigenen Anschluss am T-Knoten ohne zusätzliche gezeichnete Länge. Tatsächliche Anschlusslängen bei Bedarf ergänzen. Kleine vorhandene Anschlussabweichungen korrigiert die Anwendung vor der Berechnung mit Hinweis und Rückgängig-Möglichkeit; größere Abweichungen markieren die betroffene Leitung.

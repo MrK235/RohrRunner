@@ -471,3 +471,14 @@ test('Kältemittel-Dimensionierung bleibt bei verzögerter Lastfallneuberechnung
     assert.deepEqual([...result.endpoints].map(endpoint => Number(endpoint.suctionK.toFixed(6))), suctionK);
   }
 });
+
+test('Nachträgliche Kühlstelle auf einer Leitung ist auch im Solver mit einem Anschluss berechenbar', async()=>{
+  runInContext(read('src/editor-core.js'),vm);
+  await context.RohrStoffdaten.load();
+  const plan={nodes:[{id:'s',type:'start',x:0,y:0},{id:'a',type:'endpoint',name:'A',coolingKW:2,x:10,y:0},{id:'b',type:'endpoint',name:'B',coolingKW:2,x:5,y:0}],edges:[{id:'main',from:'s',to:'a',points:[{x:0,y:0},{x:10,y:0}]}]};
+  let id=0;context.RohrRunnerEditor.connectTopology(plan,()=>`split-${++id}`);
+  const result=context.RohrRunnerEngine.calculate(plan,1,settings,context.RohrStoffdaten,catalog);
+  assert.equal(result.endpoints.length,2);assert.equal(result.rows.length,6);
+  assert.ok(result.rows.every(row=>Number.isFinite(row.pressureDropPa)&&Number.isFinite(row.lengthM)));
+  assert.equal(result.rows.filter(row=>row.type==='suction').reduce((sum,row)=>sum+row.lengthM,0),10);
+});

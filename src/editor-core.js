@@ -114,6 +114,109 @@
     return result;
   }
 
+  function anchorRoute(points, from, to) {
+    const end = (path, target) => {
+      const old = path.pop(), previous = path.at(-1);
+      if(close(old,target)){path.push(clonePoint(target));return path;}
+      // Keep the final approach direction: an offset must not create a short
+      // overlapping tail along the main pipe at the connection.
+      path.push(...orthogonalPath(previous, target, Math.abs(previous.y-old.y)<=EPSILON?'y':'x'));
+      if(path.length===1)path.push(clonePoint(target));
+      path[path.length-1]=clonePoint(target);
+      return path;
+    };
+    return end(end(points.map(clonePoint),to).reverse(),from).reverse();
+  }
+
+  function geometryIssues(network) {
+    const nodes=new Map(network.nodes.map(node=>[node.id,node]));
+    return network.edges.flatMap(edge=>{
+      const from=nodes.get(edge.from),to=nodes.get(edge.to),p=edge.points;
+      if(!from||!to||!p?.length)return [];
+      const deviation=Math.max(Math.hypot(p[0].x-from.x,p[0].y-from.y),Math.hypot(p.at(-1).x-to.x,p.at(-1).y-to.y));
+      return deviation>1e-5?[{edgeId:edge.id,deviation,message:`Leitung ${from.name||from.id} ↔ ${to.name||to.id}: Rohrende weicht ${deviation.toFixed(3)} Planpunkte vom Anschluss ab.`}]:[];
+    });
+  }
+
+  function repairAnchors(network, tolerance=2) {
+    const repaired=[];
+    for(const issue of geometryIssues(network)){
+      const edge=network.edges.find(e=>e.id===issue.edgeId);
+      if(issue.deviation>tolerance||edge.points.length<2||!isOrthogonal(edge.points))continue;
+      edge.points=anchorRoute(edge.points,network.nodes.find(n=>n.id===edge.from),network.nodes.find(n=>n.id===edge.to));
+      repaired.push(edge.id);
+    }
+    return repaired;
+  }
+
+  // Run on a transaction copy. Crossings connect; terminals keep one outlet.
+  function connectTopology(network, uid) {
+    const nodes=network.nodes,originals=network.edges;
+    const pointOf=id=>nodes.find(n=>n.id===id);
+    const pathOf=e=>e.points||[pointOf(e.from),pointOf(e.to)];
+    const junctionAt=point=>{
+      let node=nodes.find(n=>n.type!=='endpoint'&&close(n,point));
+      if(!node){node={id:uid('junction'),type:'junction',name:`T-${nodes.filter(n=>n.type==='junction').length+1}`,...clonePoint(point)};nodes.push(node);}
+      return node;
+    };
+    // Reuse coincident junctions, giving the plant node precedence.
+    const canonical=[];
+    for(const node of [...nodes].sort((a,b)=>(b.type==='start')-(a.type==='start'))){
+      if(node.type==='endpoint')continue;
+      const found=canonical.find(n=>close(n,node));
+      if(!found){canonical.push(node);continue;}
+      for(const edge of originals){if(edge.from===node.id)edge.from=found.id;if(edge.to===node.id)edge.to=found.id;}
+      nodes.splice(nodes.indexOf(node),1);
+    }
+    for(let i=0;i<originals.length;i++)for(let j=i+1;j<originals.length;j++){
+      const a=pathOf(originals[i]),b=pathOf(originals[j]);
+      for(let x=1;x<a.length;x++)for(let y=1;y<b.length;y++){
+        if(close(a[x-1],a[x])||close(b[y-1],b[y]))continue;
+        const hit=segmentIntersection(a[x-1],a[x],b[y-1],b[y]);
+        if(hit)junctionAt(hit);
+      }
+    }
+    const links=[];
+    for(const terminal of [...nodes].filter(n=>n.type==='endpoint')){
+      const incident=originals.filter(e=>e.from===terminal.id||e.to===terminal.id);
+      const interior=originals.some(e=>e.from!==terminal.id&&e.to!==terminal.id&&pathOf(e).slice(1).some((p,i)=>pointOnSegment(terminal,pathOf(e)[i],p)));
+      const existing=nodes.find(n=>n.type!=='endpoint'&&close(n,terminal));
+      if(incident.length>1||interior||existing){
+        const junction=existing||junctionAt(terminal);
+        for(const edge of incident){if(edge.from===terminal.id)edge.from=junction.id;if(edge.to===terminal.id)edge.to=junction.id;}
+        // Retain an existing terminal link and its hydraulic properties.
+        const previous=incident.find(e=>e.from===e.to);
+        links.push({...previous,id:previous?.id||uid('edge'),from:junction.id,to:terminal.id,points:[clonePoint(junction),clonePoint(terminal)]});
+      }
+    }
+    const result=[];
+    for(const edge of originals){
+      if(edge.from===edge.to)continue;
+      const path=pathOf(edge),lengths=[0];
+      for(let i=1;i<path.length;i++)lengths.push(lengths.at(-1)+Math.abs(path[i].x-path[i-1].x)+Math.abs(path[i].y-path[i-1].y));
+      const total=lengths.at(-1),cuts=[{node:pointOf(edge.from),at:0}];
+      for(const node of nodes){
+        if(node.type==='endpoint'||node.id===edge.from||node.id===edge.to)continue;
+        for(let i=1;i<path.length;i++)if(pointOnSegment(node,path[i-1],path[i])){
+          const at=lengths[i-1]+Math.abs(node.x-path[i-1].x)+Math.abs(node.y-path[i-1].y);
+          if(at>EPSILON&&at<total-EPSILON)cuts.push({node,at});break;
+        }
+      }
+      cuts.push({node:pointOf(edge.to),at:total});cuts.sort((a,b)=>a.at-b.at);
+      for(let i=1;i<cuts.length;i++){
+        const a=cuts[i-1],b=cuts[i];if(a.node.id===b.node.id)continue;
+        if(result.some(e=>(e.from===a.node.id&&e.to===b.node.id)||(e.from===b.node.id&&e.to===a.node.id)))throw Error('Überlappende oder doppelte Rohrstrecken: bitte die vorhandene Leitung verwenden.');
+        const points=[clonePoint(a.node),...path.filter((p,k)=>lengths[k]>a.at+EPSILON&&lengths[k]<b.at-EPSILON).map(clonePoint),clonePoint(b.node)];
+        const fraction=total?(b.at-a.at)/total:1,copy=JSON.parse(JSON.stringify(edge));
+        Object.assign(copy,{id:i===1?edge.id:uid('edge'),from:a.node.id,to:b.node.id,points});
+        for(const key of ['extraLengthM','pipeRiserLengthM','riserLengthM','zeta'])if(copy[key]!==undefined)copy[key]=Number(copy[key])*fraction;
+        for(const state of Object.values(copy.thermal||{}))if(state.deltaZ!==undefined)state.deltaZ=Number(state.deltaZ)*fraction;
+        result.push(copy);
+      }
+    }
+    network.edges=[...result,...links];return network;
+  }
+
   function moveNode(network, nodeId, dx, dy) {
     const nodes = (network.nodes || []).map(node => ({ ...node }));
     const node = nodes.find(item => item.id === nodeId);
@@ -200,6 +303,7 @@
 
   return Object.freeze({
     EPSILON,
+    anchorRoute, geometryIssues, repairAnchors, connectTopology,
     close,
     parseDecimal,
     orthogonalPath,

@@ -496,10 +496,10 @@ test('PWA cached ausschließlich App-Dateien und keine Fehlerseiten', async () =
 test('PWA-Aktivierung löscht nur alte RohrRunner-Caches', async () => {
   const listeners={},deleted=[];
   const self={registration:{scope:'http://127.0.0.1:4173/'},location:{origin:'http://127.0.0.1:4173'},clients:{claim:async()=>{}},addEventListener:(type,handler)=>listeners[type]=handler};
-  const caches={keys:async()=>['rohrrunner-pwa-v41','rohrrunner-pwa-v42','other-app-cache'],delete:async name=>{deleted.push(name);return true}};
+  const caches={keys:async()=>['rohrrunner-pwa-v41','rohrrunner-pwa-v42','rohrrunner-pwa-v42-connections','other-app-cache'],delete:async name=>{deleted.push(name);return true}};
   runInNewContext(read('sw.js'),{self,caches,URL,Set,Promise});
   let work;listeners.activate({waitUntil:promise=>work=promise});await work;
-  assert.deepEqual(deleted,['rohrrunner-pwa-v41']);
+  assert.deepEqual(deleted,['rohrrunner-pwa-v41','rohrrunner-pwa-v42']);
 });
 
 test('Desktop-Update entfernt nur den alten PWA-Cache und lädt die Oberfläche neu', async () => {

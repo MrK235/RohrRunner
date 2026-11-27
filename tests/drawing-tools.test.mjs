@@ -96,3 +96,121 @@ test('Zoom platziert Beschriftungen in jedem Animationsframe neu, vollständiges
   context.zoom=2;context.pan={x:20,y:10};context.animateZoom(176);
   assert.equal(layouts,1);assert.equal(context.zoomFrame,0);
 });
+
+const topologyContext=createContext({console});
+runInContext(readFileSync(new URL('../src/editor-core.js',import.meta.url),'utf8'),topologyContext);
+const topologyEditor=topologyContext.RohrRunnerEditor;
+function drawingHarness(network){
+  let serial=0;
+  const fields={};const messages=[];
+  const context=createContext({project:structuredClone(network),Editor:topologyEditor,clone:structuredClone,uid:type=>`${type}-${++serial}`,near:(a,b,t=1)=>topologyEditor.close(a,b,t),toast:m=>messages.push(m),remember(){},renderAll(){},invalidate(){},setTool(){},resetPipe(){},selection:null,pipeStart:null,pipeAxis:null,pipePoints:[],pipeCornerHistory:[],$:id=>fields[id]||=( {} )});
+  const names=['edgeAt','splitEdgeAt','newEdge','addConnection','connectPipe','connectPipeToEdge','attachPlacedNode','createEndpoint','createStart','finishPipeAt','routeLength','branchAxis'];
+  for(const name of names)runInContext(app.split('\n').find(line=>line.startsWith(`  function ${name}(`)),context);
+  context.edgePoints=edge=>edge.points||[context.project.nodes.find(n=>n.id===edge.from),context.project.nodes.find(n=>n.id===edge.to)];
+  return {context,messages};
+}
+const node=(id,x,y,type='junction')=>({id,x,y,type,name:id,coolingKW:type==='endpoint'?2:undefined});
+const line=(id,a,b,extra={})=>({id,from:a.id,to:b.id,points:[{x:a.x,y:a.y},{x:b.x,y:b.y}],...extra});
+function assertGeometry(network){
+  assert.equal(topologyEditor.geometryIssues(network).length,0);
+  for(const edge of network.edges){assert.ok(topologyEditor.isOrthogonal(edge.points));assert.ok(network.nodes.some(n=>n.id===edge.from));assert.ok(network.nodes.some(n=>n.id===edge.to));}
+  for(const terminal of network.nodes.filter(n=>n.type==='endpoint'))assert.ok(network.edges.filter(e=>e.from===terminal.id||e.to===terminal.id).length<=1);
+}
+
+test('Klick neben einer Leitung und Abgriff nahe einem vorhandenen Knoten behalten exakte Anschlüsse',()=>{
+  for(const reverse of [false,true])for(const offset of [0,1,5]){
+    const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',51,50,'endpoint');
+    const {context:cxt}=drawingHarness({nodes:[a,b,c],edges:[line('main',...(reverse?[b,a]:[a,b]))]});
+    cxt.pipeStart=cxt.project.nodes[2];
+    assert.equal(cxt.connectPipeToEdge(cxt.project.edges[0],{x:51,y:offset},[{x:51,y:50},{x:51,y:offset}]),true);
+    assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,3);
+  }
+  const a=node('a',0,0,'start'),b=node('b',51,0),c=node('c',50,50,'endpoint');
+  const {context:cxt}=drawingHarness({nodes:[a,b,c],edges:[line('main',a,b)]});cxt.pipeStart=cxt.project.nodes[2];
+  assert.equal(cxt.connectPipeToEdge(cxt.project.edges[0],{x:50,y:0},[{x:50,y:50},{x:50,y:0}]),true);assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,2);
+});
+
+test('Hauptleitung und Abgriff funktionieren in beiden Reihenfolgen und Zeichenrichtungen',()=>{
+  for(const reverseMain of [false,true])for(const reverseBranch of [false,true])for(const branchFirst of [false,true]){
+    const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),t=node('t',50,0),c=node('c',50,50,'endpoint');
+    const {context:cxt}=drawingHarness({nodes:[a,b,t,c],edges:[]});
+    const pairs=[reverseMain?[b,a]:[a,b],reverseBranch?[c,t]:[t,c]];if(branchFirst)pairs.reverse();
+    for(const [from,to] of pairs)assert.equal(cxt.addConnection(from.id,to.id,[from,to]),true);
+    assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,3);
+    assert.equal(cxt.project.edges.filter(e=>e.from==='t'||e.to==='t').length,3);
+  }
+});
+
+test('Start und Kühlstellen können vor oder nach den Rohrstrecken gesetzt werden',()=>{
+  for(const terminalsFirst of [false,true]){
+    const a=node('a',0,0),b=node('b',100,0);const {context:cxt}=drawingHarness({nodes:[a,b],edges:[]});
+    if(terminalsFirst){cxt.createStart(a);cxt.createEndpoint(b);}
+    const from=cxt.project.nodes.find(n=>n.x===0),to=cxt.project.nodes.find(n=>n.x===100);
+    assert.equal(cxt.addConnection(from.id,to.id,[from,to]),true);
+    if(!terminalsFirst){cxt.createEndpoint(b);cxt.createStart(a);}
+    assertGeometry(cxt.project);assert.equal(cxt.project.nodes.length,2);assert.equal(cxt.project.edges.length,1);
+    assert.equal(cxt.project.nodes.filter(n=>n.type==='start').length,1);assert.equal(cxt.project.nodes.filter(n=>n.type==='endpoint').length,1);
+  }
+});
+
+test('Kühlstelle auf einer Hauptleitung behält einen eigenen Anschluss ohne erfundene Planlänge',()=>{
+  for(const terminalFirst of [true,false]){
+    const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint');const {context:cxt}=drawingHarness({nodes:[a,b],edges:[]});
+    if(terminalFirst)cxt.createEndpoint({x:50,y:0});
+    cxt.addConnection(a.id,b.id,[a,b]);
+    if(!terminalFirst)cxt.createEndpoint({x:50,y:0});
+    assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,3);
+    const total=cxt.project.edges.reduce((sum,e)=>sum+e.points.slice(1).reduce((s,p,i)=>s+Math.abs(p.x-e.points[i].x)+Math.abs(p.y-e.points[i].y),0),0);
+    assert.equal(total,100);
+    const before=JSON.stringify(cxt.project);topologyEditor.connectTopology(cxt.project,()=>{throw Error('Keine neuen IDs bei erneutem Normalisieren erwartet')});assert.equal(JSON.stringify(cxt.project),before);
+  }
+});
+
+test('Kreuzungen werden geteilt, Ziel hinter der ersten Kreuzung bleibt verbunden',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',50,-50),d=node('d',50,50,'endpoint');
+  const {context:cxt}=drawingHarness({nodes:[a,b,c,d],edges:[line('main',a,b)]});cxt.pipeStart=cxt.project.nodes[2];cxt.connectPipe(d,[c,d]);
+  assertGeometry(cxt.project);assert.equal(cxt.project.edges.length,4);assert.ok(cxt.project.edges.some(e=>e.to==='d'||e.from==='d'));
+});
+
+test('Überlappende Leitungen werden atomar abgelehnt',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',30,0),d=node('d',70,0);
+  const {context:cxt,messages}=drawingHarness({nodes:[a,b,c,d],edges:[line('main',a,b)]});
+  const before=JSON.stringify(cxt.project);assert.equal(cxt.addConnection(c.id,d.id,[c,d]),false);assert.equal(JSON.stringify(cxt.project),before);assert.match(messages[0],/Überlappende/);
+});
+
+test('Anschlussreparatur nutzt bekannte Knoten-IDs und lässt größere Abweichungen stehen',()=>{
+  const a=node('a',0,0),b=node('b',51,0),c=node('c',100,50);
+  const network={nodes:[a,b,c],edges:[{...line('small',a,b),points:[a,{x:50,y:0}]},{...line('large',b,c),points:[b,{x:51,y:40},{x:100,y:40}]}]};
+  assert.deepEqual([...topologyEditor.repairAnchors(network)],['small']);assert.equal(topologyEditor.geometryIssues(network).length,1);assert.equal(topologyEditor.geometryIssues(network)[0].edgeId,'large');assert.ok(topologyEditor.isOrthogonal(network.edges[0].points));
+});
+
+test('Aufteilen an mehreren Abgriffen erhält sämtliche extensiven Leitungswerte',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',25,0),d=node('d',75,0);
+  const network={nodes:[a,b,c,d],edges:[line('main',a,b,{extraLengthM:8,pipeRiserLengthM:4,riserLengthM:6,zeta:2,thermal:{suction:{deltaZ:-4,mode:'manual',sizeId:'22x1'},liquid:{deltaZ:4}}})]};let id=0;
+  topologyEditor.connectTopology(network,()=>`id-${++id}`);assertGeometry(network);assert.equal(network.edges.length,3);
+  for(const key of ['extraLengthM','pipeRiserLengthM','riserLengthM','zeta'])assert.equal(network.edges.reduce((sum,e)=>sum+e[key],0),{extraLengthM:8,pipeRiserLengthM:4,riserLengthM:6,zeta:2}[key]);
+  assert.equal(network.edges.reduce((sum,e)=>sum+e.thermal.suction.deltaZ,0),-4);assert.ok(network.edges.every(e=>e.thermal.suction.sizeId==='22x1'));
+});
+
+test('Rohrwerkzeug beginnt auf freier Fläche und erlaubt Start/Kühlstelle nach dem Zeichnen',()=>{
+  const {context:cxt}=drawingHarness({nodes:[],edges:[]});
+  Object.assign(cxt,{tool:'pipe',ignoreCanvasClick:false,svgPoint:e=>e.planPoint,drawNetwork(){},pipeHover:null});
+  runInContext(app.split('\n').find(line=>line.startsWith('  function onCanvasClick(')),cxt);
+  cxt.onCanvasClick({planPoint:{x:0,y:0}});assert.equal(cxt.project.nodes.length,1);assert.ok(cxt.pipeStart);
+  cxt.finishPipeAt({x:100,y:0});assert.equal(cxt.project.edges.length,1);
+  cxt.createStart({x:0,y:0});cxt.createEndpoint({x:100,y:0});assertGeometry(cxt.project);
+  assert.equal(cxt.project.nodes.length,2);assert.equal(cxt.project.edges.length,1);
+});
+
+test('Fehlgeschlagener Abgriff lässt auch die zuvor aufgeteilte Hauptleitung unverändert',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint');const {context:cxt}=drawingHarness({nodes:[a,b],edges:[line('main',a,b)]});
+  cxt.pipeStart=cxt.project.nodes[0];const before=JSON.stringify(cxt.project);
+  assert.equal(cxt.connectPipeToEdge(cxt.project.edges[0],{x:50,y:0},[a,{x:50,y:0}]),false);
+  assert.equal(JSON.stringify(cxt.project),before);
+});
+
+test('Weitere Zeichenaktionen kaschieren keine große Anschlussabweichung im Altbestand',()=>{
+  const a=node('a',0,0,'start'),b=node('b',100,0,'endpoint'),c=node('c',0,50,'endpoint');
+  const invalid={...line('main',a,b),points:[{x:10,y:0},b]};const {context:cxt}=drawingHarness({nodes:[a,b,c],edges:[invalid]});
+  const before=JSON.stringify(cxt.project);assert.equal(cxt.addConnection(a.id,c.id,[a,c]),false);assert.equal(JSON.stringify(cxt.project),before);
+});

@@ -53,7 +53,7 @@ test('Doppelklick auf freier Fläche beendet die Leitung mit einem T-Stück', ()
   const connections=[],project={nodes:[{id:'start',type:'start',x:0,y:0}],edges:[]};
   const sandbox={
     project,pipeStart:project.nodes[0],pipePoints:[{x:0,y:0}],pipeAxis:null,selection:null,
-    Editor:{finishOrthogonal:(points,target)=>[...points,target]},routeLength:()=>40,routeHits:()=>[],
+    Editor:{finishOrthogonal:(points,target)=>[...points,target]},routeLength:()=>40,edgeAt:()=>null,near:editor.close,
     remember:()=>{},uid:()=> 'junction-1',addConnection:(from,to,route)=>connections.push({from,to,route}),
     resetPipe:()=>{},renderAll:()=>{},invalidate:()=>{},$:()=>({textContent:''}),toast:message=>{throw Error(message)}
   };
